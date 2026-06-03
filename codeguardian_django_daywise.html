@@ -1,0 +1,207 @@
+
+<style>
+*{box-sizing:border-box}
+.wk-hdr{font-size:13px;font-weight:500;color:var(--color-text-primary);padding:14px 0 6px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;margin-top:4px}
+.ph-pill{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500}
+.day-row{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.day-row:last-child{border-bottom:none}
+.day-label{min-width:38px;padding:8px 0 8px 2px;font-size:11px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0;padding-top:10px}
+.day-body{flex:1;padding:8px 0 8px 8px}
+.day-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.task-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:2px 8px;margin:2px 2px 2px 0;color:var(--color-text-secondary)}
+.task-chip i{font-size:12px}
+.section-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:10px}
+.filter-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fbtn{font-size:11px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary)}
+.fbtn.on{font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.scard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px}
+.scard-l{font-size:11px;color:var(--color-text-secondary)}
+.scard-v{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.milestone{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 9px;border-radius:20px;margin-left:8px}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Django-based day-wise work plan for CodeGuardian AI across 16 weeks</h2>
+
+<div class="stats">
+  <div class="scard"><div class="scard-l">Total weeks</div><div class="scard-v">16</div></div>
+  <div class="scard"><div class="scard-l">Working days</div><div class="scard-v">80</div></div>
+  <div class="scard"><div class="scard-l">Django apps</div><div class="scard-v">6</div></div>
+  <div class="scard"><div class="scard-l">Phases</div><div class="scard-v">6</div></div>
+</div>
+
+<div class="filter-wrap" id="fb">
+  <button class="fbtn on" data-p="0" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">All</button>
+  <button class="fbtn" data-p="1" style="--on-bg:#EEEDFE;--on-c:#3C3489">Phase 1 — Setup</button>
+  <button class="fbtn" data-p="2" style="--on-bg:#E1F5EE;--on-c:#085041">Phase 2 — Django core</button>
+  <button class="fbtn" data-p="3" style="--on-bg:#FAECE7;--on-c:#712B13">Phase 3 — AI engine</button>
+  <button class="fbtn" data-p="4" style="--on-bg:#FAEEDA;--on-c:#633806">Phase 4 — ML &amp; fixes</button>
+  <button class="fbtn" data-p="5" style="--on-bg:#E6F1FB;--on-c:#0C447C">Phase 5 — Frontend</button>
+  <button class="fbtn" data-p="6" style="--on-bg:#EAF3DE;--on-c:#27500A">Phase 6 — Deploy</button>
+</div>
+
+<div id="plan"></div>
+
+<script>
+const P={
+  1:{label:"Phase 1",name:"Setup & Architecture",bg:"#EEEDFE",tc:"#3C3489",dot:"#7F77DD"},
+  2:{label:"Phase 2",name:"Django Core",bg:"#E1F5EE",tc:"#085041",dot:"#1D9E75"},
+  3:{label:"Phase 3",name:"AI Engine",bg:"#FAECE7",tc:"#712B13",dot:"#D85A30"},
+  4:{label:"Phase 4",name:"ML & Auto-Fix",bg:"#FAEEDA",tc:"#633806",dot:"#BA7517"},
+  5:{label:"Phase 5",name:"Frontend & Dashboard",bg:"#E6F1FB",tc:"#0C447C",dot:"#378ADD"},
+  6:{label:"Phase 6",name:"Testing & Deploy",bg:"#EAF3DE",tc:"#27500A",dot:"#639922"}
+};
+
+const WEEKS=[
+{w:1,p:1,title:"Project Setup & Django Scaffold",days:[
+  {d:"Mon",t:"Project planning & environment",tasks:["Understand scope, define features","Research similar tools (SonarQube, Bandit)","Finalize Django as backend framework","Create requirement document"]},
+  {d:"Tue",t:"Django project init",tasks:["pip install django djangorestframework","django-admin startproject codeguardian","Create 6 Django apps: accounts, scanner, issues, fixes, reports, dashboard","Push initial structure to GitHub"]},
+  {d:"Wed",t:"Settings & config",tasks:["Configure settings.py (INSTALLED_APPS, DATABASES)","Set up .env with python-decouple","Configure MEDIA_ROOT for ZIP uploads","Add django-cors-headers for API access"]},
+  {d:"Thu",t:"Database schema design",tasks:["Design models: User, Project, Scan, Issue, Fix, Report","Run python manage.py makemigrations","Run python manage.py migrate (SQLite)","Test DB with Django shell"]},
+  {d:"Fri",t:"Git & Docker setup",tasks:["Write Dockerfile for Django app","Create docker-compose.yml (app + db)","Set up .gitignore for Django","Configure GitHub Actions for lint + test"]}
+]},
+{w:2,p:1,title:"Django Auth & URL Structure",days:[
+  {d:"Mon",t:"Django Auth system",tasks:["Use django.contrib.auth for user model","Create CustomUser model extending AbstractUser","Add role field (admin/user)","Run migrations for accounts app"]},
+  {d:"Tue",t:"JWT auth with SimpleJWT",tasks:["pip install djangorestframework-simplejwt","Configure JWT in settings.py","Create /api/auth/register/ and /api/auth/login/ endpoints","Test token generation in Postman"]},
+  {d:"Wed",t:"URL routing",tasks:["Set up project-level urls.py","Include app-level urls from all 6 apps","Create api/v1/ prefix for all endpoints","Test URL routing with curl"]},
+  {d:"Thu",t:"Django admin setup",tasks:["Register all models in admin.py","Customize admin list_display for Scan, Issue","Add search_fields and list_filter","Create superuser account"]},
+  {d:"Fri",t:"Week 1–2 review",tasks:["Code review & refactor settings","Write docstrings for all views","Update README with setup instructions","Plan Week 3 sprint board"]}
+]},
+{w:3,p:2,title:"File Upload & Project Parser",days:[
+  {d:"Mon",t:"File upload model",tasks:["Create Project model with FileField for ZIP","Configure MEDIA_ROOT + MEDIA_URL","Set upload_to='uploads/projects/%Y/%m/%d/'","Test file save via Django admin"]},
+  {d:"Tue",t:"Upload API view",tasks:["Create ProjectUploadView using APIView","Parse multipart/form-data in DRF","Validate file type (.zip, .py only)","Return project_id on success"]},
+  {d:"Wed",t:"ZIP extractor service",tasks:["Create services/file_extractor.py","Use zipfile module to extract to MEDIA_ROOT","Walk extracted dir with os.walk()","Return list of .py file paths"]},
+  {d:"Thu",t:"GitHub URL support",tasks:["pip install PyGithub","Create GitHubImportView in scanner/views.py","Clone repo to temp dir using git.Repo.clone_from()","Store cloned files same as ZIP flow"]},
+  {d:"Fri",t:"Project structure mapper",tasks:["Detect project type (Django/Flask/FastAPI) by checking installed_apps, app.py, main.py","Store project_type in Project model","Return project file tree as JSON","Write unit tests for extractor"]}
+]},
+{w:4,p:2,title:"Django Models & Scan Lifecycle",days:[
+  {d:"Mon",t:"Scan model",tasks:["Create Scan model with status (pending/running/done/failed)","Add ForeignKey to Project","Add started_at, completed_at DateTimeFields","Run migrations for scanner app"]},
+  {d:"Tue",t:"Issue model",tasks:["Create Issue model: file, line_number, issue_type, description, severity","Add ForeignKey to Scan","Add SeverityChoices: LOW/MEDIUM/HIGH/CRITICAL","Create IssueSerializer in DRF"]},
+  {d:"Wed",t:"Fix model",tasks:["Create Fix model: original_code, fixed_code, diff_patch","OneToOne relationship with Issue","Add status: pending/applied/dismissed","Create FixSerializer in DRF"]},
+  {d:"Thu",t:"Scan API views",tasks:["Create StartScanView — triggers async scan task","Create ScanStatusView — returns scan progress","Create ScanResultsView — returns paginated issues","Test full scan lifecycle in Postman"]},
+  {d:"Fri",t:"Django Signals",tasks:["Add post_save signal on Project to auto-create Scan","Add post_save signal on Scan to trigger analysis pipeline","Test signal chain end-to-end","Document signal flow"]}
+]},
+{w:5,p:3,title:"Static Analysis Integration",days:[
+  {d:"Mon",t:"AST parser module",tasks:["Create scanner/services/ast_parser.py","Use Python ast module to walk .py files","Detect: missing error handling, long functions (>50 lines), bare except","Store findings as Issue objects via Django ORM"]},
+  {d:"Tue",t:"Bandit integration",tasks:["pip install bandit","Create scanner/services/bandit_runner.py","Run bandit subprocess on uploaded files","Parse JSON output, map to Issue model with HIGH/CRITICAL severity"]},
+  {d:"Wed",t:"Pylint + Ruff integration",tasks:["pip install pylint ruff","Create scanner/services/linter_runner.py","Run both linters on project files","Merge linter findings into Issue table"]},
+  {d:"Thu",t:"Hardcoded secrets detector",tasks:["Create scanner/services/secret_detector.py","Regex patterns: API_KEY=, PASSWORD=, SECRET=","Detect AWS/GCP credential patterns","Mark as CRITICAL severity in Issue model"]},
+  {d:"Fri",t:"Issue aggregator",tasks:["Create scanner/services/issue_aggregator.py","Deduplicate findings from all 3 sources","Assign confidence score per issue","Update Scan.status to 'done' after aggregation"]}
+]},
+{w:6,p:3,title:"LangChain + LLM Agent Setup",days:[
+  {d:"Mon",t:"LLM dependencies",tasks:["pip install langchain langchain-openai","pip install langchain-community faiss-cpu","Add OPENAI_API_KEY to .env","Create scanner/services/llm_agent.py"]},
+  {d:"Tue",t:"LangChain review agent",tasks:["Build ChatOpenAI chain with structured output","Prompt template: analyze Python code for bugs","Parse LLM JSON response into Issue objects","Map to existing Issue model format"]},
+  {d:"Wed",t:"Context builder",tasks:["Create scanner/services/context_builder.py","Combine AST findings + raw code into LLM prompt","Implement token limit chunking (4096 tokens max)","Add retry logic with tenacity"]},
+  {d:"Thu",t:"Code embeddings",tasks:["pip install sentence-transformers","Create scanner/services/embeddings.py","Generate embeddings per file using all-MiniLM-L6-v2","Store vectors in FAISS index on disk"]},
+  {d:"Fri",t:"RAG pipeline",tasks:["Create scanner/services/rag_pipeline.py","Query FAISS for similar code on each issue","Add retrieved context to LLM prompt","Test RAG with SQL injection example"]}
+]},
+{w:7,p:3,title:"AI Agent Orchestration",days:[
+  {d:"Mon",t:"LangGraph agent",tasks:["pip install langgraph","Create multi-step agent: static_scan → llm_review → severity_predict","Define agent state with TypedDict","Connect agent to Django scan workflow"]},
+  {d:"Tue",t:"Celery async tasks",tasks:["pip install celery redis","Create scanner/tasks.py with @shared_task","Move scan pipeline to Celery task","Add Redis to docker-compose.yml"]},
+  {d:"Wed",t:"Celery Beat scheduling",tasks:["Configure Celery Beat for cleanup tasks","Add periodic task: delete old scans after 30 days","Test Celery worker with docker-compose","Add task result tracking to Scan model"]},
+  {d:"Thu",t:"Issue enrichment",tasks:["Add explanation field to Issue model (LLM-generated)","Add remediation_steps field","Generate 'why this is a bug' text per issue","Run migrations for new fields"]},
+  {d:"Fri",t:"MVP integration test",tasks:["Upload real Flask project ZIP","Verify all issue types detected","Verify scan completes in <60 seconds","MVP milestone — basic scan pipeline works"]}
+]},
+{w:8,p:3,title:"Security Rules & ML Prep",days:[
+  {d:"Mon",t:"SQL injection detector",tasks:["Create scanner/services/sql_detector.py","Detect string concatenation in queryset-like patterns","Detect raw SQL without parameterization","Mark as CRITICAL in Issue model"]},
+  {d:"Tue",t:"Auth security checks",tasks:["Detect missing @login_required decorators","Detect missing permission_classes in DRF views","Flag plain-text password storage","Add to static analysis pipeline"]},
+  {d:"Wed",t:"ML training data prep",tasks:["Export 500+ labeled issues from DB","Features: issue_type, file_ext, severity_rule, line_count","Label: LOW=0 MEDIUM=1 HIGH=2 CRITICAL=3","Create issues/ml/training_data.csv"]},
+  {d:"Thu",t:"Severity classifier training",tasks:["pip install scikit-learn","Train RandomForestClassifier on labeled data","Evaluate with classification_report","Save model: joblib.dump(clf, 'severity_clf.pkl')"]},
+  {d:"Fri",t:"Classifier Django integration",tasks:["Create issues/services/severity_predictor.py","Load model with joblib.load() at startup","Predict severity for each new Issue","Override with rule-based logic for SQL/secrets"]}
+]},
+{w:9,p:4,title:"Auto-Fix Generator",days:[
+  {d:"Mon",t:"Fix generation agent",tasks:["Create fixes/services/fix_generator.py","Build LangChain chain: buggy_code → fixed_code","Prompt: 'Fix this Python bug, return only corrected code'","Store result in Fix.fixed_code field"]},
+  {d:"Tue",t:"Diff generator",tasks:["Use difflib.unified_diff() for before/after","Format as Git-style unified diff","Store in Fix.diff_patch field","Expose via /api/fixes/{id}/diff/ endpoint"]},
+  {d:"Wed",t:"Fix validation",tasks:["Run ast.parse() on fixed code to check syntax","Run pylint on fixed code snippet","Flag if fix introduces new issues","Set Fix.is_valid = True/False accordingly"]},
+  {d:"Thu",t:"Fix download endpoint",tasks:["Create FixedFileDownloadView","Bundle fixed files as ZIP using zipfile","Expose /api/scans/{id}/download/","Set Content-Disposition: attachment header"]},
+  {d:"Fri",t:"Patch file export",tasks:["Generate .patch file for git apply","Create /api/scans/{id}/patch/ endpoint","Test with git apply --check","Update Fix model with patch_file FileField"]}
+]},
+{w:10,p:4,title:"Test Case Generator & Report",days:[
+  {d:"Mon",t:"Test case generator",tasks:["Create fixes/services/test_generator.py","Prompt LLM to generate pytest test cases per function","Detect Django views → generate Django TestCase","Store as TestSuite model linked to Scan"]},
+  {d:"Tue",t:"Test suite model & API",tasks:["Create TestSuite model with generated_tests TextField","Create TestSuiteView for download","Format as valid test_<filename>.py files","Expose /api/scans/{id}/tests/ endpoint"]},
+  {d:"Wed",t:"Report model",tasks:["Create Report model linked to Scan","Fields: pdf_file, generated_at, summary_json","Create reports/services/pdf_generator.py","pip install weasyprint"]},
+  {d:"Thu",t:"PDF report generation",tasks:["Create Django template: reports/templates/report.html","Render scan summary, issue table, severity chart","Convert to PDF with weasyprint.HTML().write_pdf()","Save to Report.pdf_file FileField"]},
+  {d:"Fri",t:"Report download API",tasks:["Create ReportDownloadView","Stream PDF with FileResponse","Add /api/reports/{scan_id}/download/ endpoint","Test PDF output in browser"]}
+]},
+{w:11,p:5,title:"Django Templates — Frontend",days:[
+  {d:"Mon",t:"Base template setup",tasks:["Create templates/base.html with Bootstrap 5 CDN","Add navbar: Dashboard, New Scan, History, Profile","Configure TEMPLATES in settings.py","Set up static files: static/css/main.css"]},
+  {d:"Tue",t:"Login & register pages",tasks:["Create accounts/templates/login.html","Create accounts/templates/register.html","Use Django's built-in auth forms","Style with Bootstrap 5 + custom CSS"]},
+  {d:"Wed",t:"Upload page",tasks:["Create scanner/templates/upload.html","Drag-and-drop area with vanilla JS","GitHub URL input field","CSRF token in form, POST to upload API"]},
+  {d:"Thu",t:"Scan progress page",tasks:["Create scanner/templates/scan_status.html","Poll /api/scans/{id}/status/ every 3 seconds with fetch()","Animated spinner while scan runs","Auto-redirect to results on completion"]},
+  {d:"Fri",t:"Issues list page",tasks:["Create issues/templates/issues_list.html","Render Issue queryset as table","Color-coded severity badges with Bootstrap","Filter by severity using URL query params"]}
+]},
+{w:12,p:5,title:"Dashboard & Chart.js",days:[
+  {d:"Mon",t:"Issue detail page",tasks:["Create issues/templates/issue_detail.html","Show code snippet with <pre> tag","Display LLM explanation and fix suggestion","Before/after diff with line highlights"]},
+  {d:"Tue",t:"Dashboard view",tasks:["Create dashboard/views.py with DashboardView","Aggregate stats: total scans, issues, by severity","Pass context dict to dashboard/templates/dashboard.html","Link to recent scans"]},
+  {d:"Wed",t:"Chart.js integration",tasks:["Add Chart.js CDN to base.html","Severity doughnut chart using scan stats API","Issues-per-file bar chart","Animate charts on page load"]},
+  {d:"Thu",t:"Health score display",tasks:["Calculate security_score, quality_score (0–100) in ScanResultsView","Display as progress rings with CSS","Green/amber/red by score thresholds","Show score history line chart"]},
+  {d:"Fri",t:"Django admin panel polish",tasks:["Customize admin dashboard with django-admin-interface","Add scan stats to admin home","Create custom admin actions: re-run scan, export CSV","Add admin charts with Chart.js in admin template"]}
+]},
+{w:13,p:5,title:"Frontend Polish & Beta",days:[
+  {d:"Mon",t:"Fix management UI",tasks:["Create fixes/templates/fix_list.html","Show all pending fixes with diff preview","Mark as applied/dismissed via AJAX","Update Fix.status via PATCH API call"]},
+  {d:"Tue",t:"Test cases page",tasks:["Create fixes/templates/test_suite.html","Syntax-highlighted code with highlight.js CDN","Copy-to-clipboard button with JS","Download tests ZIP button"]},
+  {d:"Wed",t:"Email notifications",tasks:["pip install django-anymail or use smtplib","Send email on scan_complete signal","HTML email template with scan summary","Configure EMAIL_BACKEND in settings.py"]},
+  {d:"Thu",t:"Responsive design",tasks:["Test all pages on 375px mobile viewport","Fix overflowing tables with table-responsive class","Collapsible sidebar for mobile with Bootstrap offcanvas","Test touch interactions"]},
+  {d:"Fri",t:"Beta milestone",tasks:["Full feature audit: all 7 features working","Fix all P0/P1 bugs found","Beta milestone achieved","Record 2-min demo walkthrough video"]}
+]},
+{w:14,p:6,title:"Testing — Django TestCase",days:[
+  {d:"Mon",t:"Model tests",tasks:["Create tests/test_models.py in each app","Test Project, Scan, Issue, Fix model creation","Test model __str__ methods","Test ForeignKey constraints"]},
+  {d:"Tue",t:"View & API tests",tasks:["Use Django TestClient for view tests","Test /api/auth/register/ and /api/auth/login/","Test /api/projects/upload/ with test ZIP file","Test /api/scans/{id}/results/ pagination"]},
+  {d:"Wed",t:"Service unit tests",tasks:["Mock LLM calls with unittest.mock.patch","Test ast_parser.py with sample Python files","Test bandit_runner.py with vulnerable fixture code","Achieve 70% code coverage with coverage.py"]},
+  {d:"Thu",t:"Security hardening",tasks:["Add Django CSRF protection on all forms","Set SECURE_SSL_REDIRECT, X_FRAME_OPTIONS in production settings","Sanitize file upload inputs (check MIME type)","Add django-ratelimit to login endpoint"]},
+  {d:"Fri",t:"Performance tuning",tasks:["Add select_related() to Issue querysets","Add DB indexes on Scan.status, Issue.severity","Profile slow views with django-debug-toolbar","Target: scan results page loads in <500ms"]}
+]},
+{w:15,p:6,title:"Docker, CI/CD & Staging",days:[
+  {d:"Mon",t:"Production Dockerfile",tasks:["Multi-stage Dockerfile: builder + runtime","Use gunicorn as WSGI server","ENTRYPOINT: gunicorn codeguardian.wsgi","Add whitenoise for static files"]},
+  {d:"Tue",t:"docker-compose production",tasks:["Services: web (Django), db (PostgreSQL), redis (Celery), celery_worker","Use environment variables from .env.production","Add healthcheck for web service","Test full stack with docker-compose up"]},
+  {d:"Wed",t:"PostgreSQL migration",tasks:["pip install psycopg2-binary","Update DATABASES in production settings","Run manage.py migrate on PostgreSQL","Test all queries work on Postgres"]},
+  {d:"Thu",t:"GitHub Actions CI/CD",tasks:["Lint: flake8 + isort on every PR","Test: python manage.py test on every PR","Build: docker build on merge to main","Deploy: push to Render/Railway/VPS via SSH"]},
+  {d:"Fri",t:"Staging deployment",tasks:["Deploy to staging URL","Run smoke tests on staging","Test real GitHub repo scan on staging","Fix any environment-specific bugs"]}
+]},
+{w:16,p:6,title:"Production Launch",days:[
+  {d:"Mon",t:"Load testing",tasks:["Use Locust to simulate 10 concurrent users","Measure scan API response time under load","Identify and fix bottlenecks","Target: <30s for 50-file project scan"]},
+  {d:"Tue",t:"Final Django settings",tasks:["Set DEBUG=False in production","Configure ALLOWED_HOSTS","Set up STATIC_ROOT + collectstatic in CI","Configure Django logging to file"]},
+  {d:"Wed",t:"Production deploy",tasks:["Deploy to production server","Run manage.py migrate on production DB","Run manage.py collectstatic","Verify all features on live URL"]},
+  {d:"Thu",t:"Documentation",tasks:["Write full README: setup, env vars, how to run","Document all API endpoints in README","Add architecture diagram to docs","Write CONTRIBUTING.md"]},
+  {d:"Fri",t:"Launch & wrap-up",tasks:["Announce on LinkedIn with live URL","Add to resume as CodeGuardian AI","Pin to GitHub profile","Record final 3-min demo video"]}
+]}
+];
+
+function chip(text,dot){
+  return `<span class="task-chip"><i class="ti ti-point" style="color:${dot};font-size:10px" aria-hidden="true"></i>${text}</span>`;
+}
+
+function render(filter){
+  const el=document.getElementById('plan');
+  el.innerHTML='';
+  WEEKS.filter(w=>filter===0||w.p===filter).forEach(w=>{
+    const ph=P[w.p];
+    const ms=w.w===7?`<span class="milestone" style="background:#E1F5EE;color:#085041"><i class="ti ti-flag" aria-hidden="true" style="font-size:12px"></i>MVP</span>`:
+              w.w===13?`<span class="milestone" style="background:#FAEEDA;color:#633806"><i class="ti ti-flag" aria-hidden="true" style="font-size:12px"></i>Beta</span>`:
+              w.w===16?`<span class="milestone" style="background:#EEEDFE;color:#3C3489"><i class="ti ti-rocket" aria-hidden="true" style="font-size:12px"></i>Launch</span>`:'';
+    const sec=document.createElement('div');
+    sec.className='section-card';
+    sec.innerHTML=`<div class="wk-hdr"><i class="ti ti-calendar" aria-hidden="true" style="font-size:14px;color:${ph.dot}"></i>Week ${w.w} — ${w.title}<span class="ph-pill" style="background:${ph.bg};color:${ph.tc}">${ph.label}: ${ph.name}</span>${ms}</div>`+
+    w.days.map(d=>`<div class="day-row"><div class="day-label">${d.d}</div><div class="day-body"><div class="day-title">${d.t}</div><div>${d.tasks.map(t=>chip(t,ph.dot)).join('')}</div></div></div>`).join('');
+    el.appendChild(sec);
+  });
+}
+
+render(0);
+
+document.getElementById('fb').addEventListener('click',e=>{
+  const b=e.target.closest('.fbtn');
+  if(!b)return;
+  document.querySelectorAll('.fbtn').forEach(x=>{
+    x.classList.remove('on');
+    x.style.background='transparent';
+    x.style.color='var(--color-text-secondary)';
+    x.style.borderColor='var(--color-border-secondary)';
+  });
+  b.classList.add('on');
+  const p=parseInt(b.dataset.p);
+  if(p===0){b.style.background='#EEEDFE';b.style.color='#3C3489';b.style.borderColor='#AFA9EC';}
+  else{const ph=P[p];b.style.background=ph.bg;b.style.color=ph.tc;b.style.borderColor=ph.dot;}
+  render(p);
+});
+</script>
