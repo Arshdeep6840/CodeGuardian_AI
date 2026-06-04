@@ -202,34 +202,3 @@ It shows:
 
 **CodeGuardian AI – AI-Powered Python Code Review & Bug-Fixing Platform**
 Developed an AI-based code review platform that analyzes Python, Flask, Django, and FastAPI projects to detect bugs, security risks, poor coding practices, and missing test cases. Integrated LLM-based code explanation, ML-based bug severity classification, automated fix suggestions, test case generation, and a project health dashboard. Built using Python, FastAPI/Flask, SQLAlchemy, ChromaDB/FAISS, Scikit-learn, Bootstrap, and GitHub API.
-
----
-
-## 5 More Unique Project Ideas
-
-1. **AI Data Analyst Agent**
-   Upload CSV/Excel and the system automatically cleans data, creates charts, finds insights, trains ML models, and generates a business report.
-
-2. **Smart College NAAC Document Intelligence System**
-   Upload NAAC PDFs and the AI extracts year-wise data, validates missing documents, summarizes reports, and answers questions from college documents.
-
-3. **AI Interview Simulator for Freshers**
-   Role-based interview system for Python, Data Analyst, AI/ML, and Django roles with voice, scoring, feedback, and improvement plan.
-
-4. **AI Resume Matcher + Skill Gap Analyzer**
-   Upload resume and job description. The system gives ATS score, missing skills, project suggestions, and interview questions.
-
-5. **Agentic Research Assistant for Students**
-   Upload PDFs, notes, and syllabus. The AI creates summaries, MCQs, short answers, long answers, flashcards, and exam preparation plans.
-
----
-
-## My Best Recommendation
-
-Choose **CodeGuardian AI**.
-
-It is unique, useful, and impressive because it solves a real developer problem. It also gives you strong talking points in interviews for **Python developer**, **AI engineer**, and **ML engineer** roles.
-
-[1]: https://octoverse.github.com/ "Octoverse 2025: The state of open source | The State of the Octoverse"
-[2]: https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/ "Octoverse: A new developer joins GitHub every second as AI leads TypeScript to #1 - The GitHub Blog"
-[3]: https://www.datacamp.com/blog/top-ai-agent-projects "Top 10 AI Agent Projects to Build in 2026 (With Guides and Demos) | DataCamp"
