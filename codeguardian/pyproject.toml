@@ -1,0 +1,11 @@
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "codeguardian.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
