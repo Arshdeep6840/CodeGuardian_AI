@@ -1,50 +1,99 @@
+# =============================================================
 # Python
+# =============================================================
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+*.pyd
+*.pyo
 
-# Virtual environments
+# =============================================================
+# Virtual Environments
+# =============================================================
 env/
 venv/
 .venv/
 ENV/
+env.bak/
+venv.bak/
 
+# =============================================================
 # Django
+# =============================================================
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
-# Media and static files
 media/
 staticfiles/
+static_root/
 
-# Environment variables
+# =============================================================
+# Environment Variables / Secrets
+# =============================================================
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+secrets.json
 
-# IDE
-.vscode/
-.idea/
+# =============================================================
+# Distribution / Packaging
+# =============================================================
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
 
-# Testing
-.pytest_cache/
+# =============================================================
+# Testing & Coverage
+# =============================================================
+.tox/
+.nox/
 .coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
 htmlcov/
+.pytest_cache/
+.cache/
+nosetests.xml
 
-# Ruff
-.ruff_cache/
-
-# OS files
+# =============================================================
+# IDEs & Editors
+# =============================================================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
 
+# =============================================================
 # Docker
-*.pid
+# =============================================================
+.dockerignore
 
-# ZIP uploads
-*.zip
-uploads/
-project_zips/
-scan_reports/
+# =============================================================
+# Jupyter Notebooks
+# =============================================================
+.ipynb_checkpoints
+*.ipynb
+
+# =============================================================
+# Misc
+# =============================================================
+*.bak
+*.tmp
+*.orig
