@@ -1,0 +1,538 @@
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --tb:#0D1117;--th:#161B22;
+  --tcg:#7EE8A2;--tcb:#79C0FF;--tcr:#FF7B7B;--tca:#FFAB70;--tcd:#8B949E;--tcw:#E6EDF3;
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--d9);color:var(--t1);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* UTILS */
+.container{max-width:1180px;margin:0 auto;padding:0 36px;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ── NAVBAR ── */
+.nav{position:sticky;top:0;z-index:100;background:rgba(7,12,24,.90);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--bd);}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 36px;height:62px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.nav-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;letter-spacing:.5px;}
+.nav-logo-text{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:700;color:var(--t1);}
+.nav-logo-text em{color:var(--pm);font-style:normal;}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;}
+.nav-links a{font-size:13.5px;color:var(--t3);text-decoration:none;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--t1);}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.btn-ghost{background:none;border:1px solid var(--bdm);color:var(--t2);padding:6px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--pm);color:var(--t1);}
+.btn-primary{background:var(--p);border:none;color:#fff;padding:7px 16px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-primary:hover{background:var(--pd);}
+
+/* ── HERO ── */
+.hero{position:relative;overflow:hidden;background:linear-gradient(155deg,#0C1526 0%,#070C18 55%);}
+.glow1{position:absolute;top:-200px;left:-150px;width:650px;height:650px;background:radial-gradient(circle,rgba(115,101,240,.16),transparent 70%);pointer-events:none;}
+.glow2{position:absolute;bottom:-80px;right:-80px;width:450px;height:450px;background:radial-gradient(circle,rgba(35,209,139,.07),transparent 70%);pointer-events:none;}
+.hero-inner{max-width:1180px;margin:0 auto;padding:72px 36px 80px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(115,101,240,.14);border:1px solid rgba(115,101,240,.28);border-radius:20px;padding:5px 14px 5px 9px;font-size:11.5px;font-weight:600;color:var(--pm);margin-bottom:26px;}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--pm);animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.75);}}
+.hero-h1{font-family:'Syne',sans-serif;font-size:54px;font-weight:800;line-height:1.09;letter-spacing:-1.5px;margin-bottom:22px;}
+.hero-h1 .hl{color:var(--pm);}
+.hero-sub{font-size:16.5px;color:var(--t3);line-height:1.72;margin-bottom:34px;max-width:470px;}
+.hero-btns{display:flex;align-items:center;gap:12px;margin-bottom:40px;flex-wrap:wrap;}
+.btn-hp{background:var(--p);color:#fff;padding:13px 26px;border-radius:10px;border:none;font-size:14.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-hp:hover{background:var(--pd);transform:translateY(-1px);}
+.btn-hs{background:transparent;color:var(--t2);padding:13px 22px;border-radius:10px;border:1px solid var(--bdm);font-size:14.5px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-hs:hover{border-color:var(--pm);color:var(--t1);}
+.hero-trust{display:flex;align-items:center;gap:14px;}
+.t-avs{display:flex;}
+.t-av{width:27px;height:27px;border-radius:50%;border:2px solid var(--d8);background:var(--d5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--pm);margin-left:-7px;}
+.t-av:first-child{margin-left:0;}
+.t-txt{font-size:12.5px;color:var(--t4);}
+.t-txt strong{color:var(--t2);}
+
+/* ── TERMINAL ── */
+.term-wrap{position:relative;}
+.term-glow{position:absolute;inset:-24px;background:radial-gradient(circle at 50% 50%,rgba(115,101,240,.11),transparent 68%);pointer-events:none;z-index:0;}
+.scan-chip{position:absolute;top:-14px;right:14px;background:var(--d7);border:1px solid var(--bdm);border-radius:8px;padding:7px 13px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--t2);z-index:3;}
+.scan-dot{width:7px;height:7px;border-radius:50%;background:var(--sl);animation:pdot 1.4s infinite;}
+.terminal{position:relative;z-index:1;background:var(--tb);border-radius:var(--rl);border:1px solid rgba(255,255,255,.08);overflow:hidden;}
+.term-hd{background:var(--th);padding:11px 15px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.dots{display:flex;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dr{background:#FF5F57;} .dy{background:#FFBD2E;} .dg{background:#28C840;}
+.term-tab{font-size:11.5px;color:var(--tcd);font-family:'JetBrains Mono',monospace;letter-spacing:.02em;}
+.term-bd{padding:18px 20px;min-height:296px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;}
+.tline{display:block;}
+.tcursor{display:inline-block;width:7px;height:1em;background:var(--tcg);vertical-align:text-bottom;animation:blink 1.1s step-end infinite;margin-left:1px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ── STATS ── */
+.stats{background:var(--d8);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);}
+.stats-row{max-width:1180px;margin:0 auto;padding:0 36px;display:grid;grid-template-columns:repeat(4,1fr);}
+.stat{padding:30px 20px;text-align:center;border-right:1px solid var(--bd);}
+.stat:last-child{border-right:none;}
+.stat-n{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--t1);margin-bottom:3px;}
+.stat-n em{color:var(--pm);font-style:normal;}
+.stat-l{font-size:12.5px;color:var(--t4);font-weight:500;}
+
+/* ── FEATURES ── */
+.feats{background:var(--l1);padding:88px 0;}
+.eye{font-size:11.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--p);margin-bottom:11px;}
+.sec-h{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;color:var(--dt1);line-height:1.13;letter-spacing:-.8px;margin-bottom:14px;}
+.sec-s{font-size:16px;color:var(--dt3);line-height:1.68;max-width:500px;}
+.sec-hdr{margin-bottom:52px;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.fc{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:26px;transition:all .22s;cursor:default;}
+.fc:hover{border-color:rgba(115,101,240,.32);transform:translateY(-2px);}
+.fc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:16px;}
+.fc-t{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--dt1);margin-bottom:7px;}
+.fc-d{font-size:13.5px;color:var(--dt3);line-height:1.62;}
+.fc-tag{display:inline-block;margin-top:13px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--pp);color:var(--p);}
+
+/* ── HOW IT WORKS ── */
+.hiw{background:var(--lw);padding:88px 0;}
+.hiw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;position:relative;margin-top:0;}
+.hiw-conn{position:absolute;top:38px;height:1px;background:linear-gradient(90deg,rgba(115,101,240,.25),rgba(115,101,240,.55));pointer-events:none;}
+.hiw-step{text-align:center;padding:28px 20px;}
+.hiw-num{width:46px;height:46px;border-radius:50%;background:var(--pp);color:var(--p);font-family:'Syne',sans-serif;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid rgba(115,101,240,.22);}
+.hiw-ico{font-size:30px;margin-bottom:10px;}
+.hiw-t{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--dt1);margin-bottom:9px;}
+.hiw-d{font-size:13.5px;color:var(--dt3);line-height:1.65;}
+
+/* ── DASHBOARD ── */
+.dash-sec{background:var(--l1);padding:88px 0;}
+.dash-mock{background:var(--lw);border:1px solid var(--bl);border-radius:var(--rl);overflow:hidden;margin-top:44px;}
+.dash-top{background:var(--dt1);padding:0 22px;height:50px;display:flex;align-items:center;justify-content:space-between;}
+.dash-logo{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;color:#fff;}
+.dash-logo em{color:var(--pm);font-style:normal;}
+.dash-tabs-row{display:flex;}
+.dtab{padding:0 18px;height:50px;display:flex;align-items:center;font-size:13px;font-weight:500;color:rgba(255,255,255,.45);border-bottom:2px solid transparent;cursor:pointer;}
+.dtab.on{color:#fff;border-bottom-color:var(--pm);}
+.duser{width:27px;height:27px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.dash-body{display:grid;grid-template-columns:220px 1fr;min-height:400px;}
+.dash-sb{background:#F7F8FC;border-right:1px solid var(--bl);padding:16px 0;}
+.sbi{padding:9px 18px;font-size:13px;font-weight:500;color:var(--dt3);display:flex;align-items:center;gap:9px;cursor:pointer;}
+.sbi.on{background:var(--pp);color:var(--p);border-right:3px solid var(--p);}
+.sbi-ico{font-size:15px;}
+.dash-main{padding:22px;background:var(--l1);}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px;}
+.mc{background:var(--lw);border:1px solid var(--bl);border-radius:10px;padding:15px;}
+.mv{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);}
+.ml{font-size:12px;color:var(--dt3);margin-top:2px;}
+.mbadge{display:inline-block;margin-top:7px;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.dash-g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.dp{background:var(--lw);border:1px solid var(--bl);border-radius:10px;padding:15px;}
+.dp-t{font-size:13px;font-weight:600;color:var(--dt1);margin-bottom:13px;}
+.sev-r{display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.sev-lbl{font-size:10.5px;font-weight:700;width:58px;}
+.sev-track{flex:1;height:6px;background:#EEEEF5;border-radius:3px;overflow:hidden;}
+.sev-fill{height:100%;border-radius:3px;width:0%;transition:width 1.4s ease;}
+.sev-cnt{font-size:12px;font-weight:600;color:var(--dt2);min-width:18px;text-align:right;}
+.it{width:100%;border-collapse:collapse;}
+.it th{font-size:10.5px;font-weight:700;color:var(--dt3);text-align:left;padding:5px 0;border-bottom:1px solid var(--bl);text-transform:uppercase;letter-spacing:.06em;}
+.it td{font-size:12px;color:var(--dt2);padding:8px 0;border-bottom:1px solid var(--bl);}
+.it tr:last-child td{border-bottom:none;}
+.isev{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.04em;}
+.cref{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dt3);}
+
+/* ── SEVERITY ── */
+.sev-sec{background:var(--d8);padding:88px 0;}
+.sev-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:44px;}
+.sevc{border-radius:var(--r);padding:22px;border:1px solid;transition:transform .2s;}
+.sevc:hover{transform:translateY(-3px);}
+.sevc-c{background:var(--scb);border-color:var(--scbd);}
+.sevc-h{background:var(--shb);border-color:var(--shbd);}
+.sevc-m{background:var(--smb);border-color:var(--smbd);}
+.sevc-l{background:var(--slb);border-color:var(--slbd);}
+.schip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;padding:4px 9px;border-radius:5px;margin-bottom:13px;}
+.cc{color:var(--sc);background:rgba(255,59,92,.14);}
+.hc{color:var(--sh);background:rgba(255,138,62,.14);}
+.mc{color:var(--sm);background:rgba(255,197,61,.12);}
+.lc{color:var(--sl);background:rgba(35,209,139,.14);}
+.sevc-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1);margin-bottom:7px;}
+.sevc-d{font-size:13px;color:var(--t3);line-height:1.6;margin-bottom:12px;}
+.sevc-ex{font-size:11.5px;color:var(--t4);font-family:'JetBrains Mono',monospace;line-height:1.9;}
+
+/* ── CTA ── */
+.cta-sec{background:var(--d9);padding:96px 0;}
+.cta-box{background:linear-gradient(140deg,rgba(115,101,240,.18),rgba(115,101,240,.05));border:1px solid rgba(115,101,240,.28);border-radius:24px;padding:68px 80px;text-align:center;position:relative;overflow:hidden;}
+.cta-glw{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:380px;height:180px;background:radial-gradient(ellipse,rgba(115,101,240,.28),transparent 68%);pointer-events:none;}
+.cta-h{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;color:var(--t1);margin-bottom:14px;letter-spacing:-1px;position:relative;}
+.cta-h em{color:var(--pm);font-style:normal;}
+.cta-s{font-size:16.5px;color:var(--t3);margin-bottom:36px;position:relative;}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:12px;position:relative;}
+
+/* ── FOOTER ── */
+.ft{background:var(--d8);border-top:1px solid var(--bd);padding:52px 0 28px;}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;padding-bottom:36px;border-bottom:1px solid var(--bd);}
+.ft-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1);margin-bottom:8px;}
+.ft-name em{color:var(--pm);font-style:normal;}
+.ft-desc{font-size:13px;color:var(--t4);line-height:1.7;max-width:240px;}
+.ft-col-t{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;}
+.ft-links{list-style:none;}
+.ft-links li{margin-bottom:9px;}
+.ft-links a{font-size:13px;color:var(--t4);text-decoration:none;transition:color .2s;}
+.ft-links a:hover{color:var(--t2);}
+.ft-bot{display:flex;align-items:center;justify-content:space-between;padding-top:22px;font-size:12px;color:var(--t4);}
+.tech-bs{display:flex;gap:7px;flex-wrap:wrap;}
+.tbadge{padding:3px 9px;border-radius:4px;border:1px solid var(--bdm);font-size:11px;font-weight:600;color:var(--t3);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s;}
+.rv.show{opacity:1;transform:translateY(0);}
+.rv:nth-child(2){transition-delay:.07s;}
+.rv:nth-child(3){transition-delay:.14s;}
+.rv:nth-child(4){transition-delay:.21s;}
+.rv:nth-child(5){transition-delay:.28s;}
+.rv:nth-child(6){transition-delay:.35s;}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:40px;}
+  .feat-grid{grid-template-columns:1fr 1fr;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .sev-cards{grid-template-columns:repeat(2,1fr);}
+  .ft-top{grid-template-columns:1fr 1fr;}
+  .hiw-grid{grid-template-columns:1fr;}
+  .hiw-conn{display:none;}
+  .dash-body{grid-template-columns:1fr;}
+  .dash-sb{display:none;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .dash-g2{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .hero-h1{font-size:38px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .sev-cards{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .cta-box{padding:40px 24px;}
+  .cta-h{font-size:32px;}
+  .ft-top{grid-template-columns:1fr;}
+}
+</style>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">CG</div>
+      <span class="nav-logo-text">Code<em>Guardian</em> AI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#hiw">How it works</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#severity">Severity</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-ghost">Log in</button>
+      <button class="btn-primary">Start Scanning →</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="glow1"></div>
+  <div class="glow2"></div>
+  <div class="hero-inner">
+    <!-- Left -->
+    <div>
+      <div class="hero-badge"><div class="badge-dot"></div>AI-Powered Python Code Review</div>
+      <h1 class="hero-h1">Ship code that<br><span class="hl">can't be broken.</span></h1>
+      <p class="hero-sub">Upload your Python project and get AI-powered bug detection, security scanning, severity classification, and auto-fix suggestions in seconds.</p>
+      <div class="hero-btns">
+        <button class="btn-hp">↑ Upload ZIP / GitHub URL</button>
+        <button class="btn-hs">View Live Demo →</button>
+      </div>
+      <div class="hero-trust">
+        <div class="t-avs">
+          <div class="t-av">AS</div><div class="t-av">RK</div><div class="t-av">MP</div><div class="t-av">+</div>
+        </div>
+        <span class="t-txt">Trusted by <strong>2,000+</strong> Python developers · Free to start</span>
+      </div>
+    </div>
+    <!-- Right – Terminal -->
+    <div class="term-wrap">
+      <div class="term-glow"></div>
+      <div class="scan-chip"><div class="scan-dot"></div>Scanning 12 files…</div>
+      <div class="terminal">
+        <div class="term-hd">
+          <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+          <span class="term-tab">codeguardian — scan</span>
+          <span class="term-tab">bash</span>
+        </div>
+        <div class="term-bd" id="termBody"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ STATS ═══════ -->
+<div class="stats">
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n"><span id="s1">0</span><em>K+</em></div><div class="stat-l">Bugs Detected</div></div>
+    <div class="stat"><div class="stat-n"><span id="s2">0</span><em>%</em></div><div class="stat-l">Detection Accuracy</div></div>
+    <div class="stat"><div class="stat-n"><span id="s3">0</span></div><div class="stat-l">Analysis Engines</div></div>
+    <div class="stat"><div class="stat-n">&lt;<span id="s4">0</span><em>s</em></div><div class="stat-l">Average Scan Time</div></div>
+  </div>
+</div>
+
+<!-- ═══════ FEATURES ═══════ -->
+<section class="feats" id="features">
+  <div class="container">
+    <div class="sec-hdr">
+      <div class="eye">What We Detect</div>
+      <h2 class="sec-h">Six engines.<br>One guardian.</h2>
+      <p class="sec-s">Every scan runs a full suite of analysis tools — from AST parsing to AI review — running in parallel on your project.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="fc rv"><div class="fc-icon" style="background:#EAE8FD">🔍</div><div class="fc-t">AST Code Parser</div><div class="fc-d">Structural analysis using Python's ast module. Detects long functions, deep nesting, missing error handling, and bare except blocks.</div><span class="fc-tag">Python AST</span></div>
+      <div class="fc rv"><div class="fc-icon" style="background:#FFEAE8">🔒</div><div class="fc-t">Security Scanner</div><div class="fc-d">Bandit integration for CVE-level detection. Catches hardcoded secrets, SQL injection, weak cryptography, and broken auth patterns.</div><span class="fc-tag">Bandit</span></div>
+      <div class="fc rv"><div class="fc-icon" style="background:#E8F8F0">🤖</div><div class="fc-t">AI Auto-Fix Agent</div><div class="fc-d">LangChain-powered agent generates corrected code with explanations. Review before/after diffs and download fixed files instantly.</div><span class="fc-tag">LangChain + LLM</span></div>
+      <div class="fc rv"><div class="fc-icon" style="background:#FFF4E5">📊</div><div class="fc-t">ML Severity Classifier</div><div class="fc-d">Scikit-learn model trained on real bug reports predicts CRITICAL / HIGH / MEDIUM / LOW severity with 95%+ accuracy.</div><span class="fc-tag">Scikit-learn</span></div>
+      <div class="fc rv"><div class="fc-icon" style="background:#EAF5FF">🧪</div><div class="fc-t">Test Case Generator</div><div class="fc-d">AI-generated pytest test cases for every Django view and function — including API endpoints, model tests, and CRUD operations.</div><span class="fc-tag">pytest</span></div>
+      <div class="fc rv"><div class="fc-icon" style="background:#F3EAF8">📄</div><div class="fc-t">PDF Reports</div><div class="fc-d">Detailed downloadable reports with issue summaries, severity breakdowns, code health scores, and AI improvement recommendations.</div><span class="fc-tag">WeasyPrint</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section class="hiw" id="hiw">
+  <div class="container">
+    <div class="sec-hdr" style="text-align:center">
+      <div class="eye">How It Works</div>
+      <h2 class="sec-h">Three steps.<br>Zero guesswork.</h2>
+    </div>
+    <div class="hiw-grid rv">
+      <div class="hiw-conn" style="left:calc(33.33% - 8px);width:calc(33.33% + 16px)"></div>
+      <div class="hiw-conn" style="left:calc(66.66% - 8px);width:calc(33.33% + 8px)"></div>
+      <div class="hiw-step"><div class="hiw-num">1</div><div class="hiw-ico">📤</div><div class="hiw-t">Upload Your Project</div><div class="hiw-d">Upload a ZIP of your Flask, Django, or FastAPI project — or paste a public GitHub repository URL. We'll handle extraction and scanning.</div></div>
+      <div class="hiw-step"><div class="hiw-num">2</div><div class="hiw-ico">⚡</div><div class="hiw-t">Multi-Engine Analysis</div><div class="hiw-d">Six engines run in parallel — AST parser, Bandit, Ruff, secret detector, LLM code reviewer, and ML severity classifier.</div></div>
+      <div class="hiw-step"><div class="hiw-num">3</div><div class="hiw-ico">✅</div><div class="hiw-t">Review & Fix</div><div class="hiw-d">Browse issues by severity, review AI-suggested fixes with diffs, generate unit tests, and download corrected code or your PDF report.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<section class="dash-sec" id="dashboard">
+  <div class="container">
+    <div class="sec-hdr">
+      <div class="eye">Dashboard</div>
+      <h2 class="sec-h">Your code health,<br>at a glance.</h2>
+      <p class="sec-s">Real-time charts, severity breakdowns, and project health scores — all in one clean Django-powered interface.</p>
+    </div>
+    <div class="dash-mock rv">
+      <div class="dash-top">
+        <span class="dash-logo">Code<em>Guardian</em> AI</span>
+        <div class="dash-tabs-row">
+          <div class="dtab on">Dashboard</div><div class="dtab">Issues</div><div class="dtab">Fixes</div><div class="dtab">Reports</div>
+        </div>
+        <div class="duser">AS</div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-sb">
+          <div class="sbi on"><span class="sbi-ico">📊</span>Dashboard</div>
+          <div class="sbi"><span class="sbi-ico">🔍</span>New Scan</div>
+          <div class="sbi"><span class="sbi-ico">📁</span>My Projects</div>
+          <div class="sbi"><span class="sbi-ico">⚠️</span>Issues</div>
+          <div class="sbi"><span class="sbi-ico">🔧</span>Auto-Fixes</div>
+          <div class="sbi"><span class="sbi-ico">🧪</span>Test Cases</div>
+          <div class="sbi"><span class="sbi-ico">📄</span>Reports</div>
+        </div>
+        <div class="dash-main">
+          <div class="metrics">
+            <div class="mc"><div class="mv">28</div><div class="ml">Total Issues</div><span class="mbadge" style="background:#FFEAE8;color:#FF3B5C">3 Critical</span></div>
+            <div class="mc"><div class="mv">12</div><div class="ml">Files Scanned</div><span class="mbadge" style="background:#EAE8FD;color:#7365F0">All parsed</span></div>
+            <div class="mc"><div class="mv">74</div><div class="ml">Health Score</div><span class="mbadge" style="background:#E8F8F0;color:#23D18B">+6 pts</span></div>
+            <div class="mc"><div class="mv">9</div><div class="ml">AI Fixes Ready</div><span class="mbadge" style="background:#FFF4E5;color:#FF8A3E">Download</span></div>
+          </div>
+          <div class="dash-g2">
+            <div class="dp">
+              <div class="dp-t">Issue Severity Breakdown</div>
+              <div class="sev-r"><span class="sev-lbl" style="color:var(--sc)">CRITICAL</span><div class="sev-track"><div class="sev-fill" id="bc" style="background:var(--sc)"></div></div><span class="sev-cnt">3</span></div>
+              <div class="sev-r"><span class="sev-lbl" style="color:var(--sh)">HIGH</span><div class="sev-track"><div class="sev-fill" id="bh" style="background:var(--sh)"></div></div><span class="sev-cnt">5</span></div>
+              <div class="sev-r"><span class="sev-lbl" style="color:var(--sm)">MEDIUM</span><div class="sev-track"><div class="sev-fill" id="bm" style="background:var(--sm)"></div></div><span class="sev-cnt">12</span></div>
+              <div class="sev-r"><span class="sev-lbl" style="color:var(--sl)">LOW</span><div class="sev-track"><div class="sev-fill" id="bl2" style="background:var(--sl)"></div></div><span class="sev-cnt">8</span></div>
+            </div>
+            <div class="dp">
+              <div class="dp-t">Recent Issues</div>
+              <table class="it">
+                <thead><tr><th>Sev</th><th>Location</th><th>Issue</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="isev" style="background:var(--scb);color:var(--sc)">CRITICAL</span></td><td class="cref">auth/views.py:47</td><td>Plain-text password</td></tr>
+                  <tr><td><span class="isev" style="background:var(--shb);color:var(--sh)">HIGH</span></td><td class="cref">models.py:23</td><td>SQL injection risk</td></tr>
+                  <tr><td><span class="isev" style="background:var(--shb);color:var(--sh)">HIGH</span></td><td class="cref">api/views.py:91</td><td>Missing auth check</td></tr>
+                  <tr><td><span class="isev" style="background:var(--smb);color:var(--sm)">MEDIUM</span></td><td class="cref">utils.py:88</td><td>Bare except clause</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SEVERITY ═══════ -->
+<section class="sev-sec" id="severity">
+  <div class="container">
+    <div class="sec-hdr">
+      <div class="eye" style="color:var(--pm)">Severity System</div>
+      <h2 class="sec-h" style="color:var(--t1)">Every issue ranked.<br>No false alarms.</h2>
+      <p class="sec-s" style="color:var(--t3)">Our ML classifier assigns severity so you always know where to focus first.</p>
+    </div>
+    <div class="sev-cards">
+      <div class="sevc sevc-c rv"><span class="schip cc">● CRITICAL</span><div class="sevc-t">Security Threats</div><div class="sevc-d">Active vulnerabilities that could cause data breaches, unauthorized access, or system compromise.</div><div class="sevc-ex"><span>→ Hardcoded credentials</span><span>→ SQL injection</span><span>→ Broken auth logic</span></div></div>
+      <div class="sevc sevc-h rv"><span class="schip hc">● HIGH</span><div class="sevc-t">Runtime Bugs</div><div class="sevc-d">Bugs likely to cause crashes, incorrect output, or data corruption in production environments.</div><div class="sevc-ex"><span>→ Unhandled exceptions</span><span>→ Logic errors</span><span>→ Missing validations</span></div></div>
+      <div class="sevc sevc-m rv"><span class="schip mc">● MEDIUM</span><div class="sevc-t">Code Quality</div><div class="sevc-d">Issues that reduce maintainability, readability, and long-term reliability of your codebase.</div><div class="sevc-ex"><span>→ Long functions</span><span>→ Dead code</span><span>→ Poor naming</span></div></div>
+      <div class="sevc sevc-l rv"><span class="schip lc">● LOW</span><div class="sevc-t">Style Issues</div><div class="sevc-d">Minor PEP 8 violations and style inconsistencies that don't affect functionality but hurt readability.</div><div class="sevc-ex"><span>→ Naming conventions</span><span>→ Import ordering</span><span>→ Line length</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="cta-sec">
+  <div class="container">
+    <div class="cta-box">
+      <div class="cta-glw"></div>
+      <h2 class="cta-h">Start analyzing your<br><em>code today.</em></h2>
+      <p class="cta-s">No credit card. No setup. Upload your project and get your first report in under 30 seconds.</p>
+      <div class="cta-btns">
+        <button class="btn-hp">↑ Upload Your Python Project</button>
+        <button class="btn-hs">View on GitHub →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="ft">
+  <div class="container">
+    <div class="ft-top">
+      <div>
+        <div class="ft-name">Code<em>Guardian</em> AI</div>
+        <p class="ft-desc">AI-powered Python code review, bug detection, and auto-fix platform. Built for developers who ship fast and care about quality.</p>
+      </div>
+      <div>
+        <div class="ft-col-t">Product</div>
+        <ul class="ft-links"><li><a href="#">Features</a></li><li><a href="#">Dashboard</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li></ul>
+      </div>
+      <div>
+        <div class="ft-col-t">Tech Stack</div>
+        <ul class="ft-links"><li><a href="#">Django Backend</a></li><li><a href="#">LangChain AI</a></li><li><a href="#">Bandit Security</a></li><li><a href="#">Scikit-learn ML</a></li></ul>
+      </div>
+      <div>
+        <div class="ft-col-t">Developer</div>
+        <ul class="ft-links"><li><a href="#">API Docs</a></li><li><a href="#">GitHub</a></li><li><a href="#">Roadmap</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span>© 2024 CodeGuardian AI — Arshdeep Singh </span>
+      <div class="tech-bs">
+        <span class="tbadge">Python</span><span class="tbadge">Django</span><span class="tbadge">LangChain</span><span class="tbadge">Bootstrap</span><span class="tbadge">Chart.js</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── TERMINAL ANIMATION ── */
+const LINES=[
+  {t:"$ codeguardian scan ./myapp/ --ai --report",c:"#7EE8A2"},
+  {t:"",c:""},
+  {t:"[i] Scanning 12 Python files...",c:"#8B949E"},
+  {t:"[i] Running: AST · Bandit · Ruff · LLM",c:"#8B949E"},
+  {t:"",c:""},
+  {t:"● CRITICAL  auth/views.py:47",c:"#FF7B7B"},
+  {t:"  ↳ Password stored in plain text",c:"#8B949E"},
+  {t:"  ↳ Fix: use generate_password_hash()",c:"#7EE8A2"},
+  {t:"",c:""},
+  {t:"● HIGH  models.py:23",c:"#FFAB70"},
+];
+const tb=document.getElementById('termBody');
+let li=0,ci=0,ce=null,cursorEl=null;
+
+function resetTerm(){tb.innerHTML='';li=0;ci=0;ce=null;setTimeout(run,2200);}
+function run(){
+  if(li>=LINES.length){
+    cursorEl=document.createElement('span');cursorEl.className='tcursor';tb.appendChild(cursorEl);
+    setTimeout(resetTerm,4500);return;
+  }
+  const line=LINES[li];
+  if(!line.t){
+    tb.appendChild(document.createElement('br'));li++;setTimeout(run,90);return;
+  }
+  ce=document.createElement('span');
+  ce.className='tline mono';
+  ce.style.color=line.c;
+  tb.appendChild(ce);
+  ci=0;typeC(line.t);
+}
+function typeC(txt){
+  if(ci<txt.length){ce.textContent+=txt[ci++];setTimeout(()=>typeC(txt),15);}
+  else{tb.appendChild(document.createElement('br'));li++;setTimeout(run,li<=1?120:li<=4?380:240);}
+}
+setTimeout(run,900);
+
+/* ── COUNTER ANIMATION ── */
+function counter(el,target,dur=1300){
+  let v=0,step=target/(dur/16);
+  const t=setInterval(()=>{v+=step;if(v>=target){el.textContent=target;clearInterval(t);}else el.textContent=Math.floor(v);},16);
+}
+const statsEl=document.querySelector('.stats');
+const sObs=new IntersectionObserver(en=>{
+  if(en[0].isIntersecting){
+    counter(document.getElementById('s1'),50);
+    counter(document.getElementById('s2'),99);
+    counter(document.getElementById('s3'),6,800);
+    counter(document.getElementById('s4'),30,900);
+    sObs.disconnect();
+  }
+},{threshold:.5});
+sObs.observe(statsEl);
+
+/* ── DASHBOARD BARS ── */
+const dashEl=document.querySelector('.dash-sec');
+const dObs=new IntersectionObserver(en=>{
+  if(en[0].isIntersecting){
+    setTimeout(()=>{
+      document.getElementById('bc').style.width='25%';
+      document.getElementById('bh').style.width='42%';
+      document.getElementById('bm').style.width='100%';
+      document.getElementById('bl2').style.width='67%';
+    },400);
+    dObs.disconnect();
+  }
+},{threshold:.3});
+dObs.observe(dashEl);
+
+/* ── SCROLL REVEAL ── */
+const rObs=new IntersectionObserver(en=>{
+  en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');rObs.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>rObs.observe(el));
+
+/* ── NAVBAR SCROLL EFFECT ── */
+const nav=document.querySelector('.nav');
+window.addEventListener('scroll',()=>{
+  nav.style.background=window.scrollY>20?'rgba(7,12,24,.97)':'rgba(7,12,24,.90)';
+},{ passive:true });
+</script>

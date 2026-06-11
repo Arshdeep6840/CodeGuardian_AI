@@ -1,6 +1,6 @@
 from django.urls import path
-from scanner import views
+from .views import *
 
-# urlpatterns = [
-#     path('', views.home_page, name='home'),
-# ]
+urlpatterns = [
+    path('', home_page, name='home'),
+]

@@ -5,22 +5,22 @@ from django.conf import settings
 
 
 # -----------------------------User Model-----------------------------
-class User(AbstractUser):
-    ROLE_CHOICES = (
-        ("user", "User"),
-        ("admin", "Admin"),
-    )
+# class User(AbstractUser):
+#     ROLE_CHOICES = (
+#         ("user", "User"),
+#         ("admin", "Admin"),
+#     )
 
-    email = models.EmailField(unique=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="user")
-    profile_image = models.ImageField(upload_to="profiles/", null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+#     email = models.EmailField(unique=True)
+#     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="user")
+#     profile_image = models.ImageField(upload_to="profiles/", null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+#     USERNAME_FIELD = "email"
+#     REQUIRED_FIELDS = ["username"]
 
-    def __str__(self):
-        return self.email
+#     def __str__(self):
+#         return self.email
 
 
 # -----------------------------Project Model-----------------------------
@@ -308,3 +308,20 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
+
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = (
+        ("admin", "Admin"),
+        ("user", "User"),
+    )
+
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default="user"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username

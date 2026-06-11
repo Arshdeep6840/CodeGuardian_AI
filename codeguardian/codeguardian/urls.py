@@ -27,7 +27,7 @@ urlpatterns = [
     # path('', include('fixes.urls')),
     # path('', include('dashboard.urls')),    
     # path('', include('reports.urls')),
-    # path('', include('home.urls')),
+    path('', include('home.urls')),
 
 ]
 
