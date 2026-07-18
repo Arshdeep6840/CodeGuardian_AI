@@ -10,6 +10,7 @@ from accounts.models import Project, Scan, Issue, CustomUser
 from accounts.serializers import ProjectSerializer, ScanSerializer, IssueSerializer
 from scanner.services.file_extractor import extract_and_map_project
 from scanner.services.github_downloader import download_github_repo
+from scanner.services.issue_aggregator import run_project_scan
 
 User = get_user_model()
 
@@ -168,17 +169,13 @@ class StartScanView(APIView):
             started_at=timezone.now()
         )
 
-        # In Phase 2, we simulate scanning. We mark the scan as completed.
-        # Phase 3 and 4 will run real engines.
-        scan.total_files_scanned = project.total_python_files
-        scan.status = "completed"
-        scan.completed_at = timezone.now()
-        scan.overall_score = 100.0
-        scan.security_score = 100.0
-        scan.code_quality_score = 100.0
-        scan.maintainability_score = 100.0
-        scan.scan_log = "Scan execution completed (simulated Phase 2 lifecycle)."
-        scan.save()
+        # Trigger actual scan pipeline
+        success, message = run_project_scan(scan.id)
+        if not success:
+            return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Refresh scan from database to load updated scores and details
+        scan.refresh_from_db()
 
         serializer = ScanSerializer(scan)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
