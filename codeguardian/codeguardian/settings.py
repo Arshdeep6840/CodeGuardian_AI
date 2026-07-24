@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from django.db.models.fields import files
 from pathlib import Path
 import os
 
@@ -153,3 +154,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = True # remove on production
 # AUTH_USER_MODEL = "accounts.User"
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+# Static files configuration
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]

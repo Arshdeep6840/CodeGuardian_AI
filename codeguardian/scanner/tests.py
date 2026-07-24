@@ -139,3 +139,74 @@ class ScannerTests(APITestCase):
         response = self.client.get(results_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0) # No issues detected in dummy scan
+
+    @patch("scanner.services.ruff_runner.run_ruff")
+    def test_ruff_scan_integration(self, mock_run_ruff):
+        """Test that Ruff issues are correctly parsed, mapped to DB, and affect scores."""
+        # Set up mock ruff results
+        mock_run_ruff.return_value = [
+            {
+                "issue_type": "code_quality",
+                "severity": "medium",
+                "title": "Unused import: `sys`",
+                "description": "Ruff Rule F401: `sys` imported but unused.",
+                "file_path": "app.py",
+                "line_number": 1,
+                "column_number": 1,
+                "code_snippet": "import sys",
+                "rule_id": "F401"
+            },
+            {
+                "issue_type": "code_quality",
+                "severity": "high",
+                "title": "Undefined name: `value`",
+                "description": "Ruff Rule F821: Undefined name `value`.",
+                "file_path": "utils.py",
+                "line_number": 5,
+                "column_number": 10,
+                "code_snippet": "return value",
+                "rule_id": "F821"
+            }
+        ]
+
+        # Setup an uploaded project first
+        project = Project.objects.create(
+            user=self.user,
+            name="Ruff Test Project",
+            upload_type="zip",
+            status="ready",
+            total_python_files=2
+        )
+        # Create corresponding CodeFile objects in DB so the database references work
+        CodeFile.objects.create(project=project, file_name="app.py", file_path="app.py", extension=".py")
+        CodeFile.objects.create(project=project, file_name="utils.py", file_path="utils.py", extension=".py")
+
+        start_url = reverse("scan-start")
+        data = {"project_id": project.id}
+        
+        # Start scanning
+        with patch("scanner.services.bandit_runner.run_bandit", return_value=[]), \
+             patch("scanner.services.secret_detector.scan_file_for_secrets", return_value=[]), \
+             patch("scanner.services.ast_parser.analyze_file", return_value=[]):
+            response = self.client.post(start_url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        scan_id = response.data["id"]
+        scan = Scan.objects.get(id=scan_id)
+        
+        # Verify scan values
+        self.assertEqual(scan.status, "completed")
+        self.assertEqual(scan.total_issues_found, 2)
+        # Undefined name (F821) is high severity -> deduction = 10
+        # Unused import (F401) is medium severity -> deduction = 5
+        # Total deduction = 15. Overall score = 100 - 15 = 85.0
+        self.assertEqual(scan.overall_score, 85.0)
+        self.assertEqual(scan.code_quality_score, 85.0)
+        self.assertEqual(scan.security_score, 100.0) # No security issues
+        
+        # Check issues saved in DB
+        self.assertEqual(scan.issues.count(), 2)
+        issue1 = scan.issues.get(rule_id="F401")
+        self.assertEqual(issue1.severity, "medium")
+        self.assertEqual(issue1.tool_name, "ruff")
+        self.assertEqual(issue1.file_path, "app.py")

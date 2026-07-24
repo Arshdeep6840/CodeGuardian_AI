@@ -2,7 +2,7 @@ import os
 from django.utils import timezone
 from django.conf import settings
 from accounts.models import Scan, CodeFile, Issue
-from scanner.services import ast_parser, bandit_runner, secret_detector
+from scanner.services import ast_parser, bandit_runner, secret_detector, ruff_runner
 
 def run_project_scan(scan_id):
     """
@@ -34,6 +34,9 @@ def run_project_scan(scan_id):
     
     # 1. Run Bandit (Security scanner on project folder)
     bandit_issues = bandit_runner.run_bandit(extracted_path)
+    
+    # Run Ruff (Code Quality scanner on project folder)
+    ruff_issues = ruff_runner.run_ruff(extracted_path)
     
     # 2. Run AST and Secret Scanners file-by-file
     file_specific_issues = []
@@ -76,6 +79,29 @@ def run_project_scan(scan_id):
             code_snippet=raw.get("code_snippet"),
             tool_name="bandit",
             rule_id=raw.get("rule_id")
+        )
+        db_issues.append(issue_obj)
+
+    # Map Ruff issues back to CodeFile models in database
+    for raw in ruff_issues:
+        rel_path = raw.get("file_path", "")
+        code_file = code_files.filter(file_path=rel_path).first()
+        rule_id = raw.get("rule_id", "")
+        issue_type = "security" if rule_id.upper().startswith("S") else "code_quality"
+        
+        issue_obj = Issue(
+            scan=scan,
+            code_file=code_file,
+            issue_type=issue_type,
+            severity=raw.get("severity", "low"),
+            title=raw.get("title", "Code Quality Issue"),
+            description=raw.get("description", ""),
+            file_path=rel_path,
+            line_number=raw.get("line_number"),
+            column_number=raw.get("column_number", 0),
+            code_snippet=raw.get("code_snippet"),
+            tool_name="ruff",
+            rule_id=rule_id
         )
         db_issues.append(issue_obj)
 
@@ -136,8 +162,8 @@ def run_project_scan(scan_id):
         elif issue.issue_type in ["code_quality", "style", "bug"]:
             quality_deductions += deduction
         
-        # AST rule checks for maintainability (complexity, too long, too many arguments)
-        if issue.rule_id in ["AST003", "AST004"]:
+        # AST rule or Ruff complexity check for maintainability (complexity, too long, too many arguments)
+        if issue.rule_id in ["AST003", "AST004"] or (issue.rule_id and (issue.rule_id.startswith("C9") or issue.rule_id.startswith("PLR09"))):
             maintainability_deductions += deduction
 
     # Deduct from base of 100

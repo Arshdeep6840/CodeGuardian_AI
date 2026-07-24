@@ -1,0 +1,80 @@
+/* ============================================================
+   CodeGuardian AI — shared app-shell stylesheet
+   Design tokens copied from home/templates/index.html so every
+   authenticated page (dashboard, upload, scans, issues...) stays
+   visually consistent with the public landing page.
+   ============================================================ */
+
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --tb:#0D1117;--th:#161B22;
+  --tcg:#7EE8A2;--tcb:#79C0FF;--tcr:#FF7B7B;--tca:#FFAB70;--tcd:#8B949E;--tcw:#E6EDF3;
+  --r:14px;--rl:20px;--rs:8px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--d9);
+  color:var(--t1);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.container{max-width:1180px;margin:0 auto;padding:0 36px;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;}
+
+/* ───────── App shell nav (dashboard, upload, history, profile) ───────── */
+.nav{position:sticky;top:0;z-index:100;background:rgba(7,12,24,.90);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--bd);}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 36px;height:62px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.nav-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;letter-spacing:.5px;}
+.nav-logo-text{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:700;color:var(--t1);}
+.nav-logo-text em{color:var(--pm);font-style:normal;}
+.nav-links{display:flex;align-items:center;gap:26px;list-style:none;}
+.nav-links a{font-size:13.5px;color:var(--t3);text-decoration:none;font-weight:500;transition:color .2s;display:flex;align-items:center;gap:6px;}
+.nav-links a:hover{color:var(--t1);}
+.nav-links a.active{color:var(--t1);}
+.nav-links a.active .nav-dot{opacity:1;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--pm);opacity:0;}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.btn-ghost{background:none;border:1px solid var(--bdm);color:var(--t2);padding:6px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;display:inline-block;}
+.btn-ghost:hover{border-color:var(--pm);color:var(--t1);}
+.btn-primary{background:var(--p);border:none;color:#fff;padding:7px 16px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;text-decoration:none;display:inline-block;}
+.btn-primary:hover{background:var(--pd);}
+
+@media (max-width:860px){
+  .nav-links{display:none;}
+}
+
+/* ───────── Page shell ───────── */
+.page{background:linear-gradient(155deg,#0C1526 0%,#070C18 55%);min-height:calc(100vh - 62px);padding:44px 0 80px;}
+.page-head{margin-bottom:32px;}
+.page-eyebrow{font-size:11.5px;font-weight:600;color:var(--pm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.page-title{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.5px;color:var(--t1);}
+.page-sub{color:var(--t3);font-size:14.5px;margin-top:8px;max-width:560px;}
+
+/* ───────── Cards (reused by dashboard, upload, issues...) ───────── */
+.card{background:var(--d7);border:1px solid var(--bd);border-radius:var(--r);padding:24px;}
+.card + .card{margin-top:16px;}
+
+/* ───────── Flash / message banners ───────── */
+.msg{border-radius:var(--rs);padding:10px 14px;font-size:13.5px;margin-bottom:18px;border:1px solid;}
+.msg-error{background:var(--scb);border-color:var(--scbd);color:var(--sc);}
+.msg-success{background:var(--slb);border-color:var(--slbd);color:var(--sl);}
+.msg-info{background:var(--pp);border-color:var(--bdm);color:var(--pd);}
+
+/* ───────── Footer ───────── */
+.app-footer{border-top:1px solid var(--bd);padding:22px 0;text-align:center;color:var(--t4);font-size:12.5px;}
