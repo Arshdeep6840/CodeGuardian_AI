@@ -1,0 +1,1334 @@
+/* ==========================================
+   CodeGuardian AI Register Page
+   Part 2.1
+========================================== */
+
+:root {
+
+    --primary: #7365F0;
+    --primary-dark: #5D4FE8;
+    --primary-light: #9B91F7;
+
+    --bg: #070C18;
+    --bg2: #0C1526;
+    --card: #111B30;
+    --card2: #172038;
+
+    --white: #ffffff;
+
+    --text: #EEF2FF;
+    --muted: #9BA7C0;
+    --border: rgba(255, 255, 255, .08);
+
+    --success: #23D18B;
+    --danger: #FF5B6A;
+    --warning: #FFC53D;
+
+    --radius: 18px;
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+body {
+
+    background: linear-gradient(145deg, var(--bg2), var(--bg));
+
+    color: var(--text);
+
+    font-family: 'DM Sans', sans-serif;
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    position: relative;
+
+}
+
+
+/*=========================
+Background
+==========================*/
+
+.bg-grid {
+
+    position: fixed;
+
+    inset: 0;
+
+    background-image:
+
+        linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+
+        linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+
+    background-size: 45px 45px;
+
+    opacity: .3;
+
+    pointer-events: none;
+
+}
+
+.glow {
+
+    position: fixed;
+
+    border-radius: 50%;
+
+    filter: blur(120px);
+
+    pointer-events: none;
+
+}
+
+.glow-1 {
+
+    width: 500px;
+
+    height: 500px;
+
+    background: rgba(115, 101, 240, .22);
+
+    top: -180px;
+
+    left: -120px;
+
+}
+
+.glow-2 {
+
+    width: 420px;
+
+    height: 420px;
+
+    background: rgba(35, 209, 139, .08);
+
+    right: -120px;
+
+    bottom: -120px;
+
+}
+
+
+/*=========================
+Container
+==========================*/
+
+.auth-container {
+
+    width: 100%;
+
+    max-width: 1350px;
+
+    margin: auto;
+
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns: 1fr 520px;
+
+    align-items: center;
+
+    gap: 70px;
+
+    padding: 60px;
+
+}
+
+
+/*=========================
+Left
+==========================*/
+
+.left-panel {
+
+    position: relative;
+
+}
+
+.logo {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    text-decoration: none;
+
+    margin-bottom: 70px;
+
+}
+
+.logo-icon {
+
+    width: 46px;
+
+    height: 46px;
+
+    border-radius: 12px;
+
+    background: var(--primary);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: #fff;
+
+    font-weight: 800;
+
+    font-family: 'Syne', sans-serif;
+
+}
+
+.logo-text {
+
+    font-size: 24px;
+
+    font-family: 'Syne', sans-serif;
+
+    color: #fff;
+
+    font-weight: 700;
+
+}
+
+.logo-text span {
+
+    color: var(--primary-light);
+
+}
+
+.left-content {
+
+    max-width: 620px;
+
+}
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px 16px;
+
+    border-radius: 30px;
+
+    background: rgba(115, 101, 240, .15);
+
+    border: 1px solid rgba(115, 101, 240, .25);
+
+    color: var(--primary-light);
+
+    font-size: 13px;
+
+    margin-bottom: 28px;
+
+}
+
+.dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+
+    animation: pulse 1.8s infinite;
+
+}
+
+.left-content h1 {
+
+    font-family: 'Syne', sans-serif;
+
+    font-size: 64px;
+
+    line-height: 1.1;
+
+    margin-bottom: 25px;
+
+}
+
+.left-content h1 span {
+
+    color: var(--primary-light);
+
+}
+
+.left-content p {
+
+    color: var(--muted);
+
+    font-size: 18px;
+
+    line-height: 1.8;
+
+    margin-bottom: 50px;
+
+}
+
+
+/*=========================
+Features
+==========================*/
+
+.feature-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 24px;
+
+}
+
+.feature {
+
+    display: flex;
+
+    gap: 18px;
+
+    align-items: flex-start;
+
+}
+
+.feature .icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 14px;
+
+    background: rgba(115, 101, 240, .15);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: var(--primary-light);
+
+    font-weight: bold;
+
+    font-size: 20px;
+
+}
+
+.feature h4 {
+
+    font-size: 18px;
+
+    margin-bottom: 5px;
+
+}
+
+.feature p {
+
+    margin: 0;
+
+    font-size: 15px;
+
+    color: var(--muted);
+
+}
+
+
+/* animation */
+
+@keyframes pulse {
+
+    0% {
+
+        transform: scale(1);
+
+        opacity: 1;
+
+    }
+
+    50% {
+
+        transform: scale(.7);
+
+        opacity: .5;
+
+    }
+
+    100% {
+
+        transform: scale(1);
+
+        opacity: 1;
+
+    }
+
+}
+
+/* ==========================================
+   FORM CARD
+========================================== */
+
+.right-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-card {
+
+    width: 100%;
+    max-width: 500px;
+
+    background: rgba(17, 27, 48, .90);
+
+    backdrop-filter: blur(22px);
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    border-radius: 24px;
+
+    padding: 45px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, .45),
+        0 0 0 1px rgba(255, 255, 255, .03);
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.form-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -120px;
+    right: -120px;
+
+    width: 260px;
+    height: 260px;
+
+    background: radial-gradient(circle,
+            rgba(115, 101, 240, .22),
+            transparent 70%);
+
+    pointer-events: none;
+
+}
+
+.card-header {
+
+    text-align: center;
+
+    margin-bottom: 35px;
+
+}
+
+.card-header h2 {
+
+    font-family: 'Syne', sans-serif;
+
+    font-size: 36px;
+
+    margin-bottom: 10px;
+
+    color: #fff;
+
+}
+
+.card-header p {
+
+    color: var(--muted);
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+}
+
+
+/* ==========================
+      INPUT GROUP
+========================== */
+
+.input-group {
+
+    margin-bottom: 22px;
+
+}
+
+.input-group label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+
+    color: #BFC8DB;
+
+    font-weight: 600;
+
+}
+
+.input-group input {
+
+    width: 100%;
+
+    height: 55px;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    background: #0F172B;
+
+    color: #fff;
+
+    padding: 0 18px;
+
+    font-size: 15px;
+
+    transition: .3s;
+
+}
+
+.input-group input::placeholder {
+
+    color: #6E7A95;
+
+}
+
+.input-group input:focus {
+
+    outline: none;
+
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 4px rgba(115, 101, 240, .12);
+
+}
+
+
+/* ==========================
+PASSWORD
+========================== */
+
+.password-box {
+
+    position: relative;
+
+}
+
+.password-box input {
+
+    padding-right: 55px;
+
+}
+
+.eye {
+
+    position: absolute;
+
+    right: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: none;
+
+    border: none;
+
+    color: #9BA7C0;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    transition: .25s;
+
+}
+
+.eye:hover {
+
+    color: white;
+
+}
+
+
+/* ==========================
+PASSWORD STRENGTH
+========================== */
+
+.strength {
+
+    margin-top: 12px;
+
+    height: 8px;
+
+    border-radius: 30px;
+
+    background: #1B2742;
+
+    overflow: hidden;
+
+}
+
+#strengthBar {
+
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: 30px;
+
+    transition: .35s;
+
+}
+
+#strengthText {
+
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: 13px;
+
+    color: #8EA0C3;
+
+}
+
+
+/* ==========================
+ERRORS
+========================== */
+
+.error {
+
+    display: block;
+
+    color: #FF7B7B;
+
+    font-size: 13px;
+
+    margin-top: 7px;
+
+    min-height: 18px;
+
+}
+
+
+/* ==========================
+CHECKBOX
+========================== */
+
+.terms {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin: 25px 0;
+
+}
+
+.terms input {
+
+    margin-top: 4px;
+
+    accent-color: var(--primary);
+
+}
+
+.terms label {
+
+    color: #A8B3C7;
+
+    line-height: 1.7;
+
+    font-size: 14px;
+
+}
+
+.terms a {
+
+    color: var(--primary-light);
+
+    text-decoration: none;
+
+}
+
+.terms a:hover {
+
+    color: white;
+
+}
+
+
+/* ==========================
+REGISTER BUTTON
+========================== */
+
+.register-btn {
+
+    width: 100%;
+
+    height: 58px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+.register-btn:hover {
+
+    background: var(--primary-dark);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 15px 35px rgba(115, 101, 240, .30);
+
+}
+
+.register-btn:active {
+
+    transform: scale(.98);
+
+}
+
+
+/* ==========================
+LOADER
+========================== */
+
+.loader {
+
+    display: none;
+
+    width: 18px;
+
+    height: 18px;
+
+    border: 2px solid rgba(255, 255, 255, .3);
+
+    border-top: 2px solid white;
+
+    border-radius: 50%;
+
+    animation: spin .8s linear infinite;
+
+}
+
+@keyframes spin {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}
+
+
+/* ==========================
+MESSAGE
+========================== */
+
+.message {
+
+    margin-top: 18px;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    display: none;
+
+    font-size: 14px;
+
+}
+
+.message.success {
+
+    background: rgba(35, 209, 139, .12);
+
+    border: 1px solid rgba(35, 209, 139, .25);
+
+    color: #23D18B;
+
+}
+
+.message.error {
+
+    background: rgba(255, 91, 106, .12);
+
+    border: 1px solid rgba(255, 91, 106, .25);
+
+    color: #FF7B7B;
+
+}
+
+
+/* ==========================
+DIVIDER
+========================== */
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin: 30px 0;
+
+}
+
+.divider::before,
+
+.divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: rgba(255, 255, 255, .08);
+
+}
+
+.divider span {
+
+    color: #7D8AA5;
+
+    font-size: 13px;
+
+}
+
+
+/* ==========================
+GOOGLE BUTTON
+========================== */
+
+.google-btn {
+
+    width: 100%;
+
+    height: 55px;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    background: #111B30;
+
+    color: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    transition: .3s;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+}
+
+.google-btn img {
+
+    width: 22px;
+
+    height: 22px;
+
+}
+
+.google-btn:hover {
+
+    border-color: var(--primary);
+
+    background: #16203A;
+
+}
+
+
+/* ==========================
+FOOTER
+========================== */
+
+.footer-link {
+
+    text-align: center;
+
+    margin-top: 30px;
+
+    color: #A8B3C7;
+
+    font-size: 15px;
+
+}
+
+.footer-link a {
+
+    color: var(--primary-light);
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+}
+
+.footer-link a:hover {
+
+    color: white;
+
+}
+
+/* ==========================================
+   PART 2.3
+   Animations & Responsive
+========================================== */
+
+/* ==========================
+   Fade In Animation
+========================== */
+
+.auth-container {
+    animation: fadeUp .8s ease;
+}
+
+@keyframes fadeUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+/* ==========================
+   Floating Glow
+========================== */
+
+.glow-1 {
+
+    animation: floatGlow1 8s ease-in-out infinite;
+
+}
+
+.glow-2 {
+
+    animation: floatGlow2 10s ease-in-out infinite;
+
+}
+
+@keyframes floatGlow1 {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(40px, 25px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+@keyframes floatGlow2 {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(-35px, -30px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+/* ==========================
+   Card Hover
+========================== */
+
+.form-card {
+
+    transition: .35s;
+
+}
+
+.form-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, .45),
+        0 0 40px rgba(115, 101, 240, .15);
+
+}
+
+/* ==========================
+   Input Hover
+========================== */
+
+.input-group input:hover {
+
+    border-color: rgba(115, 101, 240, .30);
+
+}
+
+/* ==========================
+   Button Animation
+========================== */
+
+.register-btn {
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.register-btn::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -100%;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, .15),
+            transparent);
+
+    transition: .6s;
+
+}
+
+.register-btn:hover::before {
+
+    left: 100%;
+
+}
+
+/* ==========================
+   Logo Animation
+========================== */
+
+.logo-icon {
+
+    transition: .35s;
+
+}
+
+.logo:hover .logo-icon {
+
+    transform: rotate(8deg) scale(1.08);
+
+}
+
+/* ==========================
+   Feature Card Hover
+========================== */
+
+.feature {
+
+    transition: .3s;
+
+}
+
+.feature:hover {
+
+    transform: translateX(8px);
+
+}
+
+.feature:hover .icon {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+/* ==========================
+   Scrollbar
+========================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: #09111F;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: #4E43C7;
+
+    border-radius: 20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #7365F0;
+
+}
+
+/* ==========================
+   Selection
+========================== */
+
+::selection {
+
+    background: rgba(115, 101, 240, .45);
+
+    color: white;
+
+}
+
+/* ==========================
+   Tablet
+========================== */
+
+@media(max-width:1100px) {
+
+    .auth-container {
+
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+
+        padding: 40px;
+
+    }
+
+    .left-panel {
+
+        text-align: center;
+
+    }
+
+    .left-content {
+
+        max-width: 700px;
+
+        margin: auto;
+
+    }
+
+    .feature {
+
+        justify-content: center;
+
+    }
+
+    .form-card {
+
+        margin: auto;
+
+    }
+
+}
+
+/* ==========================
+   Mobile
+========================== */
+
+@media(max-width:768px) {
+
+    body {
+
+        overflow-y: auto;
+
+    }
+
+    .auth-container {
+
+        padding: 25px;
+
+    }
+
+    .left-panel {
+
+        display: none;
+
+    }
+
+    .form-card {
+
+        max-width: 100%;
+
+        padding: 30px;
+
+        border-radius: 20px;
+
+    }
+
+    .card-header h2 {
+
+        font-size: 28px;
+
+    }
+
+    .input-group input {
+
+        height: 52px;
+
+        font-size: 14px;
+
+    }
+
+    .register-btn {
+
+        height: 54px;
+
+    }
+
+}
+
+/* ==========================
+   Small Phones
+========================== */
+
+@media(max-width:480px) {
+
+    .auth-container {
+
+        padding: 15px;
+
+    }
+
+    .form-card {
+
+        padding: 24px;
+
+    }
+
+    .card-header h2 {
+
+        font-size: 24px;
+
+    }
+
+    .card-header p {
+
+        font-size: 14px;
+
+    }
+
+    .footer-link {
+
+        font-size: 14px;
+
+    }
+
+    .google-btn {
+
+        font-size: 14px;
+
+    }
+
+}
+
+/* ==========================
+   Reduced Motion
+========================== */
+
+@media(prefers-reduced-motion:reduce) {
+
+    * {
+
+        animation: none !important;
+
+        transition: none !important;
+
+        scroll-behavior: auto !important;
+
+    }
+
+}

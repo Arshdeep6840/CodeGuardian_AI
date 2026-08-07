@@ -1,0 +1,346 @@
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --tb:#0D1117;--th:#161B22;--tcg:#7EE8A2;--tcr:#FF7B7B;--tcd:#8B949E;--tcw:#E6EDF3;
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* ── APP SHELL (shared) ── */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--l1);border:1px solid var(--bl);border-radius:9px;padding:8px 13px;width:280px;font-size:13px;color:var(--dt3);}
+.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--dt1);flex:1;font-family:'DM Sans',sans-serif;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+.tb-urole{font-size:11px;color:var(--dt3);}
+
+/* ── PAGE HEADER ── */
+.pg-hdr{padding:20px 26px 0;flex-shrink:0;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13px;color:var(--dt3);margin-top:3px;}
+
+/* ── FILTER BAR ── */
+.filters{display:flex;align-items:center;gap:9px;padding:16px 26px;flex-wrap:wrap;flex-shrink:0;}
+.pill{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:20px;border:1px solid var(--bl);background:var(--lw);font-size:12.5px;font-weight:600;color:var(--dt3);cursor:pointer;transition:all .15s;}
+.pill .cnt{font-size:11px;font-weight:700;background:var(--l1);padding:1px 6px;border-radius:8px;}
+.pill.on{border-color:transparent;color:#fff;}
+.pill.on.all{background:var(--dt1);}
+.pill.on.critical{background:var(--sc);}
+.pill.on.high{background:var(--sh);}
+.pill.on.medium{background:var(--sm);color:#5B4300;}
+.pill.on.low{background:var(--sl);}
+.pill.on .cnt{background:rgba(255,255,255,.28);color:#fff;}
+.fspace{flex:1;}
+.dropdown{padding:8px 13px;border:1px solid var(--bl);border-radius:9px;font-size:12.5px;font-weight:500;color:var(--dt2);background:var(--lw);cursor:pointer;}
+
+/* ── SPLIT LAYOUT ── */
+.split{flex:1;display:grid;grid-template-columns:390px 1fr;overflow:hidden;border-top:1px solid var(--bl);}
+
+/* Issue list pane */
+.ilist{overflow-y:auto;border-right:1px solid var(--bl);background:var(--lw);}
+.icard{padding:15px 18px;border-bottom:1px solid var(--bl);cursor:pointer;transition:background .15s;position:relative;}
+.icard:hover{background:var(--l2);}
+.icard.sel{background:var(--pp);}
+.icard.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--p);}
+.icard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.ichip{font-size:10px;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:5px;text-transform:uppercase;}
+.ichip.critical{background:var(--scb);color:var(--sc);}
+.ichip.high{background:var(--shb);color:var(--sh);}
+.ichip.medium{background:var(--smb);color:var(--sm);}
+.ichip.low{background:var(--slb);color:var(--sl);}
+.ifixed{font-size:13px;color:var(--sl);}
+.icard-t{font-size:13.5px;font-weight:700;color:var(--dt1);margin-bottom:4px;}
+.icard-loc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dt3);}
+.icard-tool{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;color:var(--dt3);background:var(--l1);padding:2px 7px;border-radius:4px;}
+
+/* Detail pane */
+.detail{overflow-y:auto;padding:24px 30px 60px;}
+.d-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:6px;}
+.d-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--dt1);letter-spacing:-.3px;}
+.d-loc{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--dt3);margin-top:6px;}
+.d-tags{display:flex;gap:8px;margin:14px 0 20px;flex-wrap:wrap;}
+.dtag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--l1);color:var(--dt2);}
+
+.d-sec-t{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dt3);margin:22px 0 10px;}
+.d-desc{font-size:13.5px;color:var(--dt2);line-height:1.7;}
+
+.code-block{background:var(--tb);border-radius:12px;overflow:hidden;margin-top:2px;}
+.code-hd{background:var(--th);padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tcd);border-bottom:1px solid rgba(255,255,255,.06);}
+.code-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:var(--tcw);overflow-x:auto;}
+.ln{color:var(--tcd);display:inline-block;width:26px;user-select:none;}
+.hl{background:rgba(255,59,92,.14);display:block;margin:0 -16px;padding:0 16px;border-left:2px solid var(--sc);}
+
+.ai-box{background:linear-gradient(140deg,rgba(115,101,240,.07),rgba(115,101,240,.02));border:1px solid rgba(115,101,240,.20);border-radius:12px;padding:16px 18px;margin-top:2px;}
+.ai-hd{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--pd);margin-bottom:8px;}
+.ai-body{font-size:13px;color:var(--dt2);line-height:1.7;}
+
+/* Fix panel */
+.fix-panel{background:var(--lw);border:1px solid var(--bl);border-radius:var(--rl);margin-top:24px;overflow:hidden;}
+.fix-hd{padding:16px 20px;border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;}
+.fix-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dt1);display:flex;align-items:center;gap:8px;}
+.conf{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dt3);}
+.conf-track{width:70px;height:6px;background:#EEEEF5;border-radius:3px;overflow:hidden;}
+.conf-fill{height:100%;background:var(--sl);width:90%;border-radius:3px;}
+.fix-tabs{display:flex;gap:4px;padding:12px 20px 0;}
+.ftab{padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--dt3);border-radius:8px 8px 0 0;cursor:pointer;}
+.ftab.on{background:var(--tb);color:var(--tcw);}
+.diff-body{background:var(--tb);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;}
+.dl{display:block;padding:0 8px;white-space:pre;}
+.dl.add{background:rgba(35,209,139,.10);color:#7EE8A2;}
+.dl.add::before{content:'+ ';color:#23D18B;}
+.dl.rem{background:rgba(255,59,92,.10);color:#FF9FAF;}
+.dl.rem::before{content:'- ';color:#FF3B5C;}
+.dl.ctx{color:var(--tcd);}
+.dl.ctx::before{content:'  ';}
+.fix-explain{padding:14px 20px;font-size:13px;color:var(--dt2);line-height:1.7;border-top:1px solid var(--bl);}
+.fix-actions{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-top:1px solid var(--bl);background:var(--l2);}
+.fa-left{display:flex;gap:10px;}
+.btn-sm{padding:9px 16px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;}
+.btn-reject{background:var(--lw);border:1px solid var(--bl);color:var(--dt3);}
+.btn-accept{background:var(--pp);color:var(--p);border:1px solid rgba(115,101,240,.24);}
+.btn-apply{background:var(--sl);color:#04231a;}
+.btn-tests{background:var(--l1);color:var(--dt2);border:1px solid var(--bl);}
+
+@media(max-width:1000px){
+  .split{grid-template-columns:1fr;}
+  .ilist{display:none;}
+}
+@media(max-width:760px){.side{display:none;}}
+</style>
+
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item on"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item"><span class="side-ico">📄</span>Reports</div>
+    </nav>
+    <div class="side-foot">
+      <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
+      <div class="side-item"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-search">🔍 <input type="text" placeholder="Search issues by file, rule, keyword..."></div>
+      <div class="tb-right">
+        <div class="tb-user">
+          <div class="tb-av">AS</div>
+          <div><div class="tb-uname">Arshdeep Singh</div><div class="tb-urole">Developer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg-hdr">
+      <div class="pg-h1">Issues & Fix Review</div>
+      <div class="pg-sub">InttelTrade_Advanced — Scan_20260722_1140 · 28 issues found</div>
+    </div>
+
+    <div class="filters">
+      <div class="pill on all" data-f="all">All <span class="cnt">28</span></div>
+      <div class="pill critical" data-f="critical">● Critical <span class="cnt">3</span></div>
+      <div class="pill high" data-f="high">● High <span class="cnt">7</span></div>
+      <div class="pill medium" data-f="medium">● Medium <span class="cnt">12</span></div>
+      <div class="pill low" data-f="low">● Low <span class="cnt">6</span></div>
+      <div class="fspace"></div>
+      <div class="dropdown">Type: All ▾</div>
+      <div class="dropdown">Tool: All ▾</div>
+    </div>
+
+    <div class="split">
+      <!-- ISSUE LIST -->
+      <div class="ilist">
+        <div class="icard sel">
+          <div class="icard-top"><span class="ichip critical">Critical</span></div>
+          <div class="icard-t">Password stored in plain text</div>
+          <div class="icard-loc">auth/views.py:47</div>
+          <span class="icard-tool">bandit</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip high">High</span></div>
+          <div class="icard-t">SQL injection risk in query builder</div>
+          <div class="icard-loc">models.py:23</div>
+          <span class="icard-tool">bandit</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip high">High</span></div>
+          <div class="icard-t">Missing authentication check</div>
+          <div class="icard-loc">api/views.py:91</div>
+          <span class="icard-tool">ai reviewer</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip critical">Critical</span></div>
+          <div class="icard-t">Hardcoded API key in source</div>
+          <div class="icard-loc">config/settings.py:15</div>
+          <span class="icard-tool">secret detector</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip medium">Medium</span><span class="ifixed">✓</span></div>
+          <div class="icard-t">Bare except clause swallows errors</div>
+          <div class="icard-loc">utils.py:88</div>
+          <span class="icard-tool">ruff</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip medium">Medium</span></div>
+          <div class="icard-t">Function exceeds 80 lines</div>
+          <div class="icard-loc">scanner/pipeline.py:112</div>
+          <span class="icard-tool">radon</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip low">Low</span></div>
+          <div class="icard-t">Unused import 'os.path'</div>
+          <div class="icard-loc">views.py:12</div>
+          <span class="icard-tool">ruff</span>
+        </div>
+        <div class="icard">
+          <div class="icard-top"><span class="ichip low">Low</span></div>
+          <div class="icard-t">Variable name 'x' is non-descriptive</div>
+          <div class="icard-loc">helpers.py:34</div>
+          <span class="icard-tool">pylint</span>
+        </div>
+      </div>
+
+      <!-- DETAIL + FIX -->
+      <div class="detail">
+        <div class="d-hdr">
+          <div>
+            <div class="d-title">Password stored in plain text</div>
+            <div class="d-loc">📍 auth/views.py · line 47</div>
+          </div>
+          <span class="ichip critical" style="font-size:11px;">Critical</span>
+        </div>
+        <div class="d-tags">
+          <span class="dtag">🔒 Security</span>
+          <span class="dtag">🛠 bandit</span>
+          <span class="dtag">Rule: B105</span>
+        </div>
+
+        <div class="d-sec-t">Description</div>
+        <p class="d-desc">User-submitted passwords are assigned directly to the model field without hashing. If the database is ever exposed or leaked, all user credentials are compromised in plain text.</p>
+
+        <div class="d-sec-t">Code Snippet</div>
+        <div class="code-block">
+          <div class="code-hd">auth/views.py</div>
+          <div class="code-body">
+<span class="ln">45</span>def register_user(request):
+<span class="ln">46</span>    password = request.form["password"]
+<span class="hl"><span class="ln">47</span>    user.password = password</span>
+<span class="ln">48</span>    user.save()
+          </div>
+        </div>
+
+        <div class="d-sec-t">AI Explanation</div>
+        <div class="ai-box">
+          <div class="ai-hd">✨ Generated by LLM code reviewer</div>
+          <div class="ai-body">Storing raw passwords breaks the most basic principle of authentication security — credentials must always be one-way hashed before persistence. This is classified Critical because it directly enables account takeover in the event of any data exposure, and it's an easy, low-effort fix.</div>
+        </div>
+
+        <!-- FIX PANEL -->
+        <div class="fix-panel">
+          <div class="fix-hd">
+            <span class="fix-t">🔧 AI Suggested Fix</span>
+            <div class="conf">Confidence <div class="conf-track"><div class="conf-fill"></div></div> 90%</div>
+          </div>
+          <div class="fix-tabs">
+            <div class="ftab on">Diff</div>
+            <div class="ftab">Before / After</div>
+          </div>
+          <div class="diff-body">
+<span class="dl ctx">def register_user(request):</span><span class="dl ctx">    password = request.form["password"]</span><span class="dl rem">    user.password = password</span><span class="dl add">    from werkzeug.security import generate_password_hash</span><span class="dl add">    user.password = generate_password_hash(password)</span><span class="dl ctx">    user.save()</span>
+          </div>
+          <div class="fix-explain">Hashes the password with <strong>werkzeug.security.generate_password_hash()</strong> before it's assigned to the model — the value stored in the database becomes a salted, one-way hash instead of raw text. Verify logins with <strong>check_password_hash()</strong>.</div>
+          <div class="fix-actions">
+            <div class="fa-left">
+              <button class="btn-sm btn-reject">✕ Reject</button>
+              <button class="btn-sm btn-accept">✓ Accept Fix</button>
+              <button class="btn-sm btn-apply">⚡ Apply & Download</button>
+            </div>
+            <button class="btn-sm btn-tests">🧪 Generate Tests</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Severity filter pills (visual only — wire to GET /api/issues/?severity=) */
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on');
+  });
+});
+
+/* Issue card selection (visual only — wire to GET /api/issues/<id>/ + GET /api/fixes/issue/<id>/) */
+document.querySelectorAll('.icard').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.icard').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');
+  });
+});
+
+/* Diff / Before-After tab toggle */
+document.querySelectorAll('.ftab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+  });
+});
+
+document.querySelectorAll('.side-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('on'));
+    el.classList.add('on');
+  });
+});
+</script>

@@ -1,9 +1,14 @@
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Avg
 from accounts.models import Project, Scan, Issue
+
+def dashboard_page(request):
+    """View to serve the static dashboard HTML template."""
+    return render(request, "dashboard.html")
 
 class DashboardStatsView(APIView):
     """API view to aggregate security and code quality stats across all user projects."""

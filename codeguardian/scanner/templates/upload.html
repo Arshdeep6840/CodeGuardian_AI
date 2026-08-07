@@ -1,0 +1,352 @@
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --tb:#0D1117;--th:#161B22;--tcg:#7EE8A2;--tcb:#79C0FF;--tcr:#FF7B7B;--tca:#FFAB70;--tcd:#8B949E;
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* ── APP SHELL (shared) ── */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--l1);border:1px solid var(--bl);border-radius:9px;padding:8px 13px;width:280px;font-size:13px;color:var(--dt3);}
+.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--dt1);flex:1;font-family:'DM Sans',sans-serif;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-bell{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--l1);cursor:pointer;font-size:15px;position:relative;}
+.tb-bell::after{content:'';position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--sc);}
+.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+.tb-urole{font-size:11px;color:var(--dt3);}
+.content{padding:28px 30px 60px;max-width:960px;}
+.pg-hdr{margin-bottom:26px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+
+/* ── UPLOAD CARD ── */
+.card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--rl);overflow:hidden;margin-bottom:22px;}
+.up-tabs{display:flex;border-bottom:1px solid var(--bl);}
+.up-tab{flex:1;text-align:center;padding:15px;font-size:13.5px;font-weight:600;color:var(--dt3);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:7px;}
+.up-tab.on{color:var(--p);border-bottom-color:var(--p);background:var(--pp);}
+.up-body{padding:30px;}
+.up-pane{display:none;}
+.up-pane.on{display:block;}
+
+/* Dropzone */
+.dz{border:2px dashed var(--bl);border-radius:var(--r);padding:44px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--l2);}
+.dz:hover,.dz.drag{border-color:var(--pm);background:var(--pp);}
+.dz-ico{font-size:34px;margin-bottom:12px;}
+.dz-t{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--dt1);margin-bottom:5px;}
+.dz-s{font-size:13px;color:var(--dt3);}
+.dz-s em{color:var(--p);font-style:normal;font-weight:600;}
+.dz-note{font-size:11.5px;color:var(--dt3);margin-top:14px;font-family:'JetBrains Mono',monospace;}
+
+.file-row{display:none;align-items:center;justify-content:space-between;background:var(--l2);border:1px solid var(--bl);border-radius:10px;padding:13px 16px;margin-top:16px;}
+.file-row.on{display:flex;}
+.file-info{display:flex;align-items:center;gap:12px;}
+.file-ico{width:36px;height:36px;border-radius:8px;background:var(--pp);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.file-name{font-size:13.5px;font-weight:600;color:var(--dt1);}
+.file-size{font-size:11.5px;color:var(--dt3);}
+.file-remove{width:26px;height:26px;border-radius:7px;border:none;background:var(--scb);color:var(--sc);cursor:pointer;font-size:13px;}
+
+/* GitHub pane */
+.field{margin-bottom:16px;}
+.field-l{font-size:12.5px;font-weight:600;color:var(--dt2);margin-bottom:7px;display:block;}
+.field input,.field textarea{width:100%;border:1px solid var(--bl);border-radius:9px;padding:11px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--dt1);outline:none;transition:border .2s;}
+.field input:focus,.field textarea:focus{border-color:var(--pm);}
+.field textarea{resize:vertical;min-height:70px;}
+.gh-note{display:flex;gap:9px;background:var(--pp);border-radius:9px;padding:11px 14px;font-size:12.5px;color:var(--pd);margin-top:4px;}
+
+/* Meta fields row */
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+
+/* Actions */
+.up-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:18px 30px;border-top:1px solid var(--bl);background:var(--l2);}
+.btn-ghost{background:var(--lw);border:1px solid var(--bl);color:var(--dt2);padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-primary{background:var(--p);border:none;color:#fff;padding:10px 22px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary:hover{background:var(--pd);}
+.btn-primary:disabled{background:var(--bl);color:var(--dt3);cursor:not-allowed;}
+
+/* ── SCAN PROGRESS TERMINAL ── */
+.scan-card{background:var(--tb);border-radius:var(--rl);border:1px solid rgba(255,255,255,.08);overflow:hidden;margin-bottom:22px;display:none;}
+.scan-card.on{display:block;}
+.term-hd{background:var(--th);padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.dots{display:flex;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dr{background:#FF5F57;} .dy{background:#FFBD2E;} .dg{background:#28C840;}
+.term-tab{font-size:11.5px;color:var(--tcd);font-family:'JetBrains Mono',monospace;}
+.scan-status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--tcg);font-weight:600;}
+.scan-dot{width:7px;height:7px;border-radius:50%;background:var(--tcg);animation:pdot 1.2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;}50%{opacity:.4;}}
+.term-bd{padding:18px 20px;min-height:200px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:var(--tcw);}
+.steps{display:flex;padding:16px 20px;gap:0;border-top:1px solid rgba(255,255,255,.06);}
+.step{flex:1;text-align:center;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;top:11px;left:56%;width:88%;height:1px;background:rgba(255,255,255,.12);}
+.step-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--tcd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto 6px;position:relative;z-index:1;border:2px solid rgba(255,255,255,.12);}
+.step.done .step-dot{background:var(--sl);color:#04231a;border-color:var(--sl);}
+.step.active .step-dot{background:var(--p);color:#fff;border-color:var(--pm);}
+.step-lbl{font-size:10.5px;color:var(--tcd);}
+.step.done .step-lbl,.step.active .step-lbl{color:var(--tcw);}
+
+/* Recent projects */
+.rp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.rp-t{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--dt1);}
+.rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rp-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:space-between;}
+.rp-name{font-size:14px;font-weight:700;color:var(--dt1);margin-bottom:5px;}
+.rp-meta{display:flex;align-items:center;gap:7px;}
+.tag{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.tag.zip{background:var(--pp);color:var(--p);}
+.tag.github{background:#EAF5FF;color:#2E7FD1;}
+.tag.ready{background:var(--slb);color:var(--sl);}
+.tag.failed{background:var(--scb);color:var(--sc);}
+.rp-action{font-size:12px;font-weight:600;color:var(--p);background:var(--pp);border:none;padding:8px 14px;border-radius:8px;cursor:pointer;}
+
+@media(max-width:760px){
+  .side{display:none;}
+  .meta-grid,.rp-grid{grid-template-columns:1fr;}
+  .steps{flex-wrap:wrap;}
+}
+</style>
+
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item on"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item"><span class="side-ico">📄</span>Reports</div>
+    </nav>
+    <div class="side-foot">
+      <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
+      <div class="side-item"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-search">🔍 <input type="text" placeholder="Search projects, files, issues..."></div>
+      <div class="tb-right">
+        <div class="tb-bell">🔔</div>
+        <div class="tb-user">
+          <div class="tb-av">AS</div>
+          <div><div class="tb-uname">Arshdeep Singh</div><div class="tb-urole">Developer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div class="pg-h1">New Scan</div>
+        <div class="pg-sub">Upload a ZIP, import from GitHub, or drop a single .py file to start a full analysis.</div>
+      </div>
+
+      <!-- UPLOAD CARD -->
+      <div class="card">
+        <div class="up-tabs">
+          <div class="up-tab on" data-tab="zip">📦 Upload ZIP</div>
+          <div class="up-tab" data-tab="github">🔗 Import from GitHub</div>
+          <div class="up-tab" data-tab="file">📄 Single .py File</div>
+        </div>
+        <div class="up-body">
+
+          <!-- ZIP pane -->
+          <div class="up-pane on" id="pane-zip">
+            <div class="dz" id="dz">
+              <div class="dz-ico">☁️</div>
+              <div class="dz-t">Drag & drop your project ZIP here</div>
+              <div class="dz-s">or <em>click to browse</em> from your computer</div>
+              <div class="dz-note">Flask · Django · FastAPI · Plain Python — max 50MB</div>
+            </div>
+            <div class="file-row" id="fileRow">
+              <div class="file-info">
+                <div class="file-ico">📦</div>
+                <div><div class="file-name">InttelTrade_Advanced.zip</div><div class="file-size">4.2 MB · 86 files</div></div>
+              </div>
+              <button class="file-remove" id="fileRemove">✕</button>
+            </div>
+          </div>
+
+          <!-- GitHub pane -->
+          <div class="up-pane" id="pane-github">
+            <div class="field">
+              <label class="field-l">GitHub Repository URL</label>
+              <input type="text" placeholder="https://github.com/username/repository">
+            </div>
+            <div class="gh-note">ℹ️ Only public repositories are supported. We'll clone the default branch and index all Python files automatically.</div>
+          </div>
+
+          <!-- Single file pane -->
+          <div class="up-pane" id="pane-file">
+            <div class="dz">
+              <div class="dz-ico">🐍</div>
+              <div class="dz-t">Drop a single .py file here</div>
+              <div class="dz-s">or <em>click to browse</em></div>
+              <div class="dz-note">Great for quick script reviews — max 2MB</div>
+            </div>
+          </div>
+
+          <!-- Shared metadata -->
+          <div class="meta-grid">
+            <div class="field"><label class="field-l">Project Name</label><input type="text" placeholder="e.g. InttelTrade_Advanced" value="InttelTrade_Advanced"></div>
+            <div class="field"><label class="field-l">Description <span style="color:var(--dt3);font-weight:400;">(optional)</span></label><input type="text" placeholder="Short note about this project"></div>
+          </div>
+        </div>
+        <div class="up-actions">
+          <button class="btn-ghost">Cancel</button>
+          <button class="btn-primary" id="startBtn">⚡ Start Scan</button>
+        </div>
+      </div>
+
+      <!-- SCAN PROGRESS -->
+      <div class="scan-card" id="scanCard">
+        <div class="term-hd">
+          <div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <span class="term-tab">codeguardian — scan.log</span>
+          <span class="scan-status"><span class="scan-dot"></span>Scanning…</span>
+        </div>
+        <div class="term-bd" id="termBody"></div>
+        <div class="steps">
+          <div class="step done"><div class="step-dot">✓</div><div class="step-lbl">Upload</div></div>
+          <div class="step done"><div class="step-dot">✓</div><div class="step-lbl">Extract</div></div>
+          <div class="step active"><div class="step-dot">3</div><div class="step-lbl">Analyze</div></div>
+          <div class="step"><div class="step-dot">4</div><div class="step-lbl">Classify</div></div>
+          <div class="step"><div class="step-dot">5</div><div class="step-lbl">Report</div></div>
+        </div>
+      </div>
+
+      <!-- RECENT PROJECTS -->
+      <div class="rp-hdr"><span class="rp-t">Recent Projects</span><span class="panel-link" style="font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;">View all →</span></div>
+      <div class="rp-grid">
+        <div class="rp-card">
+          <div>
+            <div class="rp-name">InttelTrade_Advanced</div>
+            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag ready">Ready</span></div>
+          </div>
+          <button class="rp-action">Scan Again</button>
+        </div>
+        <div class="rp-card">
+          <div>
+            <div class="rp-name">portfolio-website</div>
+            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag ready">Ready</span></div>
+          </div>
+          <button class="rp-action">Scan Again</button>
+        </div>
+        <div class="rp-card">
+          <div>
+            <div class="rp-name">django-blog-api</div>
+            <div class="rp-meta"><span class="tag github">GitHub</span><span class="tag ready">Ready</span></div>
+          </div>
+          <button class="rp-action">Scan Again</button>
+        </div>
+        <div class="rp-card">
+          <div>
+            <div class="rp-name">flask-inventory-app</div>
+            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag failed">Failed</span></div>
+          </div>
+          <button class="rp-action">Retry Upload</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* Tab switching */
+document.querySelectorAll('.up-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.up-tab').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.up-pane').forEach(p=>p.classList.remove('on'));
+    tab.classList.add('on');
+    document.getElementById('pane-'+tab.dataset.tab).classList.add('on');
+  });
+});
+
+/* Dropzone interactions (visual only — wire to POST /api/projects/upload/) */
+const dz=document.getElementById('dz'), fileRow=document.getElementById('fileRow');
+dz.addEventListener('click',()=>fileRow.classList.add('on'));
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');fileRow.classList.add('on');});
+document.getElementById('fileRemove').addEventListener('click',()=>fileRow.classList.remove('on'));
+
+/* Start scan → reveal terminal (visual only — wire to POST /api/scans/start/) */
+const LINES=[
+  {t:"$ codeguardian scan InttelTrade_Advanced --ai --report",c:"#7EE8A2"},
+  {t:"",c:""},
+  {t:"[i] Extracting archive... 86 files found (34 .py)",c:"#8B949E"},
+  {t:"[i] Running: AST · Bandit · Ruff · Secret Detector · LLM",c:"#8B949E"},
+  {t:"",c:""},
+  {t:"● CRITICAL  auth/views.py:47 — Plain-text password",c:"#FF7B7B"},
+  {t:"● HIGH      models.py:23 — SQL injection risk",c:"#FFAB70"},
+  {t:"● MEDIUM    utils.py:88 — Bare except clause",c:"#FFC53D"},
+];
+document.getElementById('startBtn').addEventListener('click',()=>{
+  const card=document.getElementById('scanCard');
+  card.classList.add('on');
+  card.scrollIntoView({behavior:'smooth',block:'center'});
+  const tb=document.getElementById('termBody');
+  tb.innerHTML='';
+  let li=0;
+  function run(){
+    if(li>=LINES.length)return;
+    const line=LINES[li++];
+    const span=document.createElement('span');
+    span.style.display='block';span.style.color=line.c||'#E6EDF3';span.textContent=line.t||'\u00A0';
+    tb.appendChild(span);
+    setTimeout(run,380);
+  }
+  run();
+});
+
+document.querySelectorAll('.side-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('on'));
+    el.classList.add('on');
+  });
+});
+</script>

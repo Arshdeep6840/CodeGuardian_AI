@@ -1,8 +1,10 @@
+from aiohttp import request
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterSerializer, CustomUserSerializer
+from django.shortcuts import render
 
 class RegisterView(APIView):
     """API view to register a new user."""
@@ -31,3 +33,12 @@ class UserProfileView(APIView):
     def get(self, request, *args, **kwargs):
         serializer = CustomUserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def register(request):
+    return render(request,'register.html' )
+
+
+def login(request):
+    return render(request, 'login.html')
+

@@ -1,0 +1,501 @@
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* ── APP SHELL ── */
+.app{display:flex;min-height:100vh;}
+
+/* Sidebar */
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+/* Main column */
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--l1);border:1px solid var(--bl);border-radius:9px;padding:8px 13px;width:280px;font-size:13px;color:var(--dt3);}
+.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--dt1);flex:1;font-family:'DM Sans',sans-serif;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.btn-newscan{background:var(--p);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-newscan:hover{background:var(--pd);}
+.tb-bell{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--l1);cursor:pointer;font-size:15px;position:relative;}
+.tb-bell::after{content:'';position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--sc);}
+.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+.tb-urole{font-size:11px;color:var(--dt3);}
+
+.content{padding:28px 30px 60px;max-width:1360px;}
+
+/* Page header */
+.pg-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+.proj-select{display:flex;align-items:center;gap:8px;background:var(--lw);border:1px solid var(--bl);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:500;color:var(--dt2);cursor:pointer;}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.mc{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px 20px;}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.mv{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--dt1);}
+.ml{font-size:12.5px;color:var(--dt3);margin-top:2px;}
+.mtrend{font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.mtrend.up{color:var(--sl);background:var(--slb);}
+.mtrend.down{color:var(--sc);background:var(--scb);}
+
+/* Grid 2-col */
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-bottom:16px;}
+.panel{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:22px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.panel-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dt1);}
+.panel-link{font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;}
+
+/* Score rings */
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.ring-box{text-align:center;}
+.ring{width:84px;height:84px;margin:0 auto 10px;position:relative;}
+.ring svg{transform:rotate(-90deg);}
+.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--dt1);}
+.ring-lbl{font-size:11.5px;color:var(--dt3);font-weight:500;}
+
+/* Severity bars */
+.sev-r{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
+.sev-lbl{font-size:11px;font-weight:700;width:64px;letter-spacing:.03em;}
+.sev-track{flex:1;height:8px;background:#EEEEF5;border-radius:4px;overflow:hidden;}
+.sev-fill{height:100%;border-radius:4px;}
+.sev-cnt{font-size:12.5px;font-weight:700;color:var(--dt2);min-width:22px;text-align:right;}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:10.5px;font-weight:700;color:var(--dt3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--bl);text-transform:uppercase;letter-spacing:.06em;background:var(--l2);}
+.tbl th:first-child{border-radius:8px 0 0 0;}
+.tbl th:last-child{border-radius:0 8px 0 0;}
+.tbl td{font-size:13px;color:var(--dt2);padding:11px 10px;border-bottom:1px solid var(--bl);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--l2);}
+.isev{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.04em;display:inline-block;}
+.cref{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dt3);}
+.stbadge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;display:inline-block;}
+.stbadge.completed{background:var(--slb);color:var(--sl);}
+.stbadge.running{background:var(--smb);color:var(--sm);}
+.stbadge.failed{background:var(--scb);color:var(--sc);}
+.rowbtn{font-size:12px;font-weight:600;color:var(--p);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;}
+
+/* Risky files */
+.rf-row{display:flex;align-items:center;justify-content:space-between;padding:11px 4px;border-bottom:1px solid var(--bl);}
+.rf-row:last-child{border-bottom:none;}
+.rf-path{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dt1);}
+.rf-proj{font-size:11px;color:var(--dt4);color:var(--dt3);margin-top:2px;}
+.rf-badge{background:var(--scb);color:var(--sc);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px;}
+
+/* Grid full */
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .metrics{grid-template-columns:1fr 1fr;}
+  .grid2,.grid2b{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+  .side{display:none;}
+  .metrics{grid-template-columns:1fr;}
+  .tb-search{display:none;}
+}
+</style>
+
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item on"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item"><    <div class="side-foot">
+      <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
+      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-search">🔍 <input type="text" placeholder="Search projects, files, issues..."></div>
+      <div class="tb-right">
+        <button class="btn-newscan">↑ New Scan</button>
+        <div class="tb-bell">🔔</div>
+        <div class="tb-user">
+          <div class="tb-av" id="user-av">AS</div>
+          <div>
+            <div class="tb-uname" id="user-uname">Developer</div>
+            <div class="tb-urole" id="user-role">Developer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div>
+          <div class="pg-h1">Dashboard</div>
+          <div class="pg-sub">Your code health across all projects, at a glance.</div>
+        </div>
+        <div class="proj-select">📁 All Projects ▾</div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics">
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--pp)">📁</div><span class="mtrend up" style="visibility:hidden;">+2 this wk</span></div>
+          <div class="mv" id="stat-total-projects">-</div><div class="ml">Total Projects</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:#EAF5FF">🔍</div><span class="mtrend up" style="visibility:hidden;">+5 this wk</span></div>
+          <div class="mv" id="stat-total-scans">-</div><div class="ml">Total Scans</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--scb)">⚠️</div><span class="mtrend down" style="visibility:hidden;">-8 vs last</span></div>
+          <div class="mv" id="stat-total-issues">-</div><div class="ml">Total Issues Found</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--slb)">💚</div><span class="mtrend up" style="visibility:hidden;">+6 pts</span></div>
+          <div class="mv" id="stat-health-score">-<span style="font-size:15px;color:var(--dt3)">/100</span></div><div class="ml">Overall Health Score</div>
+        </div>
+      </div>
+
+      <!-- SCORES + SEVERITY -->
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-t">Code Health Scores</span><span class="panel-link">View history</span></div>
+          <div class="rings">
+            <div class="ring-box">
+              <div class="ring">
+                <svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-overall-circle" cx="42" cy="42" r="36" fill="none" stroke="#7365F0" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+                <div class="ring-val" id="ring-overall-val">-</div>
+              </div>
+              <div class="ring-lbl">Overall</div>
+            </div>
+            <div class="ring-box">
+              <div class="ring">
+                <svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-security-circle" cx="42" cy="42" r="36" fill="none" stroke="#FF3B5C" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+                <div class="ring-val" id="ring-security-val">-</div>
+              </div>
+              <div class="ring-lbl">Security</div>
+            </div>
+            <div class="ring-box">
+              <div class="ring">
+                <svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-quality-circle" cx="42" cy="42" r="36" fill="none" stroke="#23D18B" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+                <div class="ring-val" id="ring-quality-val">-</div>
+              </div>
+              <div class="ring-lbl">Code Quality</div>
+            </div>
+            <div class="ring-box">
+              <div class="ring">
+                <svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-maintain-circle" cx="42" cy="42" r="36" fill="none" stroke="#FFC53D" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+                <div class="ring-val" id="ring-maintain-val">-</div>
+              </div>
+              <div class="ring-lbl">Maintain.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-t">Issue Severity Breakdown</span><span class="panel-link" id="sev-total-lbl">- total</span></div>
+          <div class="sev-r"><span class="sev-lbl" style="color:var(--sc)">CRITICAL</span><div class="sev-track"><div class="sev-fill" id="sev-critical-fill" style="background:var(--sc);width:0%"></div></div><span class="sev-cnt" id="sev-critical-cnt">0</span></div>
+          <div class="sev-r"><span class="sev-lbl" style="color:var(--sh)">HIGH</span><div class="sev-track"><div class="sev-fill" id="sev-high-fill" style="background:var(--sh);width:0%"></div></div><span class="sev-cnt" id="sev-high-cnt">0</span></div>
+          <div class="sev-r"><span class="sev-lbl" style="color:var(--sm)">MEDIUM</span><div class="sev-track"><div class="sev-fill" id="sev-medium-fill" style="background:var(--sm);width:0%"></div></div><span class="sev-cnt" id="sev-medium-cnt">0</span></div>
+          <div class="sev-r"><span class="sev-lbl" style="color:var(--sl)">LOW</span><div class="sev-track"><div class="sev-fill" id="sev-low-fill" style="background:var(--sl);width:0%"></div></div><span class="sev-cnt" id="sev-low-cnt">0</span></div>
+        </div>
+      </div>
+
+      <!-- RECENT SCANS -->
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-hdr"><span class="panel-t">Recent Scans</span><span class="panel-link">View all</span></div>
+        <table class="tbl">
+          <thead><tr><th>Project</th><th>Scan</th><th>Status</th><th>Issues</th><th>Score</th><th>Date</th><th></th></tr></thead>
+          <tbody id="recent-scans-tbody">
+            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dt3);">Loading recent scans...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RISKY FILES + RECENT ISSUES -->
+      <div class="grid2b">
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-t">Top Risky Files</span><span class="panel-link">Sorted by severity</span></div>
+          <div id="risky-files-container">
+            <div style="text-align:center;padding:20px;color:var(--dt3);">Loading risky files...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-t">Recent Issues</span><span class="panel-link">View all</span></div>
+          <table class="tbl">
+            <thead><tr><th>Sev</th><th>Location</th><th>Issue</th></tr></thead>
+            <tbody id="recent-issues-tbody">
+              <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--dt3);">Loading recent issues...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Sidebar navigation active state
+document.querySelectorAll('.side-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('on'));
+    el.classList.add('on');
+  });
+});
+
+// Logout Button Logic
+document.getElementById("logout-btn").addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "/login/";
+});
+
+// Helper for JWT authenticated API requests
+async function fetchWithAuth(url, options = {}) {
+  let token = localStorage.getItem("access");
+  if (!token) {
+    window.location.href = "/login/";
+    return null;
+  }
+  
+  if (!options.headers) {
+    options.headers = {};
+  }
+  options.headers["Authorization"] = "Bearer " + token;
+  options.headers["Content-Type"] = "application/json";
+  
+  let response = await fetch(url, options);
+  if (response.status === 401) {
+    const refresh = localStorage.getItem("refresh");
+    if (refresh) {
+      try {
+        const refreshResponse = await fetch("/api/auth/token/refresh/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh: refresh })
+        });
+        if (refreshResponse.ok) {
+          const refreshData = await refreshResponse.json();
+          localStorage.setItem("access", refreshData.access);
+          options.headers["Authorization"] = "Bearer " + refreshData.access;
+          response = await fetch(url, options);
+        } else {
+          localStorage.clear();
+          window.location.href = "/login/";
+          return null;
+        }
+      } catch (err) {
+        localStorage.clear();
+        window.location.href = "/login/";
+        return null;
+      }
+    } else {
+      localStorage.clear();
+      window.location.href = "/login/";
+      return null;
+    }
+  }
+  return response;
+}
+
+// Function to calculate SVG stroke offset based on score
+function setRingScore(circleId, valId, score) {
+  const circle = document.getElementById(circleId);
+  const valEl = document.getElementById(valId);
+  if (!circle || !valEl) return;
+  
+  const scoreVal = score !== null && score !== undefined ? parseFloat(score) : null;
+  if (scoreVal === null) {
+    circle.setAttribute("stroke-dashoffset", 226);
+    valEl.innerText = "-";
+  } else {
+    const parsed = Math.round(scoreVal);
+    const offset = Math.round(226 * (1 - parsed / 100));
+    circle.setAttribute("stroke-dashoffset", offset);
+    valEl.innerText = parsed;
+  }
+}
+
+// Load and populate stats
+async function loadStats() {
+  try {
+    // 1. Fetch User Profile
+    const meResponse = await fetchWithAuth("/api/auth/me/");
+    if (meResponse && meResponse.ok) {
+      const user = await meResponse.json();
+      const name = user.username || user.email || "Developer";
+      document.getElementById("user-uname").innerText = name;
+      document.getElementById("user-role").innerText = user.role === "admin" ? "Admin" : "Developer";
+      
+      // Avatar Initials
+      const initials = name.slice(0, 2).toUpperCase();
+      document.getElementById("user-av").innerText = initials;
+    }
+    
+    // 2. Fetch Dashboard Stats
+    const statsResponse = await fetchWithAuth("/api/dashboard/stats/");
+    if (statsResponse && statsResponse.ok) {
+      const data = await statsResponse.json();
+      
+      // Update metric cards
+      document.getElementById("stat-total-projects").innerText = data.total_projects;
+      document.getElementById("stat-total-scans").innerText = data.total_scans;
+      document.getElementById("stat-total-issues").innerText = data.total_issues;
+      document.getElementById("stat-health-score").innerHTML = `${Math.round(data.scores.overall)}<span style="font-size:15px;color:var(--dt3)">/100</span>`;
+      
+      // Update circular score rings
+      setRingScore("ring-overall-circle", "ring-overall-val", data.scores.overall);
+      setRingScore("ring-security-circle", "ring-security-val", data.scores.security);
+      setRingScore("ring-quality-circle", "ring-quality-val", data.scores.code_quality);
+      setRingScore("ring-maintain-circle", "ring-maintain-val", data.scores.maintainability);
+      
+      // Update severity breakdown
+      const totalIssues = data.total_issues || 1;
+      document.getElementById("sev-total-lbl").innerText = `${data.total_issues} total`;
+      
+      const sc = data.severity_counts || {};
+      const critical = sc.critical || 0;
+      const high = sc.high || 0;
+      const medium = sc.medium || 0;
+      const low = sc.low || 0;
+      
+      document.getElementById("sev-critical-cnt").innerText = critical;
+      document.getElementById("sev-high-cnt").innerText = high;
+      document.getElementById("sev-medium-cnt").innerText = medium;
+      document.getElementById("sev-low-cnt").innerText = low;
+      
+      document.getElementById("sev-critical-fill").style.width = `${Math.max(0, Math.min(100, (critical / totalIssues) * 100))}%`;
+      document.getElementById("sev-high-fill").style.width = `${Math.max(0, Math.min(100, (high / totalIssues) * 100))}%`;
+      document.getElementById("sev-medium-fill").style.width = `${Math.max(0, Math.min(100, (medium / totalIssues) * 100))}%`;
+      document.getElementById("sev-low-fill").style.width = `${Math.max(0, Math.min(100, (low / totalIssues) * 100))}%`;
+      
+      // Update recent scans table
+      const scansTbody = document.getElementById("recent-scans-tbody");
+      if (data.recent_scans && data.recent_scans.length > 0) {
+        scansTbody.innerHTML = "";
+        data.recent_scans.forEach(scan => {
+          const date = new Date(scan.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const statusClass = scan.status.toLowerCase();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${scan.project_name}</td>
+            <td class="cref">${scan.scan_name}</td>
+            <td><span class="stbadge ${statusClass}">${scan.status.charAt(0).toUpperCase() + scan.status.slice(1)}</span></td>
+            <td>${scan.total_issues || 0}</td>
+            <td>${scan.score !== null ? Math.round(scan.score) : "—"}</td>
+            <td>${date}</td>
+            <td><button class="rowbtn" onclick="window.location.href='/api/scans/${scan.scan_id}/results/'">View →</button></td>
+          `;
+          scansTbody.appendChild(tr);
+        });
+      } else {
+        scansTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dt3);">No scans recorded yet.</td></tr>`;
+      }
+      
+      // Update risky files
+      const riskyContainer = document.getElementById("risky-files-container");
+      if (data.risky_files && data.risky_files.length > 0) {
+        riskyContainer.innerHTML = "";
+        data.risky_files.forEach(file => {
+          const div = document.createElement("div");
+          div.className = "rf-row";
+          div.innerHTML = `
+            <div>
+              <div class="rf-path">${file.file_path}</div>
+              <div class="rf-proj">${file.project_name}</div>
+            </div>
+            <span class="rf-badge">${file.issue_count} issue${file.issue_count !== 1 ? 's' : ''}</span>
+          `;
+          riskyContainer.appendChild(div);
+        });
+      } else {
+        riskyContainer.innerHTML = `<div style="text-align:center;padding:20px;color:var(--dt3);">No risky files found.</div>`;
+      }
+    }
+    
+    // 3. Fetch Recent Issues
+    const issuesResponse = await fetchWithAuth("/api/issues/");
+    if (issuesResponse && issuesResponse.ok) {
+      const issues = await issuesResponse.json();
+      const issuesTbody = document.getElementById("recent-issues-tbody");
+      if (issues && issues.length > 0) {
+        issuesTbody.innerHTML = "";
+        const recentIssues = issues
+          .sort((a, b) => b.id - a.id)
+          .slice(0, 5);
+          
+        recentIssues.forEach(issue => {
+          const sevMap = { critical: "CRIT", high: "HIGH", medium: "MED", low: "LOW" };
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="isev" style="background:var(--${issue.severity === 'critical' ? 'scb' : issue.severity === 'high' ? 'shb' : issue.severity === 'medium' ? 'smb' : 'slb'});color:var(--${issue.severity === 'critical' ? 'sc' : issue.severity === 'high' ? 'sh' : issue.severity === 'medium' ? 'sm' : 'sl'})">${sevMap[issue.severity.toLowerCase()] || 'INFO'}</span></td>
+            <td class="cref">${issue.file_path}:${issue.line_number}</td>
+            <td>${issue.title}</td>
+          `;
+          issuesTbody.appendChild(tr);
+        });
+      } else {
+        issuesTbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--dt3);">No issues recorded yet.</td></tr>`;
+      }
+    }
+    
+  } catch (error) {
+    console.error("Error loading dashboard data:", error);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", loadStats);
+</script>

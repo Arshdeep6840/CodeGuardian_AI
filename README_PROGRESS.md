@@ -55,30 +55,37 @@ This document serves as a tracking README to log completed milestones, system ar
 ### 5. Reporting & Analytics (`reports` & `dashboard` apps)
 * **Dashboard Aggregations**: Calculates global stats (total projects, total scans, average health scores, severity counts, recent scans list, and top 5 most risky files).
 * **PDF Report Generation**: Creates downloadable PDF reports with a premium look (using `ReportLab`) showing metric scores and detailed issue listings.
+* **Dashboard Page Template**: Designed a modern responsive HTML dashboard (`dashboard.html`) under `dashboard/templates` with cards for metrics, SVG health score circular progress rings, issue severity breakdown bars, and tables/lists for recent scans and top risky files.
 * **Endpoints**:
   * `GET /api/dashboard/stats/` - Fetches global project and scan metrics.
   * `GET /api/reports/scan/<int:scan_id>/` - Retrieves or creates report metadata.
   * `GET /api/reports/<int:id>/download/` - Dynamic PDF download with automatic regeneration on disk if missing.
 
-### 6. Templates
+### 6. Templates & Frontend Assets
 * **Landing Page**: Implemented a responsive, modern HTML landing page (`index.html`) under `home/templates` using vanilla CSS, modern typography, grid layouts, scroll animations, dynamic counter animations, and an interactive typing command-line terminal simulation.
+* **Authentication Pages**: Built responsive and elegant templates for registration (`register.html`) and login (`login.html`) under `accounts/templates` using custom stylesheets, password strength calculations, eye toggle visibility icons, and error handling elements.
+* **Static Assets**: Created custom `style.css` and helper script files `login.js` and `register.js` to manage CSRF tokens, client-side validation, loader states, and AJAX submission.
+
+### 7. Third-Party Linting Integration
+* **Ruff Static Code Analyzer**: Integrated Ruff programmatically in `ruff_runner.py` inside the scan pipeline. Maps Ruff rule codes to CodeGuardian severity levels (`critical`, `high`, `medium`, `low`) and reports issues back to the scanner.
 
 ---
 
 ## 🛠️ Recent Fixes & Housekeeping
 * **Fixed `codeguardian/settings.py`**: Cleaned up syntax errors at the bottom of the file caused by a duplicate unclosed `TEMPLATES` block and misplaced Git diff conflict hunks.
 * **Proper Static Configuration**: Formatted `STATICFILES_DIRS = [BASE_DIR / "static"]` cleanly to support custom frontend styling files.
+* **User Authentication Model**: Configured `AUTH_USER_MODEL = "accounts.CustomUser"` inside `settings.py` to enable the custom user role system.
 
 ---
 
 ## 🔮 Next Tasks & Backlog
 
-1. **Database Migrations & Running Server**:
+1. **Frontend-Backend Integration**:
+   * Wire up the newly added `dashboard.html` to a Django rendering view at `/dashboard/`.
+   * Add dynamic JSON fetching via AJAX using stored JWT tokens from `/api/dashboard/stats/` to populate metric cards, circular rings, and tables on the dashboard page.
+   * Correct the login endpoint URL in `login.js` and ensure successful login redirects users to `/dashboard/`.
+2. **Database Migrations & Running Server**:
    * Run `python manage.py makemigrations` and `python manage.py migrate` to apply any pending database updates (such as CustomUser additions).
    * Create a Django superuser.
-2. **Frontend UI Integration**:
-   * Build the Django/React dashboard views. A React app setup on port 3000 or an SPA served from Django static files can consume the existing REST API endpoints.
 3. **Scan Execution Verification**:
-   * Verify scanning functionality against an uploaded ZIP or file on disk. Ensure Bandit and local AST rules execute properly and save records.
-4. **Third-Party Linting Integration**:
-   * Extend scanning capabilities to run `ruff` or `pylint` programmatically as outlined in the day-wise documentation (Day 15).
+   * Verify scanning functionality against an uploaded ZIP or file on disk. Ensure Bandit, Ruff, and local AST rules execute properly and save records.

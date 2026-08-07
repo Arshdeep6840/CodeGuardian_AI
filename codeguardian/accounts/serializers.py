@@ -13,7 +13,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "password", "role")
+        fields = ("id", "username", "email", "password")
         read_only_fields = ("id",)
 
     def validate_email(self, value):
@@ -26,7 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
-            role=validated_data.get("role", "user")
+            role= 'user'
         )
         return user
 

@@ -242,8 +242,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--d9);color:var(-
       <li><a href="#severity">Severity</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="btn-ghost">Log in</button>
-      <button class="btn-primary">Start Scanning →</button>
+     <button class="btn-ghost" onclick="window.location.href='{% url 'login' %}'">
+    Log in
+</button>
+
+<button class="btn-primary" onclick="window.location.href='{% url 'register' %}'">
+    Sign up
+</button>
     </div>
   </div>
 </nav>

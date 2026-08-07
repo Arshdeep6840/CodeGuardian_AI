@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | CodeGuardian AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="bg-grid"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="auth-container">
+
+        <!-- LEFT PANEL -->
+
+        <div class="left-panel">
+
+            <a href="/" class="logo">
+
+                <div class="logo-icon">
+                    CG
+                </div>
+
+                <div class="logo-text">
+                    Code<span>Guardian</span> AI
+                </div>
+
+            </a>
+
+            <div class="left-content">
+
+                <div class="badge">
+
+                    <span class="dot"></span>
+
+                    AI Powered Code Review
+
+                </div>
+
+                <h1>
+
+                    Secure your
+
+                    <span>Python projects</span>
+
+                    from day one.
+
+                </h1>
+
+                <p>
+
+                    Create your free account and start scanning
+                    Django, Flask and FastAPI projects with
+                    AI-powered vulnerability detection,
+                    automatic fixes and professional reports.
+
+                </p>
+
+                <div class="feature-list">
+
+                    <div class="feature">
+
+                        <div class="icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                AI Bug Detection
+                            </h4>
+
+                            <p>
+                                Detect security issues automatically.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="feature">
+
+                        <div class="icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Smart Fix Suggestions
+                            </h4>
+
+                            <p>
+                                Get AI generated improvements instantly.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="feature">
+
+                        <div class="icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                PDF Reports
+                            </h4>
+
+                            <p>
+                                Download complete project analysis.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT PANEL -->
+
+        <div class="right-panel">
+
+            <div class="form-card">
+
+                <div class="card-header">
+
+                    <h2>Create Account</h2>
+
+                    <p>
+
+                        Join thousands of developers using
+                        CodeGuardian AI.
+
+                    </p>
+
+                </div>
+
+                <form id="registerForm" method="post">
+
+                    {% csrf_token %}
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Username
+
+                        </label>
+
+                        <input type="text" id="username" placeholder="Enter username" required>
+
+                        <small class="error" id="usernameError"></small>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Email
+
+                        </label>
+
+                        <input type="email" id="email" placeholder="Enter email" required>
+
+                        <small class="error" id="emailError"></small>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Password
+
+                        </label>
+
+                        <div class="password-box">
+
+                            <input type="password" id="password" placeholder="Create password" required>
+
+                            <button type="button" id="togglePassword" class="eye">
+
+                                👁
+
+                            </button>
+
+                        </div>
+
+                        <div class="strength">
+
+                            <div id="strengthBar"></div>
+
+                        </div>
+
+                        <small id="strengthText">
+                            Password Strength
+                        </small>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Confirm Password
+
+                        </label>
+
+                        <div class="password-box">
+
+                            <input type="password" id="password2" placeholder="Confirm password" required>
+
+                            <button type="button" id="togglePassword2" class="eye">
+
+                                👁
+
+                            </button>
+
+                        </div>
+
+                        <small class="error" id="passwordError"></small>
+
+                    </div>
+
+                    <div class="terms">
+
+                        <input type="checkbox" id="terms" required>
+
+                        <label for="terms">
+
+                            I agree to the
+
+                            <a href="#">
+
+                                Terms
+
+                            </a>
+
+                            and
+
+                            <a href="#">
+
+                                Privacy Policy
+
+                            </a>
+
+                        </label>
+
+                    </div>
+
+                    <button type="submit" class="register-btn">
+
+                        <span id="btnText">
+
+                            Create Account
+
+                        </span>
+
+                        <span id="loader" class="loader"></span>
+
+                    </button>
+
+                    <div id="message" class="message">
+
+                    </div>
+
+                </form>
+
+                <div class="divider">
+
+                    <span>
+
+                        OR
+
+                    </span>
+
+                </div>
+
+                <button class="google-btn">
+
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+
+                    Continue with Google
+
+                </button>
+
+                <div class="footer-link">
+
+                    Already have an account?
+
+
+
+                    <a href="{% url 'login' %}">
+
+                        Sign In
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/register.js' %}"></script>
+
+</body>
+
+</html>
