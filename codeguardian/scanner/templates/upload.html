@@ -150,18 +150,18 @@ a{text-decoration:none;color:inherit;}
     </div>
     <nav class="side-nav">
       <div class="side-grp-t">Workspace</div>
-      <div class="side-item"><span class="side-ico">📊</span>Dashboard</div>
-      <div class="side-item on"><span class="side-ico">🔍</span>New Scan</div>
-      <div class="side-item"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item on" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📁</span>My Projects</div>
       <div class="side-grp-t">Analysis</div>
-      <div class="side-item"><span class="side-ico">⚠️</span>Issues</div>
-      <div class="side-item"><span class="side-ico">🔧</span>Auto-Fixes</div>
-      <div class="side-item"><span class="side-ico">🧪</span>Test Cases</div>
-      <div class="side-item"><span class="side-ico">📄</span>Reports</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">📄</span>Reports</div>
     </nav>
     <div class="side-foot">
       <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
-      <div class="side-item"><span class="side-ico">↪</span>Log out</div>
+      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
     </div>
   </aside>
 
@@ -195,7 +195,8 @@ a{text-decoration:none;color:inherit;}
 
           <!-- ZIP pane -->
           <div class="up-pane on" id="pane-zip">
-            <div class="dz" id="dz">
+            <input type="file" id="fileInput" accept=".zip" style="display:none;">
+            <div class="dz" id="dz" onclick="document.getElementById('fileInput').click()">
               <div class="dz-ico">☁️</div>
               <div class="dz-t">Drag & drop your project ZIP here</div>
               <div class="dz-s">or <em>click to browse</em> from your computer</div>
@@ -204,7 +205,7 @@ a{text-decoration:none;color:inherit;}
             <div class="file-row" id="fileRow">
               <div class="file-info">
                 <div class="file-ico">📦</div>
-                <div><div class="file-name">InttelTrade_Advanced.zip</div><div class="file-size">4.2 MB · 86 files</div></div>
+                <div><div class="file-name" id="selectedFileName">InttelTrade_Advanced.zip</div><div class="file-size" id="selectedFileSize">4.2 MB</div></div>
               </div>
               <button class="file-remove" id="fileRemove">✕</button>
             </div>
@@ -214,25 +215,33 @@ a{text-decoration:none;color:inherit;}
           <div class="up-pane" id="pane-github">
             <div class="field">
               <label class="field-l">GitHub Repository URL</label>
-              <input type="text" placeholder="https://github.com/username/repository">
+              <input type="text" id="githubUrlInput" placeholder="https://github.com/username/repository">
             </div>
             <div class="gh-note">ℹ️ Only public repositories are supported. We'll clone the default branch and index all Python files automatically.</div>
           </div>
 
           <!-- Single file pane -->
           <div class="up-pane" id="pane-file">
-            <div class="dz">
+            <input type="file" id="singleFileInput" accept=".py" style="display:none;">
+            <div class="dz" id="dzFile" onclick="document.getElementById('singleFileInput').click()">
               <div class="dz-ico">🐍</div>
               <div class="dz-t">Drop a single .py file here</div>
               <div class="dz-s">or <em>click to browse</em></div>
               <div class="dz-note">Great for quick script reviews — max 2MB</div>
             </div>
+            <div class="file-row" id="fileRowFile">
+              <div class="file-info">
+                <div class="file-ico">📄</div>
+                <div><div class="file-name" id="selectedFileNameFile">main.py</div><div class="file-size" id="selectedFileSizeFile">12 KB</div></div>
+              </div>
+              <button class="file-remove" id="fileRemoveFile">✕</button>
+            </div>
           </div>
 
           <!-- Shared metadata -->
           <div class="meta-grid">
-            <div class="field"><label class="field-l">Project Name</label><input type="text" placeholder="e.g. InttelTrade_Advanced" value="InttelTrade_Advanced"></div>
-            <div class="field"><label class="field-l">Description <span style="color:var(--dt3);font-weight:400;">(optional)</span></label><input type="text" placeholder="Short note about this project"></div>
+            <div class="field"><label class="field-l">Project Name</label><input type="text" id="projectNameInput" placeholder="e.g. InttelTrade_Advanced"></div>
+            <div class="field"><label class="field-l">Description <span style="color:var(--dt3);font-weight:400;">(optional)</span></label><input type="text" id="projectDescInput" placeholder="Short note about this project"></div>
           </div>
         </div>
         <div class="up-actions">

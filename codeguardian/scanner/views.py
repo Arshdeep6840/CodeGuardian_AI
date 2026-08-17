@@ -1,10 +1,11 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import Project, Scan, Issue, CustomUser
 from accounts.serializers import ProjectSerializer, ScanSerializer, IssueSerializer
@@ -202,3 +203,18 @@ class ScanResultsView(APIView):
 
         serializer = IssueSerializer(issues, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def upload_page(request):
+    """View to serve the static project upload page HTML template."""
+    return render(request, "upload.html")
+
+
+class ProjectListView(generics.ListAPIView):
+    """API view to list all projects for the authenticated user."""
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user).order_by("-created_at")
+

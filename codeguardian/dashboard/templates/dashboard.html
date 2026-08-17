@@ -149,14 +149,16 @@ a{text-decoration:none;color:inherit;}
     </div>
     <nav class="side-nav">
       <div class="side-grp-t">Workspace</div>
-      <div class="side-item on"><span class="side-ico">📊</span>Dashboard</div>
-      <div class="side-item"><span class="side-ico">🔍</span>New Scan</div>
-      <div class="side-item"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-item on" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📁</span>My Projects</div>
       <div class="side-grp-t">Analysis</div>
-      <div class="side-item"><span class="side-ico">⚠️</span>Issues</div>
-      <div class="side-item"><span class="side-ico">🔧</span>Auto-Fixes</div>
-      <div class="side-item"><span class="side-ico">🧪</span>Test Cases</div>
-      <div class="side-item"><    <div class="side-foot">
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">📄</span>Reports</div>
+    </nav>
+    <div class="side-foot">
       <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
       <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
     </div>
@@ -167,7 +169,7 @@ a{text-decoration:none;color:inherit;}
     <div class="topbar">
       <div class="tb-search">🔍 <input type="text" placeholder="Search projects, files, issues..."></div>
       <div class="tb-right">
-        <button class="btn-newscan">↑ New Scan</button>
+        <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">↑ New Scan</button>
         <div class="tb-bell">🔔</div>
         <div class="tb-user">
           <div class="tb-av" id="user-av">AS</div>
@@ -185,7 +187,9 @@ a{text-decoration:none;color:inherit;}
           <div class="pg-h1">Dashboard</div>
           <div class="pg-sub">Your code health across all projects, at a glance.</div>
         </div>
-        <div class="proj-select">📁 All Projects ▾</div>
+        <select class="proj-select" id="projectSelect" style="outline:none; border:1px solid var(--bl); border-radius:9px; font-family:inherit; cursor:pointer; background:var(--lw); color:var(--dt2);">
+          <option value="">📁 All Projects</option>
+        </select>
       </div>
 
       <!-- METRICS -->
@@ -370,7 +374,7 @@ function setRingScore(circleId, valId, score) {
 }
 
 // Load and populate stats
-async function loadStats() {
+async function loadStats(projectId = "") {
   try {
     // 1. Fetch User Profile
     const meResponse = await fetchWithAuth("/api/auth/me/");
@@ -384,9 +388,28 @@ async function loadStats() {
       const initials = name.slice(0, 2).toUpperCase();
       document.getElementById("user-av").innerText = initials;
     }
+
+    // 2. Fetch Projects to populate select dropdown
+    const projectSelect = document.getElementById("projectSelect");
+    if (projectSelect && projectSelect.options.length <= 1) {
+      const projResponse = await fetchWithAuth("/api/projects/");
+      if (projResponse && projResponse.ok) {
+        const projects = await projResponse.json();
+        projects.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = "📁 " + p.name;
+          if (String(p.id) === String(projectId)) {
+            opt.selected = true;
+          }
+          projectSelect.appendChild(opt);
+        });
+      }
+    }
     
-    // 2. Fetch Dashboard Stats
-    const statsResponse = await fetchWithAuth("/api/dashboard/stats/");
+    // 3. Fetch Dashboard Stats
+    const statsUrl = projectId ? `/api/dashboard/stats/?project_id=${projectId}` : "/api/dashboard/stats/";
+    const statsResponse = await fetchWithAuth(statsUrl);
     if (statsResponse && statsResponse.ok) {
       const data = await statsResponse.json();
       
@@ -437,7 +460,7 @@ async function loadStats() {
             <td>${scan.total_issues || 0}</td>
             <td>${scan.score !== null ? Math.round(scan.score) : "—"}</td>
             <td>${date}</td>
-            <td><button class="rowbtn" onclick="window.location.href='/api/scans/${scan.scan_id}/results/'">View →</button></td>
+            <td><button class="rowbtn" onclick="window.location.href='/issues/?scan_id=${scan.scan_id}'">View →</button></td>
           `;
           scansTbody.appendChild(tr);
         });
@@ -466,8 +489,9 @@ async function loadStats() {
       }
     }
     
-    // 3. Fetch Recent Issues
-    const issuesResponse = await fetchWithAuth("/api/issues/");
+    // 4. Fetch Recent Issues
+    const issuesUrl = projectId ? `/api/issues/?project_id=${projectId}` : "/api/issues/";
+    const issuesResponse = await fetchWithAuth(issuesUrl);
     if (issuesResponse && issuesResponse.ok) {
       const issues = await issuesResponse.json();
       const issuesTbody = document.getElementById("recent-issues-tbody");
@@ -497,5 +521,12 @@ async function loadStats() {
   }
 }
 
-window.addEventListener("DOMContentLoaded", loadStats);
+// Wire change event to project select filter
+document.getElementById("projectSelect").addEventListener("change", (e) => {
+  loadStats(e.target.value);
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadStats();
+});
 </script>

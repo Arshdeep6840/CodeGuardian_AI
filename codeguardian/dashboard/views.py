@@ -20,10 +20,16 @@ class DashboardStatsView(APIView):
         projects = Project.objects.filter(user=user)
         total_projects = projects.count()
         
-        scans = Scan.objects.filter(project__user=user)
-        total_scans = scans.count()
+        project_id = request.query_params.get("project_id")
         
+        scans = Scan.objects.filter(project__user=user)
         issues = Issue.objects.filter(scan__project__user=user)
+        
+        if project_id:
+            scans = scans.filter(project_id=project_id)
+            issues = issues.filter(scan__project_id=project_id)
+            
+        total_scans = scans.count()
         total_issues = issues.count()
         
         # Severity breakdowns
