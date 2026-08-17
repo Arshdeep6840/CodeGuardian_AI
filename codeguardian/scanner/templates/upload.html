@@ -1,8 +1,13 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Scan — CodeGuardian AI</title>
+<meta name="description" content="Upload your Python project or import from GitHub to run an AI-powered code analysis.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 :root{
   --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
@@ -15,16 +20,14 @@
   --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
   --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
   --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
-  --tb:#0D1117;--th:#161B22;--tcg:#7EE8A2;--tcb:#79C0FF;--tcr:#FF7B7B;--tca:#FFAB70;--tcd:#8B949E;
+  --tb:#0D1117;--th:#161B22;--tcg:#7EE8A2;--tcb:#79C0FF;--tcr:#FF7B7B;--tca:#FFAB70;--tcd:#8B949E;--tcw:#E6EDF3;
   --r:14px;--rl:20px;--rs:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
-.syne{font-family:'Syne',sans-serif;}
-.mono{font-family:'JetBrains Mono',monospace;}
 a{text-decoration:none;color:inherit;}
 
-/* ── APP SHELL (shared) ── */
+/* ── APP SHELL ── */
 .app{display:flex;min-height:100vh;}
 .side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
 .side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
@@ -57,7 +60,7 @@ a{text-decoration:none;color:inherit;}
 /* ── UPLOAD CARD ── */
 .card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--rl);overflow:hidden;margin-bottom:22px;}
 .up-tabs{display:flex;border-bottom:1px solid var(--bl);}
-.up-tab{flex:1;text-align:center;padding:15px;font-size:13.5px;font-weight:600;color:var(--dt3);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:7px;}
+.up-tab{flex:1;text-align:center;padding:15px;font-size:13.5px;font-weight:600;color:var(--dt3);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;}
 .up-tab.on{color:var(--p);border-bottom-color:var(--p);background:var(--pp);}
 .up-body{padding:30px;}
 .up-pane{display:none;}
@@ -87,8 +90,6 @@ a{text-decoration:none;color:inherit;}
 .field input:focus,.field textarea:focus{border-color:var(--pm);}
 .field textarea{resize:vertical;min-height:70px;}
 .gh-note{display:flex;gap:9px;background:var(--pp);border-radius:9px;padding:11px 14px;font-size:12.5px;color:var(--pd);margin-top:4px;}
-
-/* Meta fields row */
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
 
 /* Actions */
@@ -96,7 +97,11 @@ a{text-decoration:none;color:inherit;}
 .btn-ghost{background:var(--lw);border:1px solid var(--bl);color:var(--dt2);padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .btn-primary{background:var(--p);border:none;color:#fff;padding:10px 22px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;display:inline-flex;align-items:center;gap:7px;}
 .btn-primary:hover{background:var(--pd);}
-.btn-primary:disabled{background:var(--bl);color:var(--dt3);cursor:not-allowed;}
+.btn-primary:disabled{background:#C8C5E8;color:#9A95C4;cursor:not-allowed;}
+
+/* Error banner */
+.err-banner{display:none;background:var(--scb);border:1px solid var(--scbd);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--sc);margin:0 30px 16px;font-weight:500;}
+.err-banner.on{display:block;}
 
 /* ── SCAN PROGRESS TERMINAL ── */
 .scan-card{background:var(--tb);border-radius:var(--rl);border:1px solid rgba(255,255,255,.08);overflow:hidden;margin-bottom:22px;display:none;}
@@ -104,7 +109,7 @@ a{text-decoration:none;color:inherit;}
 .term-hd{background:var(--th);padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
 .dots{display:flex;gap:6px;}
 .dot{width:11px;height:11px;border-radius:50%;}
-.dr{background:#FF5F57;} .dy{background:#FFBD2E;} .dg{background:#28C840;}
+.dr{background:#FF5F57;}.dy{background:#FFBD2E;}.dg{background:#28C840;}
 .term-tab{font-size:11.5px;color:var(--tcd);font-family:'JetBrains Mono',monospace;}
 .scan-status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--tcg);font-weight:600;}
 .scan-dot{width:7px;height:7px;border-radius:50%;background:var(--tcg);animation:pdot 1.2s infinite;}
@@ -123,15 +128,22 @@ a{text-decoration:none;color:inherit;}
 .rp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .rp-t{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--dt1);}
 .rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.rp-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:space-between;}
+.rp-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:space-between;transition:box-shadow .2s;}
+.rp-card:hover{box-shadow:0 4px 16px rgba(115,101,240,.08);}
 .rp-name{font-size:14px;font-weight:700;color:var(--dt1);margin-bottom:5px;}
-.rp-meta{display:flex;align-items:center;gap:7px;}
+.rp-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .tag{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;}
 .tag.zip{background:var(--pp);color:var(--p);}
 .tag.github{background:#EAF5FF;color:#2E7FD1;}
+.tag.single_file{background:#FFF4E0;color:#C47A00;}
 .tag.ready{background:var(--slb);color:var(--sl);}
 .tag.failed{background:var(--scb);color:var(--sc);}
-.rp-action{font-size:12px;font-weight:600;color:var(--p);background:var(--pp);border:none;padding:8px 14px;border-radius:8px;cursor:pointer;}
+.tag.uploaded,.tag.extracting{background:var(--smb);color:#8B6000;}
+.rp-action{font-size:12px;font-weight:600;color:var(--p);background:var(--pp);border:none;padding:8px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .2s;}
+.rp-action:hover{background:var(--p);color:#fff;}
+.rp-empty{text-align:center;padding:30px;color:var(--dt3);font-size:13.5px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 @media(max-width:760px){
   .side{display:none;}
@@ -139,6 +151,14 @@ a{text-decoration:none;color:inherit;}
   .steps{flex-wrap:wrap;}
 }
 </style>
+</head>
+<body>
+
+<script>
+  // Auth guard — redirect to login if no token
+  const _token = localStorage.getItem('access');
+  if (!_token) { window.location.href = '/login/'; }
+</script>
 
 <div class="app">
 
@@ -150,14 +170,14 @@ a{text-decoration:none;color:inherit;}
     </div>
     <nav class="side-nav">
       <div class="side-grp-t">Workspace</div>
-      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
-      <div class="side-item on" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
-      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-item" onclick="go('/dashboard/')"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item on" onclick="go('/scan/upload/')"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item" onclick="go('/projects/')"><span class="side-ico">📁</span>My Projects</div>
       <div class="side-grp-t">Analysis</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🔧</span>Auto-Fixes</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🧪</span>Test Cases</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">📄</span>Reports</div>
+      <div class="side-item" onclick="go('/issues/')"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item" onclick="go('/issues/')"><span class="side-ico">🔧</span>Auto-Fixes</div>
+      <div class="side-item" onclick="go('/issues/')"><span class="side-ico">🧪</span>Test Cases</div>
+      <div class="side-item" onclick="go('/issues/')"><span class="side-ico">📄</span>Reports</div>
     </nav>
     <div class="side-foot">
       <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
@@ -172,8 +192,8 @@ a{text-decoration:none;color:inherit;}
       <div class="tb-right">
         <div class="tb-bell">🔔</div>
         <div class="tb-user">
-          <div class="tb-av">AS</div>
-          <div><div class="tb-uname">Arshdeep Singh</div><div class="tb-urole">Developer</div></div>
+          <div class="tb-av" id="topbar-avatar">U</div>
+          <div><div class="tb-uname" id="topbar-username">Loading...</div><div class="tb-urole" id="topbar-role">Developer</div></div>
         </div>
       </div>
     </div>
@@ -181,22 +201,22 @@ a{text-decoration:none;color:inherit;}
     <div class="content">
       <div class="pg-hdr">
         <div class="pg-h1">New Scan</div>
-        <div class="pg-sub">Upload a ZIP, import from GitHub, or drop a single .py file to start a full analysis.</div>
+        <div class="pg-sub">Upload a ZIP, import from GitHub, or drop a single .py file to start a full AI analysis.</div>
       </div>
 
       <!-- UPLOAD CARD -->
       <div class="card">
         <div class="up-tabs">
-          <div class="up-tab on" data-tab="zip">📦 Upload ZIP</div>
-          <div class="up-tab" data-tab="github">🔗 Import from GitHub</div>
-          <div class="up-tab" data-tab="file">📄 Single .py File</div>
+          <div class="up-tab on" data-tab="zip" id="tab-zip">📦 Upload ZIP</div>
+          <div class="up-tab" data-tab="github" id="tab-github">🔗 Import from GitHub</div>
+          <div class="up-tab" data-tab="file" id="tab-file">📄 Single .py File</div>
         </div>
         <div class="up-body">
 
           <!-- ZIP pane -->
           <div class="up-pane on" id="pane-zip">
             <input type="file" id="fileInput" accept=".zip" style="display:none;">
-            <div class="dz" id="dz" onclick="document.getElementById('fileInput').click()">
+            <div class="dz" id="dz">
               <div class="dz-ico">☁️</div>
               <div class="dz-t">Drag & drop your project ZIP here</div>
               <div class="dz-s">or <em>click to browse</em> from your computer</div>
@@ -205,17 +225,17 @@ a{text-decoration:none;color:inherit;}
             <div class="file-row" id="fileRow">
               <div class="file-info">
                 <div class="file-ico">📦</div>
-                <div><div class="file-name" id="selectedFileName">InttelTrade_Advanced.zip</div><div class="file-size" id="selectedFileSize">4.2 MB</div></div>
+                <div><div class="file-name" id="selectedFileName">—</div><div class="file-size" id="selectedFileSize">—</div></div>
               </div>
-              <button class="file-remove" id="fileRemove">✕</button>
+              <button class="file-remove" id="fileRemove" aria-label="Remove file">✕</button>
             </div>
           </div>
 
           <!-- GitHub pane -->
           <div class="up-pane" id="pane-github">
             <div class="field">
-              <label class="field-l">GitHub Repository URL</label>
-              <input type="text" id="githubUrlInput" placeholder="https://github.com/username/repository">
+              <label class="field-l" for="githubUrlInput">GitHub Repository URL</label>
+              <input type="url" id="githubUrlInput" placeholder="https://github.com/username/repository">
             </div>
             <div class="gh-note">ℹ️ Only public repositories are supported. We'll clone the default branch and index all Python files automatically.</div>
           </div>
@@ -223,7 +243,7 @@ a{text-decoration:none;color:inherit;}
           <!-- Single file pane -->
           <div class="up-pane" id="pane-file">
             <input type="file" id="singleFileInput" accept=".py" style="display:none;">
-            <div class="dz" id="dzFile" onclick="document.getElementById('singleFileInput').click()">
+            <div class="dz" id="dzFile">
               <div class="dz-ico">🐍</div>
               <div class="dz-t">Drop a single .py file here</div>
               <div class="dz-s">or <em>click to browse</em></div>
@@ -232,72 +252,52 @@ a{text-decoration:none;color:inherit;}
             <div class="file-row" id="fileRowFile">
               <div class="file-info">
                 <div class="file-ico">📄</div>
-                <div><div class="file-name" id="selectedFileNameFile">main.py</div><div class="file-size" id="selectedFileSizeFile">12 KB</div></div>
+                <div><div class="file-name" id="selectedFileNameFile">—</div><div class="file-size" id="selectedFileSizeFile">—</div></div>
               </div>
-              <button class="file-remove" id="fileRemoveFile">✕</button>
+              <button class="file-remove" id="fileRemoveFile" aria-label="Remove file">✕</button>
             </div>
           </div>
 
           <!-- Shared metadata -->
           <div class="meta-grid">
-            <div class="field"><label class="field-l">Project Name</label><input type="text" id="projectNameInput" placeholder="e.g. InttelTrade_Advanced"></div>
-            <div class="field"><label class="field-l">Description <span style="color:var(--dt3);font-weight:400;">(optional)</span></label><input type="text" id="projectDescInput" placeholder="Short note about this project"></div>
+            <div class="field"><label class="field-l" for="projectNameInput">Project Name</label><input type="text" id="projectNameInput" placeholder="e.g. my-django-app"></div>
+            <div class="field"><label class="field-l" for="projectDescInput">Description <span style="color:var(--dt3);font-weight:400;">(optional)</span></label><input type="text" id="projectDescInput" placeholder="Short note about this project"></div>
           </div>
         </div>
+
+        <!-- Error banner -->
+        <div class="err-banner" id="errBanner" role="alert"></div>
+
         <div class="up-actions">
-          <button class="btn-ghost">Cancel</button>
+          <button class="btn-ghost" onclick="go('/projects/')">Cancel</button>
           <button class="btn-primary" id="startBtn">⚡ Start Scan</button>
         </div>
       </div>
 
-      <!-- SCAN PROGRESS -->
+      <!-- SCAN PROGRESS TERMINAL -->
       <div class="scan-card" id="scanCard">
         <div class="term-hd">
           <div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
           <span class="term-tab">codeguardian — scan.log</span>
-          <span class="scan-status"><span class="scan-dot"></span>Scanning…</span>
+          <span class="scan-status" id="scanStatusLabel"><span class="scan-dot"></span>Scanning…</span>
         </div>
         <div class="term-bd" id="termBody"></div>
         <div class="steps">
-          <div class="step done"><div class="step-dot">✓</div><div class="step-lbl">Upload</div></div>
-          <div class="step done"><div class="step-dot">✓</div><div class="step-lbl">Extract</div></div>
-          <div class="step active"><div class="step-dot">3</div><div class="step-lbl">Analyze</div></div>
-          <div class="step"><div class="step-dot">4</div><div class="step-lbl">Classify</div></div>
-          <div class="step"><div class="step-dot">5</div><div class="step-lbl">Report</div></div>
+          <div class="step" id="step1"><div class="step-dot">1</div><div class="step-lbl">Upload</div></div>
+          <div class="step" id="step2"><div class="step-dot">2</div><div class="step-lbl">Extract</div></div>
+          <div class="step" id="step3"><div class="step-dot">3</div><div class="step-lbl">Analyze</div></div>
+          <div class="step" id="step4"><div class="step-dot">4</div><div class="step-lbl">Classify</div></div>
+          <div class="step" id="step5"><div class="step-dot">5</div><div class="step-lbl">Report</div></div>
         </div>
       </div>
 
       <!-- RECENT PROJECTS -->
-      <div class="rp-hdr"><span class="rp-t">Recent Projects</span><span class="panel-link" style="font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;">View all →</span></div>
-      <div class="rp-grid">
-        <div class="rp-card">
-          <div>
-            <div class="rp-name">InttelTrade_Advanced</div>
-            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag ready">Ready</span></div>
-          </div>
-          <button class="rp-action">Scan Again</button>
-        </div>
-        <div class="rp-card">
-          <div>
-            <div class="rp-name">portfolio-website</div>
-            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag ready">Ready</span></div>
-          </div>
-          <button class="rp-action">Scan Again</button>
-        </div>
-        <div class="rp-card">
-          <div>
-            <div class="rp-name">django-blog-api</div>
-            <div class="rp-meta"><span class="tag github">GitHub</span><span class="tag ready">Ready</span></div>
-          </div>
-          <button class="rp-action">Scan Again</button>
-        </div>
-        <div class="rp-card">
-          <div>
-            <div class="rp-name">flask-inventory-app</div>
-            <div class="rp-meta"><span class="tag zip">ZIP</span><span class="tag failed">Failed</span></div>
-          </div>
-          <button class="rp-action">Retry Upload</button>
-        </div>
+      <div class="rp-hdr">
+        <span class="rp-t">Recent Projects</span>
+        <span style="font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;" onclick="go('/projects/')">View all →</span>
+      </div>
+      <div class="rp-grid" id="recentProjects">
+        <div class="rp-empty" style="grid-column:span 2;">Loading projects…</div>
       </div>
 
     </div>
@@ -305,57 +305,305 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <script>
-/* Tab switching */
+/* ─── Helpers ─── */
+function go(url){ window.location.href = url; }
+function getToken(){ return localStorage.getItem('access'); }
+function getCsrf(){
+  const c = document.cookie.split(';').find(x=>x.trim().startsWith('csrftoken='));
+  return c ? c.split('=')[1].trim() : '';
+}
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+function showErr(msg){ const b=document.getElementById('errBanner'); b.textContent=msg; b.classList.add('on'); }
+function hideErr(){ document.getElementById('errBanner').classList.remove('on'); }
+function log(text, color='#E6EDF3'){
+  const tb = document.getElementById('termBody');
+  const s = document.createElement('span');
+  s.style.cssText = `display:block;color:${color};`;
+  s.textContent = text || '\u00A0';
+  tb.appendChild(s);
+  tb.scrollTop = tb.scrollHeight;
+}
+function setStep(n){
+  for(let i=1;i<=5;i++){
+    const el = document.getElementById('step'+i);
+    if(!el) continue;
+    el.classList.remove('done','active');
+    if(i < n) el.classList.add('done'), el.querySelector('.step-dot').textContent='✓';
+    else if(i === n) el.classList.add('active'), el.querySelector('.step-dot').textContent=i;
+    else el.querySelector('.step-dot').textContent=i;
+  }
+}
+
+/* ─── Auth: load user info ─── */
+async function loadUser(){
+  const token = getToken();
+  if(!token) return;
+  try{
+    const r = await fetch('/api/auth/me/', { headers:{'Authorization':'Bearer '+token} });
+    if(r.ok){
+      const d = await r.json();
+      const name = d.username || d.email || 'User';
+      document.getElementById('topbar-username').textContent = name;
+      document.getElementById('topbar-avatar').textContent = name[0].toUpperCase();
+      document.getElementById('topbar-role').textContent = d.role === 'admin' ? 'Admin' : 'Developer';
+    }
+  } catch(e){}
+}
+
+/* ─── Logout ─── */
+document.getElementById('logout-btn').addEventListener('click',()=>{
+  localStorage.removeItem('access');
+  localStorage.removeItem('refresh');
+  go('/login/');
+});
+
+/* ─── Tab switching ─── */
+let activeTab = 'zip';
 document.querySelectorAll('.up-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.up-tab').forEach(t=>t.classList.remove('on'));
     document.querySelectorAll('.up-pane').forEach(p=>p.classList.remove('on'));
     tab.classList.add('on');
-    document.getElementById('pane-'+tab.dataset.tab).classList.add('on');
+    activeTab = tab.dataset.tab;
+    document.getElementById('pane-'+activeTab).classList.add('on');
+    hideErr();
   });
 });
 
-/* Dropzone interactions (visual only — wire to POST /api/projects/upload/) */
-const dz=document.getElementById('dz'), fileRow=document.getElementById('fileRow');
-dz.addEventListener('click',()=>fileRow.classList.add('on'));
+/* ─── ZIP Dropzone ─── */
+let zipFile = null;
+const dz = document.getElementById('dz');
+const fileInput = document.getElementById('fileInput');
+const fileRow = document.getElementById('fileRow');
+function setZipFile(file){
+  if(!file) return;
+  if(!file.name.endsWith('.zip')){ showErr('Please select a .zip file.'); return; }
+  if(file.size > 50*1024*1024){ showErr('File is too large. Maximum size is 50MB.'); return; }
+  zipFile = file;
+  document.getElementById('selectedFileName').textContent = file.name;
+  document.getElementById('selectedFileSize').textContent = fmtSize(file.size);
+  fileRow.classList.add('on');
+  if(!document.getElementById('projectNameInput').value)
+    document.getElementById('projectNameInput').value = file.name.replace(/\.zip$/i,'');
+  hideErr();
+}
+dz.addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>setZipFile(e.target.files[0]));
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');fileRow.classList.add('on');});
-document.getElementById('fileRemove').addEventListener('click',()=>fileRow.classList.remove('on'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');setZipFile(e.dataTransfer.files[0]);});
+document.getElementById('fileRemove').addEventListener('click',()=>{zipFile=null;fileRow.classList.remove('on');fileInput.value='';});
 
-/* Start scan → reveal terminal (visual only — wire to POST /api/scans/start/) */
-const LINES=[
-  {t:"$ codeguardian scan InttelTrade_Advanced --ai --report",c:"#7EE8A2"},
-  {t:"",c:""},
-  {t:"[i] Extracting archive... 86 files found (34 .py)",c:"#8B949E"},
-  {t:"[i] Running: AST · Bandit · Ruff · Secret Detector · LLM",c:"#8B949E"},
-  {t:"",c:""},
-  {t:"● CRITICAL  auth/views.py:47 — Plain-text password",c:"#FF7B7B"},
-  {t:"● HIGH      models.py:23 — SQL injection risk",c:"#FFAB70"},
-  {t:"● MEDIUM    utils.py:88 — Bare except clause",c:"#FFC53D"},
-];
-document.getElementById('startBtn').addEventListener('click',()=>{
-  const card=document.getElementById('scanCard');
-  card.classList.add('on');
-  card.scrollIntoView({behavior:'smooth',block:'center'});
-  const tb=document.getElementById('termBody');
-  tb.innerHTML='';
-  let li=0;
-  function run(){
-    if(li>=LINES.length)return;
-    const line=LINES[li++];
-    const span=document.createElement('span');
-    span.style.display='block';span.style.color=line.c||'#E6EDF3';span.textContent=line.t||'\u00A0';
-    tb.appendChild(span);
-    setTimeout(run,380);
+/* ─── Single File Dropzone ─── */
+let singleFile = null;
+const dzFile = document.getElementById('dzFile');
+const singleFileInput = document.getElementById('singleFileInput');
+const fileRowFile = document.getElementById('fileRowFile');
+function setPyFile(file){
+  if(!file) return;
+  if(!file.name.endsWith('.py')){ showErr('Please select a .py Python file.'); return; }
+  if(file.size > 2*1024*1024){ showErr('File is too large. Maximum size is 2MB.'); return; }
+  singleFile = file;
+  document.getElementById('selectedFileNameFile').textContent = file.name;
+  document.getElementById('selectedFileSizeFile').textContent = fmtSize(file.size);
+  fileRowFile.classList.add('on');
+  if(!document.getElementById('projectNameInput').value)
+    document.getElementById('projectNameInput').value = file.name.replace(/\.py$/i,'');
+  hideErr();
+}
+dzFile.addEventListener('click',()=>singleFileInput.click());
+singleFileInput.addEventListener('change',e=>setPyFile(e.target.files[0]));
+dzFile.addEventListener('dragover',e=>{e.preventDefault();dzFile.classList.add('drag');});
+dzFile.addEventListener('dragleave',()=>dzFile.classList.remove('drag'));
+dzFile.addEventListener('drop',e=>{e.preventDefault();dzFile.classList.remove('drag');setPyFile(e.dataTransfer.files[0]);});
+document.getElementById('fileRemoveFile').addEventListener('click',()=>{singleFile=null;fileRowFile.classList.remove('on');singleFileInput.value='';});
+
+/* ─── START SCAN ─── */
+document.getElementById('startBtn').addEventListener('click', async ()=>{
+  hideErr();
+  const btn = document.getElementById('startBtn');
+  const name = document.getElementById('projectNameInput').value.trim();
+  const desc = document.getElementById('projectDescInput').value.trim();
+  const token = getToken();
+  if(!token){ showErr('Your session has expired. Please log in again.'); go('/login/'); return; }
+
+  // Validation
+  if(activeTab === 'zip' && !zipFile){ showErr('Please select a ZIP file to upload.'); return; }
+  if(activeTab === 'file' && !singleFile){ showErr('Please select a .py file to upload.'); return; }
+  if(activeTab === 'github' && !document.getElementById('githubUrlInput').value.trim()){ showErr('Please enter a GitHub repository URL.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Uploading…';
+
+  // Show terminal
+  const scanCard = document.getElementById('scanCard');
+  scanCard.classList.add('on');
+  scanCard.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('termBody').innerHTML = '';
+  setStep(1);
+
+  log('$ codeguardian scan --ai --security --report', '#7EE8A2');
+  log('');
+
+  let projectId = null;
+  try {
+    // ── STEP 1: Upload / Import ──
+    if(activeTab === 'github'){
+      const ghUrl = document.getElementById('githubUrlInput').value.trim();
+      log('[i] Connecting to GitHub repository…', '#8B949E');
+      log('[i] Cloning: ' + ghUrl, '#8B949E');
+      const r = await fetch('/api/projects/github/', {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','X-CSRFToken':getCsrf()},
+        body: JSON.stringify({github_url: ghUrl, name: name || ghUrl.split('/').pop(), description: desc})
+      });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'GitHub import failed.');
+      projectId = d.id;
+      log('[✓] Repository cloned and indexed. ' + (d.total_python_files||'') + ' Python files found.', '#7EE8A2');
+    } else {
+      const fd = new FormData();
+      const uploadType = activeTab === 'file' ? 'single_file' : 'zip';
+      fd.append('file', activeTab === 'file' ? singleFile : zipFile);
+      fd.append('upload_type', uploadType);
+      fd.append('name', name || (activeTab === 'file' ? singleFile.name : zipFile.name));
+      fd.append('description', desc);
+      log('[i] Uploading file…', '#8B949E');
+      const r = await fetch('/api/projects/upload/', {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token,'X-CSRFToken':getCsrf()},
+        body: fd
+      });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Upload failed.');
+      projectId = d.id;
+      log('[✓] File uploaded and extracted. ' + (d.total_python_files||'') + ' Python files indexed.', '#7EE8A2');
+    }
+
+    setStep(2);
+    log('[i] Running: AST Parser · Bandit Security · Ruff Linter · Secret Detector · AI Reviewer', '#8B949E');
+    log('');
+
+    // ── STEP 2: Start Scan ──
+    setStep(3);
+    log('[i] Starting code analysis engine…', '#8B949E');
+    const sr = await fetch('/api/scans/start/', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','X-CSRFToken':getCsrf()},
+      body: JSON.stringify({project_id: projectId, scan_name: 'Scan_'+Date.now()})
+    });
+    const sd = await sr.json();
+    if(!sr.ok) throw new Error(sd.error || 'Scan failed to start.');
+
+    const scanId = sd.id;
+    setStep(4);
+    log('');
+    log('── Scan Results ────────────────────────', '#8B949E');
+
+    // Log severity summary
+    const crit = sd.critical_issues || 0;
+    const high = sd.high_issues || 0;
+    const med = sd.medium_issues || 0;
+    const low = sd.low_issues || 0;
+    const total = sd.total_issues_found || 0;
+
+    if(crit > 0) log('● ' + crit + ' CRITICAL issues found', '#FF7B7B');
+    if(high > 0) log('● ' + high + ' HIGH issues found', '#FFAB70');
+    if(med > 0)  log('● ' + med + ' MEDIUM issues found', '#FFC53D');
+    if(low > 0)  log('● ' + low + ' LOW issues found', '#7EE8A2');
+    if(total === 0) log('● No issues found — clean code! 🎉', '#7EE8A2');
+    log('');
+    log('── Scores ──────────────────────────────', '#8B949E');
+    log('  Security Score:       ' + (sd.security_score||100).toFixed(1) + '/100', '#79C0FF');
+    log('  Code Quality Score:   ' + (sd.code_quality_score||100).toFixed(1) + '/100', '#79C0FF');
+    log('  Maintainability:      ' + (sd.maintainability_score||100).toFixed(1) + '/100', '#79C0FF');
+    log('  Overall Health Score: ' + (sd.overall_score||100).toFixed(1) + '/100', '#7EE8A2');
+    log('');
+
+    setStep(5);
+    log('[✓] Analysis complete. Generating report…', '#7EE8A2');
+    log('');
+
+    document.getElementById('scanStatusLabel').innerHTML = '✓ Complete';
+    document.getElementById('scanStatusLabel').style.color = '#7EE8A2';
+
+    btn.innerHTML = '→ View Results';
+    btn.disabled = false;
+    btn.onclick = () => go('/issues/?scan_id=' + scanId);
+
+    setTimeout(()=> go('/issues/?scan_id=' + scanId), 1800);
+
+  } catch(err) {
+    log('');
+    log('[✗] Error: ' + err.message, '#FF7B7B');
+    document.getElementById('scanStatusLabel').innerHTML = '✗ Failed';
+    document.getElementById('scanStatusLabel').style.color = '#FF7B7B';
+    showErr(err.message);
+    btn.disabled = false;
+    btn.innerHTML = '⚡ Start Scan';
   }
-  run();
 });
 
-document.querySelectorAll('.side-item').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('on'));
-    el.classList.add('on');
-  });
-});
+/* ─── Load Recent Projects ─── */
+async function loadRecentProjects(){
+  const token = getToken();
+  const container = document.getElementById('recentProjects');
+  try {
+    const r = await fetch('/api/projects/', {headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok) throw new Error('Failed');
+    const projects = await r.json();
+    if(!projects.length){
+      container.innerHTML = '<div class="rp-empty" style="grid-column:span 2;">No projects yet. Upload one above to get started! 🚀</div>';
+      return;
+    }
+    container.innerHTML = '';
+    projects.slice(0,4).forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'rp-card';
+      const typeTag = `<span class="tag ${p.upload_type}">${p.upload_type==='github'?'GitHub':p.upload_type==='single_file'?'PY File':'ZIP'}</span>`;
+      const statusTag = `<span class="tag ${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>`;
+      const btnLabel = p.status === 'ready' ? 'Scan Again' : p.status === 'failed' ? 'Retry Upload' : 'Processing…';
+      card.innerHTML = `
+        <div>
+          <div class="rp-name">${p.name}</div>
+          <div class="rp-meta">${typeTag}${statusTag}<span style="font-size:10.5px;color:var(--dt3);">${p.total_python_files} files</span></div>
+        </div>
+        <button class="rp-action" data-id="${p.id}" data-status="${p.status}">${btnLabel}</button>`;
+      container.appendChild(card);
+    });
+
+    // Wire "Scan Again" buttons
+    container.querySelectorAll('.rp-action').forEach(btn=>{
+      btn.addEventListener('click', async (e)=>{
+        const pid = e.target.dataset.id;
+        const pstatus = e.target.dataset.status;
+        if(pstatus !== 'ready'){ showErr('Project is not ready for scanning yet.'); return; }
+        e.target.disabled = true;
+        e.target.innerHTML = '<span class="spinner"></span>';
+        const token2 = getToken();
+        try{
+          const r = await fetch('/api/scans/start/', {
+            method:'POST',
+            headers:{'Authorization':'Bearer '+token2,'Content-Type':'application/json','X-CSRFToken':getCsrf()},
+            body: JSON.stringify({project_id: pid, scan_name:'Scan_'+Date.now()})
+          });
+          const d = await r.json();
+          if(!r.ok) throw new Error(d.error||'Scan failed');
+          go('/issues/?scan_id='+d.id);
+        } catch(err){ showErr(err.message); e.target.disabled=false; e.target.textContent='Scan Again'; }
+      });
+    });
+  } catch(e){
+    container.innerHTML = '<div class="rp-empty" style="grid-column:span 2;">Could not load projects.</div>';
+  }
+}
+
+loadUser();
+loadRecentProjects();
 </script>
+</body>
+</html>
