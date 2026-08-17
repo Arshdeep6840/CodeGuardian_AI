@@ -99,6 +99,12 @@ def extract_and_map_project(project_id):
     # Define extraction directory
     extracted_dir_name = f"project_{project.id}"
     extracted_dir_path = os.path.join(settings.MEDIA_ROOT, "extracted_projects", extracted_dir_name)
+    if os.path.exists(extracted_dir_path):
+        import shutil
+        try:
+            shutil.rmtree(extracted_dir_path)
+        except Exception:
+            pass
     os.makedirs(extracted_dir_path, exist_ok=True)
 
     project.extracted_path = extracted_dir_path
@@ -106,7 +112,7 @@ def extract_and_map_project(project_id):
     python_files_count = 0
     total_files_count = 0
 
-    if project.upload_type == "zip":
+    if project.upload_type in ["zip", "github"]:
         if not project.zip_file:
             project.status = "failed"
             project.save()

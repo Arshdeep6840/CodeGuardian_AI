@@ -73,19 +73,25 @@ This document serves as a tracking README to log completed milestones, system ar
 
 ## 🛠️ Recent Fixes & Housekeeping
 * **Fixed `codeguardian/settings.py`**: Cleaned up syntax errors at the bottom of the file caused by a duplicate unclosed `TEMPLATES` block and misplaced Git diff conflict hunks.
-* **Proper Static Configuration**: Formatted `STATICFILES_DIRS = [BASE_DIR / "static"]` cleanly to support custom frontend styling files.
+* **Proper Static Configuration**: Formatted `STATICFILES_DIRS = [BASE_DIR / "static"]` cleanly to support custom frontend styling files. Created placeholder static directory to eliminate Django static files warning.
 * **User Authentication Model**: Configured `AUTH_USER_MODEL = "accounts.CustomUser"` inside `settings.py` to enable the custom user role system.
+* **Cleaned up View Imports**: Removed unused `aiohttp` import from `accounts/views.py` which was causing a `ModuleNotFoundError` on server startup.
+* **Ingestion and Extraction Fix for GitHub Repo**: Updated `extract_and_map_project` to correctly handle `github` upload types, extracting downloaded repository ZIP files (which were previously skipped).
+* **Test Isolation and Directory Cleanliness**: Cleared target extraction directory before extraction/copy in `extract_and_map_project` to avoid files persisting across test runs in media folders.
+* **Unit Test Repairs**: Fixed and validated all 5 unit tests in `scanner/tests.py` (which were failing due to directory pollution and missing mock structures). All tests now pass successfully.
+* **Superuser Account Created**: Programmatically created an admin superuser with credentials: `admin` / `adminpassword` to simplify manual browser login checks.
 
 ---
 
 ## 🔮 Next Tasks & Backlog
 
-1. **Frontend-Backend Integration**:
-   * Wire up the newly added `dashboard.html` to a Django rendering view at `/dashboard/`.
-   * Add dynamic JSON fetching via AJAX using stored JWT tokens from `/api/dashboard/stats/` to populate metric cards, circular rings, and tables on the dashboard page.
-   * Correct the login endpoint URL in `login.js` and ensure successful login redirects users to `/dashboard/`.
-2. **Database Migrations & Running Server**:
-   * Run `python manage.py makemigrations` and `python manage.py migrate` to apply any pending database updates (such as CustomUser additions).
-   * Create a Django superuser.
-3. **Scan Execution Verification**:
-   * Verify scanning functionality against an uploaded ZIP or file on disk. Ensure Bandit, Ruff, and local AST rules execute properly and save records.
+1. **Manual Web Verification & Running Server**:
+   * Run `python manage.py runserver` locally.
+   * Access the login page (`/login/`), sign in using the `admin` / `adminpassword` credentials, and confirm you are successfully redirected to `/dashboard/`.
+   * Verify that the dashboard dashboard renders and fetches stats via API calls correctly.
+2. **Scan Workflow Testing**:
+   * Upload a sample project zip file and verify that the Bandit and Ruff scan execution works on the server.
+   * Verify that scanning records are created in the database and display on the dashboard page.
+3. **AI explanations configuration**:
+   * Configure `GEMINI_API_KEY` in the local `.env` file to verify on-demand AI explanations function correctly.
+

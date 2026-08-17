@@ -108,14 +108,25 @@ class ScannerTests(APITestCase):
 
     def test_start_scan_lifecycle(self):
         """Test starting a scan and checking status and results."""
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
         # Setup an uploaded project first
         project = Project.objects.create(
             user=self.user,
             name="Manual Project",
             upload_type="zip",
             status="ready",
+            extracted_path=temp_dir,
             total_python_files=5
         )
+        for i in range(5):
+            open(os.path.join(temp_dir, f"file_{i}.py"), "w").close()
+            CodeFile.objects.create(
+                project=project,
+                file_name=f"file_{i}.py",
+                file_path=f"file_{i}.py",
+                extension=".py"
+            )
 
         start_url = reverse("scan-start")
         data = {"project_id": project.id}
@@ -170,11 +181,17 @@ class ScannerTests(APITestCase):
         ]
 
         # Setup an uploaded project first
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+        open(os.path.join(temp_dir, "app.py"), "w").close()
+        open(os.path.join(temp_dir, "utils.py"), "w").close()
+        
         project = Project.objects.create(
             user=self.user,
             name="Ruff Test Project",
             upload_type="zip",
             status="ready",
+            extracted_path=temp_dir,
             total_python_files=2
         )
         # Create corresponding CodeFile objects in DB so the database references work
