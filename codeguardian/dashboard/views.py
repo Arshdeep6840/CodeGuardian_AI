@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Avg
 from accounts.models import Project, Scan, Issue
+from django.contrib.auth.decorators import login_required
+
 
 def dashboard_page(request):
     """View to serve the static dashboard HTML template."""
