@@ -857,6 +857,37 @@ DIVIDER
 
 }
 
+/* ==========================
+Submit Button
+=============================*/
+
+.btn-submit {
+    width: 100%;
+    height: 58px;
+    border: none;
+    border-radius: 14px;
+    background: var(--primary);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-submit:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(115, 101, 240, .30);
+}
+
+.btn-submit:active {
+    transform: scale(.98);
+}
+
 
 /* ==========================
 GOOGLE BUTTON

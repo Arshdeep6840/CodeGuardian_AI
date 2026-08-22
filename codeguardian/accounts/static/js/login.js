@@ -27,15 +27,15 @@ const loader = document.getElementById("loader");
 // =============================================
 
 document
-.getElementById("togglePassword")
-.addEventListener("click", function () {
+    .getElementById("togglePassword")
+    .addEventListener("click", function () {
 
-    password.type =
-        password.type === "password"
-            ? "text"
-            : "password";
+        password.type =
+            password.type === "password"
+                ? "text"
+                : "password";
 
-});
+    });
 
 // =============================================
 // Validation
@@ -136,7 +136,7 @@ form.addEventListener("submit", async function (e) {
 
             body: JSON.stringify({
 
-                username: username.value,
+                username: username.value.trim(),
                 password: password.value
 
             })
@@ -165,13 +165,15 @@ form.addEventListener("submit", async function (e) {
 
             if (document.getElementById("remember").checked) {
 
-                localStorage.setItem(
-                    "remember",
-                    "true"
-                );
+                localStorage.setItem("access", data.access);
+                localStorage.setItem("refresh", data.refresh);
+
+            } else {
+
+                sessionStorage.setItem("access", data.access);
+                sessionStorage.setItem("refresh", data.refresh);
 
             }
-
             showMessage(
                 "Login successful.",
                 "success"
