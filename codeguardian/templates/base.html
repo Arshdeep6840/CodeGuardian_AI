@@ -27,17 +27,17 @@
 
       <ul class="nav-links">
         <li>
-          <a href="#" class="{% block nav_dashboard_active %}{% endblock %}">
+          <a href="{% url 'dashboard' %}" class="{% block nav_dashboard_active %}{% endblock %}">
             <span class="nav-dot"></span>Dashboard
           </a>
         </li>
         <li>
-          <a href="#" class="{% block nav_scan_active %}{% endblock %}">
+          <a href="{% url 'scan-upload-page' %}" class="{% block nav_scan_active %}{% endblock %}">
             <span class="nav-dot"></span>New Scan
           </a>
         </li>
         <li>
-          <a href="#" class="{% block nav_history_active %}{% endblock %}">
+          <a href="{% url 'issue-list-page' %}" class="{% block nav_history_active %}{% endblock %}">
             <span class="nav-dot"></span>History
           </a>
         </li>
@@ -63,10 +63,54 @@
   {% block content %}{% endblock %}
 
   <!-- ═══════ FOOTER ═══════ -->
-  <footer class="app-footer">
-    &copy; {% now "Y" %} CodeGuardian AI — AI-powered Python code review & bug-fixing.
+  <footer class="ft">
+    <div class="container">
+      <div class="ft-top">
+        <div>
+          <div class="ft-name">Code<em>Guardian</em> AI</div>
+          <p class="ft-desc">AI-powered Python code review, bug detection, and auto-fix
+            platform — built for Flask, Django, and FastAPI projects.</p>
+        </div>
+        <div>
+          <div class="ft-col-t">Product</div>
+          <ul class="ft-links">
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'scan-upload-page' %}">New Scan</a></li>
+            <li><a href="{% url 'issue-list-page' %}">Issues</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="ft-col-t">Account</div>
+          <ul class="ft-links">
+            {% if user.is_authenticated %}
+            <li><span>{{ user.username }}</span></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Log in</a></li>
+            <li><a href="{% url 'register' %}">Sign up</a></li>
+            {% endif %}
+          </ul>
+        </div>
+        <div>
+          <div class="ft-col-t">Resources</div>
+          <ul class="ft-links">
+            <li><a href="https://github.com/Arshdeep6840/CodeGuardian_AI" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="ft-bot">
+        <span>&copy; {% now "Y" %} CodeGuardian AI. AI-powered Python code review & bug-fixing.</span>
+        <div class="tech-bs">
+          <span class="tbadge">Django</span>
+          <span class="tbadge">LangChain</span>
+          <span class="tbadge">Bandit</span>
+          <span class="tbadge">Scikit-learn</span>
+        </div>
+      </div>
+    </div>
   </footer>
-{% block extra_scripts %}{% endblock %}
+  {% block extra_scripts %}{% endblock %}
 
 </body>
+
 </html>

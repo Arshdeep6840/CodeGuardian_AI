@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
 {% block content %}
 <!-- ═══════ HERO ═ ══════ -->
 <section class="hero">
@@ -188,22 +192,22 @@
         </div>
         <div class="dash-main">
           <div class="metrics">
-            <div class="mc">
+            <div class="metric-card">
               <div class="mv">28</div>
               <div class="ml">Total Issues</div><span class="mbadge" style="background:#FFEAE8;color:#FF3B5C">3
                 Critical</span>
             </div>
-            <div class="mc">
+            <div class="metric-card">
               <div class="mv">12</div>
               <div class="ml">Files Scanned</div><span class="mbadge" style="background:#EAE8FD;color:#7365F0">All
                 parsed</span>
             </div>
-            <div class="mc">
+            <div class="metric-card">
               <div class="mv">74</div>
               <div class="ml">Health Score</div><span class="mbadge" style="background:#E8F8F0;color:#23D18B">+6
                 pts</span>
             </div>
-            <div class="mc">
+            <div class="metric-card">
               <div class="mv">9</div>
               <div class="ml">AI Fixes Ready</div><span class="mbadge"
                 style="background:#FFF4E5;color:#FF8A3E">Download</span>
