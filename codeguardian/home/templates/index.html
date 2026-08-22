@@ -331,7 +331,7 @@
 </section>
 
 {% endblock %}
-
+{% block extra_scripts %}
 <script>
   /* ── TERMINAL ANIMATION ── */
   const LINES = [
@@ -415,3 +415,4 @@
     nav.style.background = window.scrollY > 20 ? 'rgba(7,12,24,.97)' : 'rgba(7,12,24,.90)';
   }, { passive: true });
 </script>
+{% endblock %}
