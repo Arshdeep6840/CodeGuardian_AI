@@ -25,7 +25,7 @@ def generate_fix(issue_title, issue_desc, original_code, file_path=""):
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-3.5-flash")
         
         prompt = f"""
 You are CodeGuardian AI, an expert auto-fix helper.

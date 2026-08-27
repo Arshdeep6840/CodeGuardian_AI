@@ -1,217 +1,823 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Issues & Fixes — CodeGuardian AI</title>
-<meta name="description" content="Review detected vulnerabilities, code quality issues, and apply AI-powered fixes in CodeGuardian AI.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
-  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
-  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
-  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
-  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
-  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
-  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
-  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
-  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
-  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
-  --r:14px;--rl:20px;--rs:8px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
-a{text-decoration:none;color:inherit;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issues & Fixes — CodeGuardian AI</title>
+  <meta name="description"
+    content="Review detected vulnerabilities, code quality issues, and apply AI-powered fixes in CodeGuardian AI.">
 
-/* Layout */
-.app{display:flex;min-height:100vh;}
-.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
-.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
-.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
-.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
-.side-logo-text em{color:var(--pm);font-style:normal;}
-.side-nav{flex:1;padding:10px 12px;}
-.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
-.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
-.side-item:hover{background:var(--d7);color:var(--t1);}
-.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
-.side-ico{font-size:15px;width:18px;text-align:center;}
-.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+  <script>
+    const _token = localStorage.getItem('access');
+    if (!_token) { window.location.href = '/login/'; }
+  </script>
 
-.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;flex-shrink:0;}
-.tb-search{display:flex;align-items:center;gap:8px;background:var(--l1);border:1px solid var(--bl);border-radius:9px;padding:8px 13px;width:280px;font-size:13px;color:var(--dt3);}
-.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--dt1);flex:1;font-family:'DM Sans',sans-serif;}
-.tb-right{display:flex;align-items:center;gap:14px;}
-.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
-.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
-.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
 
-.layout{flex:1;display:flex;min-height:0;overflow:hidden;}
-.list-pane{width:380px;flex-shrink:0;background:var(--lw);border-right:1px solid var(--bl);display:flex;flex-direction:column;min-height:0;}
-.detail-pane{flex:1;background:var(--l1);display:flex;flex-direction:column;min-height:0;overflow-y:auto;}
+  <!-- Marked.js for README / Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-.filter-bar{padding:14px 16px;border-bottom:1px solid var(--bl);display:flex;flex-direction:column;gap:10px;}
-.filter-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
-.pill{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;border:1px solid var(--bl);background:var(--l1);color:var(--dt3);cursor:pointer;white-space:nowrap;transition:all .15s;}
-.pill:hover,.pill.on{background:var(--p);color:#fff;border-color:var(--p);}
+  <style>
+    :root {
+      --p: #7365F0;
+      --pm: #9B91F7;
+      --pp: #EAE8FD;
+      --pd: #4A41C4;
+      --d9: #070C18;
+      --d8: #0B1222;
+      --d7: #111B30;
+      --d6: #172038;
+      --d5: #1E2C47;
+      --l1: #F4F3FF;
+      --l2: #FAFBFF;
+      --lw: #FFFFFF;
+      --t1: #EEF2FF;
+      --t2: #B4C0D6;
+      --t3: #7A8FAF;
+      --t4: #4A5A78;
+      --dt1: #1A1F36;
+      --dt2: #3A4266;
+      --dt3: #5E6B8A;
+      --bd: rgba(255, 255, 255, 0.06);
+      --bdm: rgba(255, 255, 255, 0.10);
+      --bl: rgba(26, 31, 54, 0.08);
+      --sc: #FF3B5C;
+      --scb: rgba(255, 59, 92, .12);
+      --scbd: rgba(255, 59, 92, .28);
+      --sh: #FF8A3E;
+      --shb: rgba(255, 138, 62, .12);
+      --shbd: rgba(255, 138, 62, .28);
+      --sm: #FFC53D;
+      --smb: rgba(255, 197, 61, .10);
+      --smbd: rgba(255, 197, 61, .28);
+      --sl: #23D18B;
+      --slb: rgba(35, 209, 139, .12);
+      --slbd: rgba(35, 209, 139, .28);
+      --r: 14px;
+      --rl: 20px;
+      --rs: 8px;
+    }
 
-.issue-scroll{flex:1;overflow-y:auto;padding:10px;}
-.issue-card{padding:14px;border-radius:10px;background:var(--lw);border:1px solid var(--bl);margin-bottom:8px;cursor:pointer;transition:all .15s;}
-.issue-card:hover{border-color:var(--pm);box-shadow:0 3px 12px rgba(115,101,240,.06);}
-.issue-card.active{border-color:var(--p);background:var(--pp);}
-.ic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.ic-title{font-size:13px;font-weight:700;color:var(--dt1);line-height:1.3;margin-bottom:4px;}
-.ic-file{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;}
-.badge.critical{background:var(--scb);color:var(--sc);}
-.badge.high{background:var(--shb);color:var(--sh);}
-.badge.medium{background:var(--smb);color:#B38600;}
-.badge.low{background:var(--slb);color:var(--sl);}
-.badge.fixed{background:var(--slb);color:var(--sl);border:1px solid var(--slbd);}
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--l1);
+      color: var(--dt1);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.detail-content{padding:26px 32px 60px;max-width:1000px;}
-.dt-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:24px;margin-bottom:20px;}
-.dt-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;}
-.dt-h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--dt1);}
-.dt-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--dt3);margin-top:6px;}
-.code-block{background:#0D1117;color:#E6EDF3;padding:16px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;overflow-x:auto;margin:12px 0;}
-.ai-box{background:linear-gradient(135deg,rgba(115,101,240,.06),rgba(155,145,247,.12));border:1px solid rgba(115,101,240,.2);border-radius:var(--r);padding:20px;margin-bottom:20px;}
-.ai-title{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-weight:700;color:var(--p);font-size:14px;margin-bottom:12px;}
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-.diff-container{background:#0D1117;border-radius:10px;overflow:hidden;margin:16px 0;}
-.diff-line{padding:4px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;margin:0;}
-.diff-add{background:rgba(40,200,64,.15);color:#7EE8A2;}
-.diff-del{background:rgba(255,95,87,.15);color:#FF7B7B;}
+    /* ── APP SHELL ── */
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
 
-.btn-p{background:var(--p);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;}
-.btn-g{background:var(--lw);border:1px solid var(--bl);color:var(--dt2);padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;}
-.btn-success{background:var(--sl);color:#04231a;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;}
+    /* Sidebar */
+    .side {
+      width: 224px;
+      flex-shrink: 0;
+      background: var(--d9);
+      border-right: 1px solid var(--bd);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
 
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--dt3);padding:40px;text-align:center;}
-.empty-ico{font-size:40px;margin-bottom:12px;}
-</style>
+    .side-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 20px 20px 18px;
+    }
+
+    .side-logo-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--p);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .side-logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--t1);
+    }
+
+    .side-logo-text em {
+      color: var(--pm);
+      font-style: normal;
+    }
+
+    .side-nav {
+      flex: 1;
+      padding: 10px 12px;
+    }
+
+    .side-grp-t {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--t4);
+      padding: 14px 10px 8px;
+    }
+
+    .side-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 9px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--t3);
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: all .15s;
+    }
+
+    .side-item:hover {
+      background: var(--d7);
+      color: var(--t1);
+    }
+
+    .side-item.on {
+      background: rgba(115, 101, 240, .16);
+      color: var(--pm);
+    }
+
+    .side-ico {
+      font-size: 15px;
+      width: 18px;
+      text-align: center;
+    }
+
+    .side-foot {
+      padding: 14px 12px 18px;
+      border-top: 1px solid var(--bd);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 60px;
+      background: var(--lw);
+      border-bottom: 1px solid var(--bl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px;
+      flex-shrink: 0;
+    }
+
+    .tb-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--l1);
+      border: 1px solid var(--bl);
+      border-radius: 9px;
+      padding: 8px 13px;
+      width: 280px;
+      font-size: 13px;
+      color: var(--dt3);
+    }
+
+    .tb-search input {
+      border: none;
+      background: none;
+      outline: none;
+      font-size: 13px;
+      color: var(--dt1);
+      flex: 1;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .tb-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-newscan {
+      background: var(--p);
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Sans', sans-serif;
+      transition: background .2s;
+    }
+
+    .btn-newscan:hover {
+      background: var(--pd);
+    }
+
+    .tb-user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      padding-left: 12px;
+      border-left: 1px solid var(--bl);
+    }
+
+    .tb-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--p);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tb-uname {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dt1);
+    }
+
+    /* Layout */
+    .layout {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .list-pane {
+      width: 380px;
+      flex-shrink: 0;
+      background: var(--lw);
+      border-right: 1px solid var(--bl);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .detail-pane {
+      flex: 1;
+      background: var(--l1);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--bl);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      border: 1px solid var(--bl);
+      background: var(--l1);
+      color: var(--dt3);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .15s;
+    }
+
+    .pill:hover,
+    .pill.on {
+      background: var(--p);
+      color: #fff;
+      border-color: var(--p);
+    }
+
+    /* Issue List */
+    .issue-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .issue-card {
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--lw);
+      border: 1px solid var(--bl);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .issue-card:hover {
+      border-color: var(--pm);
+      box-shadow: 0 3px 12px rgba(115, 101, 240, .06);
+    }
+
+    .issue-card.active {
+      border-color: var(--p);
+      background: var(--pp);
+    }
+
+    .ic-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .ic-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dt1);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .ic-file {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--dt3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge.critical {
+      background: var(--scb);
+      color: var(--sc);
+    }
+
+    .badge.high {
+      background: var(--shb);
+      color: var(--sh);
+    }
+
+    .badge.medium {
+      background: var(--smb);
+      color: #B38600;
+    }
+
+    .badge.low {
+      background: var(--slb);
+      color: var(--sl);
+    }
+
+    .badge.fixed {
+      background: var(--slb);
+      color: var(--sl);
+      border: 1px solid var(--slbd);
+    }
+
+    /* Detail Cards */
+    .detail-content {
+      padding: 26px 32px 60px;
+      max-width: 1000px;
+    }
+
+    .dt-card {
+      background: var(--lw);
+      border: 1px solid var(--bl);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .dt-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .dt-h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--dt1);
+    }
+
+    .dt-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--dt3);
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .code-block {
+      background: #0D1117;
+      color: #E6EDF3;
+      padding: 16px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    /* ── README-STYLE GEMINI AI BOX ── */
+    .ai-readme-card {
+      background: var(--lw);
+      border: 1px solid var(--bl);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(115, 101, 240, .04);
+    }
+
+    .ai-readme-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--bl);
+    }
+
+    .ai-badge-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--p);
+    }
+
+    .ai-model-tag {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--pp);
+      color: var(--pd);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Markdown Body (README Formatting) */
+    .markdown-body {
+      font-size: 13.5px;
+      color: var(--dt2);
+      line-height: 1.75;
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-family: 'Syne', sans-serif;
+      color: var(--dt1);
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .markdown-body h1 {
+      font-size: 18px;
+      border-bottom: 1px solid var(--bl);
+      padding-bottom: 6px;
+    }
+
+    .markdown-body h2 {
+      font-size: 16px;
+      border-bottom: 1px solid var(--bl);
+      padding-bottom: 5px;
+    }
+
+    .markdown-body h3 {
+      font-size: 14.5px;
+    }
+
+    .markdown-body h4 {
+      font-size: 13.5px;
+    }
+
+    .markdown-body p {
+      margin-bottom: 12px;
+    }
+
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 14px;
+      padding-left: 22px;
+    }
+
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+
+    .markdown-body strong {
+      color: var(--dt1);
+      font-weight: 700;
+    }
+
+    .markdown-body em {
+      font-style: italic;
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--p);
+      padding: 8px 14px;
+      margin: 12px 0;
+      background: var(--pp);
+      color: var(--pd);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+    }
+
+    .markdown-body code:not(pre code) {
+      background: var(--l2);
+      border: 1px solid var(--bl);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--pd);
+    }
+
+    .markdown-body pre {
+      background: #0D1117;
+      color: #E6EDF3;
+      padding: 14px;
+      border-radius: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Diff Viewer */
+    .diff-container {
+      background: #0D1117;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    .diff-line {
+      padding: 4px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .diff-add {
+      background: rgba(40, 200, 64, .15);
+      color: #7EE8A2;
+    }
+
+    .diff-del {
+      background: rgba(255, 95, 87, .15);
+      color: #FF7B7B;
+    }
+
+    /* Buttons */
+    .btn-p {
+      background: var(--p);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-g {
+      background: var(--lw);
+      border: 1px solid var(--bl);
+      color: var(--dt2);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-success {
+      background: var(--sl);
+      color: #04231a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--dt3);
+      padding: 40px;
+      text-align: center;
+    }
+
+    .empty-ico {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+  </style>
 </head>
+
 <body>
 
-<script>
-  const _token = localStorage.getItem('access');
-  if (!_token) { window.location.href = '/login/'; }
-</script>
-
-<div class="app">
-  <aside class="side">
-    <div class="side-logo">
-      <div class="side-logo-icon">CG</div>
-      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
-    </div>
-    <nav class="side-nav">
-      <div class="side-grp-t">Workspace</div>
-      <div class="side-item" onclick="location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
-      <div class="side-item" onclick="location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
-      <div class="side-item" onclick="location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
-      <div class="side-grp-t">Analysis</div>
-      <div class="side-item on" onclick="location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
-    </nav>
-    <div class="side-foot">
-      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
-    </div>
-  </aside>
-
-  <div class="main">
-    <div class="topbar">
-      <div class="tb-search">🔍 <input type="text" id="searchInput" placeholder="Filter issues by title or file..."></div>
-      <div class="tb-right">
-        <button class="btn-p" onclick="location.href='/scan/upload/'">⚡ New Scan</button>
-        <div class="tb-user">
-          <div class="tb-av" id="user-av">U</div>
-          <div class="tb-uname" id="user-name">Developer</div>
-        </div>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <div class="side-logo">
+        <div class="side-logo-icon">CG</div>
+        <span class="side-logo-text">Code<em>Guardian</em> AI</span>
       </div>
-    </div>
+      <nav class="side-nav">
+        <div class="side-grp-t">Workspace</div>
+        <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard
+        </div>
+        <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan
+        </div>
+        <div class="side-item" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects
+        </div>
+        <div class="side-grp-t">Analysis</div>
+        <div class="side-item on" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues &
+          Fixes</div>
+      </nav>
+      <div class="side-foot">
+        <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
+      </div>
+    </aside>
 
-    <div class="layout">
-      <!-- LEFT LIST -->
-      <div class="list-pane">
-        <div class="filter-bar">
-          <div class="filter-pills">
-            <div class="pill on" data-sev="">All (<span id="cnt-all">0</span>)</div>
-            <div class="pill" data-sev="critical">Critical (<span id="cnt-crit">0</span>)</div>
-            <div class="pill" data-sev="high">High (<span id="cnt-high">0</span>)</div>
-            <div class="pill" data-sev="medium">Medium (<span id="cnt-med">0</span>)</div>
-            <div class="pill" data-sev="low">Low (<span id="cnt-low">0</span>)</div>
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="tb-search">🔍 <input type="text" id="searchInput" placeholder="Filter issues by title or file...">
+        </div>
+        <div class="tb-right">
+          <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">⚡ New Scan</button>
+          <div class="tb-user">
+            <div class="tb-av" id="user-av">AS</div>
+            <div class="tb-uname" id="user-uname">Developer</div>
           </div>
         </div>
-        <div class="issue-scroll" id="issueList">
-          <div class="empty-state">Loading issues…</div>
-        </div>
       </div>
 
-      <!-- RIGHT DETAIL -->
-      <div class="detail-pane" id="detailPane">
-        <div class="empty-state">
-          <div class="empty-ico">🔍</div>
-          <h3>Select an issue to inspect</h3>
-          <p>View AI explanations, code snippets, risk factors, and auto-generated fixes.</p>
+      <!-- SPLIT LAYOUT -->
+      <div class="layout">
+        <!-- LEFT: ISSUE LIST -->
+        <div class="list-pane">
+          <div class="filter-bar">
+            <div class="filter-pills">
+              <div class="pill on" data-sev="">All (<span id="cnt-all">0</span>)</div>
+              <div class="pill" data-sev="critical">Critical (<span id="cnt-crit">0</span>)</div>
+              <div class="pill" data-sev="high">High (<span id="cnt-high">0</span>)</div>
+              <div class="pill" data-sev="medium">Medium (<span id="cnt-med">0</span>)</div>
+              <div class="pill" data-sev="low">Low (<span id="cnt-low">0</span>)</div>
+            </div>
+          </div>
+          <div class="issue-scroll" id="issueList">
+            <div class="empty-state">Loading issues…</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: DETAIL & AI FIX -->
+        <div class="detail-pane" id="detailPane">
+          <div class="empty-state">
+            <div class="empty-ico">🔍</div>
+            <h3>Select an issue to inspect</h3>
+            <p>View AI explanations, code snippets, risk factors, and auto-generated fixes.</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-let currentIssues = [];
-let selectedIssue = null;
-let activeSeverity = '';
-const urlParams = new URLSearchParams(window.location.search);
-const scanId = urlParams.get('scan_id');
-const projectId = urlParams.get('project_id');
+  <script>
+    let currentIssues = [];
+    let selectedIssue = null;
+    let activeSeverity = '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const scanId = urlParams.get('scan_id');
+    const projectId = urlParams.get('project_id');
 
-function getToken() { return localStorage.getItem('access'); }
+    function getToken() { return localStorage.getItem('access'); }
 
-async function fetchIssues() {
-  const token = getToken();
-  let url = '/api/issues/?';
-  if (scanId) url += `scan_id=${scanId}&`;
-  if (projectId) url += `project_id=${projectId}&`;
-  if (activeSeverity) url += `severity=${activeSeverity}&`;
+    async function fetchIssues() {
+      const token = getToken();
+      let url = '/api/issues/?';
+      if (scanId) url += `scan_id=${scanId}&`;
+      if (projectId) url += `project_id=${projectId}&`;
+      if (activeSeverity) url += `severity=${activeSeverity}&`;
 
-  try {
-    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-    if (!res.ok) throw new Error('Failed to load issues');
-    currentIssues = await res.json();
-    renderIssueList();
-    updateCounts();
-  } catch (err) {
-    document.getElementById('issueList').innerHTML = `<div class="empty-state">${err.message}</div>`;
-  }
-}
+      try {
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Failed to load issues');
+        currentIssues = await res.json();
+        renderIssueList();
+        updateCounts();
+      } catch (err) {
+        document.getElementById('issueList').innerHTML = `<div class="empty-state">${err.message}</div>`;
+      }
+    }
 
-function updateCounts() {
-  document.getElementById('cnt-all').textContent = currentIssues.length;
-  document.getElementById('cnt-crit').textContent = currentIssues.filter(i => i.severity === 'critical').length;
-  document.getElementById('cnt-high').textContent = currentIssues.filter(i => i.severity === 'high').length;
-  document.getElementById('cnt-med').textContent = currentIssues.filter(i => i.severity === 'medium').length;
-  document.getElementById('cnt-low').textContent = currentIssues.filter(i => i.severity === 'low').length;
-}
+    function updateCounts() {
+      document.getElementById('cnt-all').textContent = currentIssues.length;
+      document.getElementById('cnt-crit').textContent = currentIssues.filter(i => i.severity === 'critical').length;
+      document.getElementById('cnt-high').textContent = currentIssues.filter(i => i.severity === 'high').length;
+      document.getElementById('cnt-med').textContent = currentIssues.filter(i => i.severity === 'medium').length;
+      document.getElementById('cnt-low').textContent = currentIssues.filter(i => i.severity === 'low').length;
+    }
 
-function renderIssueList() {
-  const container = document.getElementById('issueList');
-  if (!currentIssues.length) {
-    container.innerHTML = '<div class="empty-state">🎉 No issues found! Code looks clean.</div>';
-    return;
-  }
+    function renderIssueList() {
+      const container = document.getElementById('issueList');
+      if (!currentIssues.length) {
+        container.innerHTML = '<div class="empty-state">🎉 No issues found! Code looks clean.</div>';
+        return;
+      }
 
-  container.innerHTML = '';
-  currentIssues.forEach(issue => {
-    const card = document.createElement('div');
-    card.className = `issue-card ${selectedIssue && selectedIssue.id === issue.id ? 'active' : ''}`;
-    card.onclick = () => loadIssueDetail(issue.id);
-    card.innerHTML = `
+      container.innerHTML = '';
+      currentIssues.forEach(issue => {
+        const card = document.createElement('div');
+        card.className = `issue-card ${selectedIssue && selectedIssue.id === issue.id ? 'active' : ''}`;
+        card.onclick = () => loadIssueDetail(issue.id);
+        card.innerHTML = `
       <div class="ic-header">
         <span class="badge ${issue.severity}">${issue.severity}</span>
         ${issue.is_fixed ? '<span class="badge fixed">Fixed</span>' : ''}
@@ -219,45 +825,56 @@ function renderIssueList() {
       <div class="ic-title">${escapeHtml(issue.title)}</div>
       <div class="ic-file">📄 ${escapeHtml(issue.file_path || 'unknown')}:${issue.line_number || 1}</div>
     `;
-    container.appendChild(card);
-  });
-}
+        container.appendChild(card);
+      });
+    }
 
-async function loadIssueDetail(id) {
-  const token = getToken();
-  const pane = document.getElementById('detailPane');
-  pane.innerHTML = '<div class="empty-state">✨ Generating AI analysis and fix suggestions...</div>';
+    async function loadIssueDetail(id) {
+      const token = getToken();
+      const pane = document.getElementById('detailPane');
+      pane.innerHTML = '<div class="empty-state">✨ Generating AI analysis and fix suggestions...</div>';
 
-  try {
-    const res = await fetch(`/api/issues/${id}/`, { headers: { 'Authorization': `Bearer ${token}` } });
-    const issue = await res.json();
-    selectedIssue = issue;
-    renderIssueList();
+      try {
+        const res = await fetch(`/api/issues/${id}/`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const issue = await res.json();
+        selectedIssue = issue;
+        renderIssueList();
 
-    let fixData = null;
-    try {
-      const fixRes = await fetch(`/api/fixes/issue/${id}/`, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (fixRes.ok) fixData = await fixRes.json();
-    } catch(e) {}
+        // Fetch AI fix suggestion
+        let fixData = null;
+        try {
+          const fixRes = await fetch(`/api/fixes/issue/${id}/`, { headers: { 'Authorization': `Bearer ${token}` } });
+          if (fixRes.ok) fixData = await fixRes.json();
+        } catch (e) { }
 
-    renderDetailView(issue, fixData);
-  } catch (err) {
-    pane.innerHTML = `<div class="empty-state">Failed to load issue details: ${err.message}</div>`;
-  }
-}
+        renderDetailView(issue, fixData);
+      } catch (err) {
+        pane.innerHTML = `<div class="empty-state">Failed to load issue details: ${err.message}</div>`;
+      }
+    }
 
-function renderDetailView(issue, fix) {
-  const pane = document.getElementById('detailPane');
-  
-  let fixHtml = '';
-  if (fix) {
-    fixHtml = `
+    function renderDetailView(issue, fix) {
+      const pane = document.getElementById('detailPane');
+
+      // Format the Gemini AI Markdown output like a README file
+      let aiMarkdownHtml = '<em>No AI explanation generated yet.</em>';
+      if (issue.ai_explanation) {
+        if (window.marked) {
+          aiMarkdownHtml = marked.parse(issue.ai_explanation);
+        } else {
+          aiMarkdownHtml = `<pre>${escapeHtml(issue.ai_explanation)}</pre>`;
+        }
+      }
+
+      let fixHtml = '';
+      if (fix) {
+        fixHtml = `
       <div class="dt-card">
-        <div class="ai-title">🔧 AI-Generated Fix</div>
-        <p style="font-size:13px;margin-bottom:12px;color:var(--dt2);">${escapeHtml(fix.explanation || '')}</p>
+        <div class="ai-badge-title">🔧 AI-Generated Fix</div>
+        <p style="font-size:13px;margin:8px 0 12px;color:var(--dt2);">${escapeHtml(fix.explanation || '')}</p>
         
         <div class="diff-container">
-          <div style="background:#161B22;padding:6px 12px;font-size:11px;color:#8B949E;">Unified Diff Patch:</div>
+          <div style="background:#161B22;padding:6px 12px;font-size:11px;color:#8B949E;border-bottom:1px solid rgba(255,255,255,0.06);">Unified Diff:</div>
           <pre class="diff-line diff-del">- ${escapeHtml(fix.original_code || issue.code_snippet || '')}</pre>
           <pre class="diff-line diff-add">+ ${escapeHtml(fix.fixed_code || '')}</pre>
         </div>
@@ -270,10 +887,11 @@ function renderDetailView(issue, fix) {
         </div>
       </div>
     `;
-  }
+      }
 
-  pane.innerHTML = `
+      pane.innerHTML = `
     <div class="detail-content">
+      <!-- ISSUE OVERVIEW CARD -->
       <div class="dt-card">
         <div class="dt-header">
           <div>
@@ -294,72 +912,110 @@ function renderDetailView(issue, fix) {
         </div>
       </div>
 
-      <div class="ai-box">
-        <div class="ai-title">✨ Gemini AI Explanation & Risk Analysis</div>
-        <div style="font-size:13px;line-height:1.7;color:var(--dt1);white-space:pre-wrap;">${escapeHtml(issue.ai_explanation || 'Generating AI review...')}</div>
+      <!-- README-STYLE GEMINI AI EXPLANATION & RISK ANALYSIS -->
+      <div class="ai-readme-card">
+        <div class="ai-readme-header">
+          <div class="ai-badge-title">
+            <span>✨</span> Gemini AI Explanation & Risk Analysis
+          </div>
+          <span class="ai-model-tag">gemini-1.5-flash</span>
+        </div>
+        <div class="markdown-body">
+          ${aiMarkdownHtml}
+        </div>
       </div>
 
+      <!-- AI FIX SECTION -->
       ${fixHtml}
     </div>
   `;
-}
+    }
 
-async function applyFix(fixId) {
-  const token = getToken();
-  try {
-    const res = await fetch(`/api/fixes/${fixId}/status/`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'applied' })
-    });
-    if (res.ok) {
-      alert('Fix marked as applied!');
-      fetchIssues();
+    async function applyFix(fixId) {
+      const token = getToken();
+      try {
+        const res = await fetch(`/api/fixes/${fixId}/status/`, {
+          method: 'PATCH',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'applied' })
+        });
+        if (res.ok) {
+          alert('Fix marked as applied!');
+          fetchIssues();
+          if (selectedIssue) loadIssueDetail(selectedIssue.id);
+        }
+      } catch (e) { alert('Failed to apply fix'); }
+    }
+
+    async function updateFixStatus(fixId, status) {
+      const token = getToken();
+      await fetch(`/api/fixes/${fixId}/status/`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: status })
+      });
       if (selectedIssue) loadIssueDetail(selectedIssue.id);
     }
-  } catch(e) { alert('Failed to apply fix'); }
-}
 
-async function updateFixStatus(fixId, status) {
-  const token = getToken();
-  await fetch(`/api/fixes/${fixId}/status/`, {
-    method: 'PATCH',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: status })
-  });
-  if (selectedIssue) loadIssueDetail(selectedIssue.id);
-}
+    async function markFalsePositive(issueId) {
+      const token = getToken();
+      await fetch(`/api/issues/${issueId}/`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_false_positive: true })
+      });
+      fetchIssues();
+    }
 
-async function markFalsePositive(issueId) {
-  const token = getToken();
-  await fetch(`/api/issues/${issueId}/`, {
-    method: 'PATCH',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ is_false_positive: true })
-  });
-  fetchIssues();
-}
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+    document.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+        pill.classList.add('on');
+        activeSeverity = pill.dataset.sev;
+        fetchIssues();
+      });
+    });
 
-document.querySelectorAll('.pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
-    pill.classList.add('on');
-    activeSeverity = pill.dataset.sev;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = currentIssues.filter(i =>
+        i.title.toLowerCase().includes(q) ||
+        (i.file_path && i.file_path.toLowerCase().includes(q))
+      );
+      const container = document.getElementById('issueList');
+      if (!filtered.length) {
+        container.innerHTML = '<div class="empty-state">No matching issues found.</div>';
+        return;
+      }
+      container.innerHTML = '';
+      filtered.forEach(issue => {
+        const card = document.createElement('div');
+        card.className = `issue-card ${selectedIssue && selectedIssue.id === issue.id ? 'active' : ''}`;
+        card.onclick = () => loadIssueDetail(issue.id);
+        card.innerHTML = `
+      <div class="ic-header">
+        <span class="badge ${issue.severity}">${issue.severity}</span>
+        ${issue.is_fixed ? '<span class="badge fixed">Fixed</span>' : ''}
+      </div>
+      <div class="ic-title">${escapeHtml(issue.title)}</div>
+      <div class="ic-file">📄 ${escapeHtml(issue.file_path || 'unknown')}:${issue.line_number || 1}</div>
+    `;
+        container.appendChild(card);
+      });
+    });
+
+    document.getElementById('logout-btn').onclick = () => {
+      localStorage.clear();
+      window.location.href = '/login/';
+    };
+
     fetchIssues();
-  });
-});
-
-document.getElementById('logout-btn').onclick = () => {
-  localStorage.clear();
-  location.href = '/login/';
-};
-
-fetchIssues();
-</script>
+  </script>
 </body>
+
 </html>
