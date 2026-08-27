@@ -1,5 +1,7 @@
 import os
 import google.generativeai as genai
+from dotenv import load_dotenv
+load_dotenv()
 
 def explain_issue(issue_title, issue_desc, code_snippet=None):
     """
@@ -15,7 +17,7 @@ def explain_issue(issue_title, issue_desc, code_snippet=None):
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-3.5-flash")
         
         prompt = f"""
 You are CodeGuardian AI, an expert code reviewer and security engineer.

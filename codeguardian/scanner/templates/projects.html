@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Projects — CodeGuardian AI</title>
+<meta name="description" content="Manage and trigger code scans across your Python repositories and files.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+
+/* Shell */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+/* Main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--l1);border:1px solid var(--bl);border-radius:9px;padding:8px 13px;width:280px;font-size:13px;color:var(--dt3);}
+.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--dt1);flex:1;font-family:'DM Sans',sans-serif;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.btn-newscan{background:var(--p);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-newscan:hover{background:var(--pd);}
+.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+
+.content{padding:28px 30px 60px;max-width:1200px;margin:0 auto;width:100%;}
+.pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+
+/* Projects Grid */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:18px;}
+.proj-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;justify-content:space-between;transition:all .2s;}
+.proj-card:hover{border-color:var(--pm);box-shadow:0 4px 18px rgba(115,101,240,.08);transform:translateY(-2px);}
+.proj-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.proj-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--dt1);word-break:break-word;}
+.proj-desc{font-size:13px;color:var(--dt3);margin-bottom:16px;line-height:1.5;min-height:38px;}
+
+/* Badges */
+.badge-group{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;text-transform:uppercase;}
+.tag.zip{background:var(--pp);color:var(--p);}
+.tag.github{background:#EAF5FF;color:#2E7FD1;}
+.tag.single_file{background:#FFF4E0;color:#C47A00;}
+.tag.ready{background:var(--slb);color:var(--sl);}
+.tag.failed{background:var(--scb);color:var(--sc);}
+
+.proj-stats{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--l2);border-radius:9px;margin-bottom:16px;font-size:12.5px;color:var(--dt2);}
+.proj-actions{display:flex;align-items:center;gap:8px;}
+.btn-scan{background:var(--p);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;flex:1;text-align:center;}
+.btn-scan:hover{background:var(--pd);}
+.btn-issues{background:var(--lw);border:1px solid var(--bl);color:var(--dt2);padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.btn-issues:hover{border-color:var(--pm);color:var(--p);}
+
+.empty-state{text-align:center;padding:60px 20px;background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);grid-column:1/-1;}
+.empty-ico{font-size:44px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item on" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
+    </nav>
+    <div class="side-foot">
+      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-search">🔍 <input type="text" id="projectSearch" placeholder="Search projects..."></div>
+      <div class="tb-right">
+        <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">⚡ Upload New</button>
+        <div class="tb-user">
+          <div class="tb-av" id="user-av">AS</div>
+          <div class="tb-uname" id="user-uname">Developer</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div>
+          <div class="pg-h1">My Projects</div>
+          <div class="pg-sub">Manage your uploaded code repositories and launch automated scans.</div>
+        </div>
+      </div>
+
+      <div class="proj-grid" id="projectGrid">
+        <div class="empty-state">Loading your projects...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let allProjects = [];
+
+function getToken() {
+  return localStorage.getItem("access");
+}
+
+async function loadUserProfile() {
+  const token = getToken();
+  try {
+    const res = await fetch("/api/auth/me/", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (res.ok) {
+      const user = await res.json();
+      const name = user.username || user.email || "Developer";
+      document.getElementById("user-uname").innerText = name;
+      document.getElementById("user-av").innerText = name.slice(0, 2).toUpperCase();
+    }
+  } catch (err) {}
+}
+
+async function loadProjects() {
+  const token = getToken();
+  const grid = document.getElementById("projectGrid");
+  
+  try {
+    const res = await fetch("/api/projects/", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!res.ok) throw new Error("Failed to load projects");
+    allProjects = await res.json();
+    renderProjects(allProjects);
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state">Failed to load projects: ${err.message}</div>`;
+  }
+}
+
+function renderProjects(projects) {
+  const grid = document.getElementById("projectGrid");
+  if (!projects.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-ico">📁</div>
+        <h3>No projects added yet</h3>
+        <p style="color:var(--dt3);margin:8px 0 16px;">Upload a Python project or import from GitHub to get started.</p>
+        <button class="btn-newscan" style="margin:0 auto;" onclick="window.location.href='/scan/upload/'">⚡ Upload First Project</button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = "";
+  projects.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "proj-card";
+    const date = new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const typeLabel = p.upload_type === "github" ? "GitHub" : p.upload_type === "single_file" ? "Single File" : "ZIP Archive";
+    
+    card.innerHTML = `
+      <div>
+        <div class="proj-top">
+          <div class="proj-title">${escapeHtml(p.name)}</div>
+        </div>
+        <div class="badge-group">
+          <span class="tag ${p.upload_type}">${typeLabel}</span>
+          <span class="tag ${p.status}">${p.status}</span>
+        </div>
+        <div class="proj-desc">${escapeHtml(p.description || "No description provided.")}</div>
+        <div class="proj-stats">
+          <span>🐍 <b>${p.total_python_files || 0}</b> Python files</span>
+          <span>📅 ${date}</span>
+        </div>
+      </div>
+      <div class="proj-actions">
+        <button class="btn-scan" onclick="triggerScan(${p.id})">⚡ Run Scan</button>
+        <button class="btn-issues" onclick="window.location.href='/issues/?project_id=${p.id}'">Issues →</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+async function triggerScan(projectId) {
+  const token = getToken();
+  try {
+    const res = await fetch("/api/scans/start/", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ project_id: projectId, scan_name: "Scan_" + Date.now() })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      window.location.href = `/issues/?scan_id=${data.id}`;
+    } else {
+      alert(data.error || "Failed to start scan");
+    }
+  } catch (err) {
+    alert("Error starting scan: " + err.message);
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+document.getElementById("projectSearch").addEventListener("input", (e) => {
+  const q = e.target.value.toLowerCase();
+  const filtered = allProjects.filter(p => p.name.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)));
+  renderProjects(filtered);
+});
+
+document.getElementById("logout-btn").onclick = () => {
+  localStorage.clear();
+  window.location.href = "/login/";
+};
+
+loadUserProfile();
+loadProjects();
+</script>
+</body>
+</html>

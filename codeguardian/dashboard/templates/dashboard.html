@@ -1,9 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — CodeGuardian AI</title>
+<meta name="description" content="Overview of project code health, vulnerabilities, security scores, and recent scans in CodeGuardian AI.">
 
 <script>
   if (!localStorage.getItem("access")) {
     window.location.href = "/login/";
   }
 </script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -98,7 +106,7 @@ a{text-decoration:none;color:inherit;}
 .sev-r{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
 .sev-lbl{font-size:11px;font-weight:700;width:64px;letter-spacing:.03em;}
 .sev-track{flex:1;height:8px;background:#EEEEF5;border-radius:4px;overflow:hidden;}
-.sev-fill{height:100%;border-radius:4px;}
+.sev-fill{height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(0.4, 0, 0.2, 1);}
 .sev-cnt{font-size:12.5px;font-weight:700;color:var(--dt2);min-width:22px;text-align:right;}
 
 /* Tables */
@@ -120,9 +128,9 @@ a{text-decoration:none;color:inherit;}
 /* Risky files */
 .rf-row{display:flex;align-items:center;justify-content:space-between;padding:11px 4px;border-bottom:1px solid var(--bl);}
 .rf-row:last-child{border-bottom:none;}
-.rf-path{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dt1);}
-.rf-proj{font-size:11px;color:var(--dt4);color:var(--dt3);margin-top:2px;}
-.rf-badge{background:var(--scb);color:var(--sc);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px;}
+.rf-path{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dt1);word-break:break-all;}
+.rf-proj{font-size:11px;color:var(--dt3);margin-top:2px;}
+.rf-badge{background:var(--scb);color:var(--sc);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap;margin-left:8px;}
 
 /* Grid full */
 .grid2b{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -138,6 +146,8 @@ a{text-decoration:none;color:inherit;}
   .tb-search{display:none;}
 }
 </style>
+</head>
+<body>
 
 <div class="app">
 
@@ -151,15 +161,11 @@ a{text-decoration:none;color:inherit;}
       <div class="side-grp-t">Workspace</div>
       <div class="side-item on" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
       <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
-      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-item" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
       <div class="side-grp-t">Analysis</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🔧</span>Auto-Fixes</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">🧪</span>Test Cases</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">📄</span>Reports</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
     </nav>
     <div class="side-foot">
-      <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
       <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
     </div>
   </aside>
@@ -195,19 +201,19 @@ a{text-decoration:none;color:inherit;}
       <!-- METRICS -->
       <div class="metrics">
         <div class="mc">
-          <div class="mc-top"><div class="mc-ico" style="background:var(--pp)">📁</div><span class="mtrend up" style="visibility:hidden;">+2 this wk</span></div>
+          <div class="mc-top"><div class="mc-ico" style="background:var(--pp)">📁</div></div>
           <div class="mv" id="stat-total-projects">-</div><div class="ml">Total Projects</div>
         </div>
         <div class="mc">
-          <div class="mc-top"><div class="mc-ico" style="background:#EAF5FF">🔍</div><span class="mtrend up" style="visibility:hidden;">+5 this wk</span></div>
+          <div class="mc-top"><div class="mc-ico" style="background:#EAF5FF">🔍</div></div>
           <div class="mv" id="stat-total-scans">-</div><div class="ml">Total Scans</div>
         </div>
         <div class="mc">
-          <div class="mc-top"><div class="mc-ico" style="background:var(--scb)">⚠️</div><span class="mtrend down" style="visibility:hidden;">-8 vs last</span></div>
+          <div class="mc-top"><div class="mc-ico" style="background:var(--scb)">⚠️</div></div>
           <div class="mv" id="stat-total-issues">-</div><div class="ml">Total Issues Found</div>
         </div>
         <div class="mc">
-          <div class="mc-top"><div class="mc-ico" style="background:var(--slb)">💚</div><span class="mtrend up" style="visibility:hidden;">+6 pts</span></div>
+          <div class="mc-top"><div class="mc-ico" style="background:var(--slb)">💚</div></div>
           <div class="mv" id="stat-health-score">-<span style="font-size:15px;color:var(--dt3)">/100</span></div><div class="ml">Overall Health Score</div>
         </div>
       </div>
@@ -215,7 +221,7 @@ a{text-decoration:none;color:inherit;}
       <!-- SCORES + SEVERITY -->
       <div class="grid2">
         <div class="panel">
-          <div class="panel-hdr"><span class="panel-t">Code Health Scores</span><span class="panel-link">View history</span></div>
+          <div class="panel-hdr"><span class="panel-t">Code Health Scores</span><span class="panel-link" onclick="window.location.href='/projects/'">View projects →</span></div>
           <div class="rings">
             <div class="ring-box">
               <div class="ring">
@@ -259,7 +265,7 @@ a{text-decoration:none;color:inherit;}
 
       <!-- RECENT SCANS -->
       <div class="panel" style="margin-bottom:16px;">
-        <div class="panel-hdr"><span class="panel-t">Recent Scans</span><span class="panel-link">View all</span></div>
+        <div class="panel-hdr"><span class="panel-t">Recent Scans</span><span class="panel-link" onclick="window.location.href='/projects/'">View all →</span></div>
         <table class="tbl">
           <thead><tr><th>Project</th><th>Scan</th><th>Status</th><th>Issues</th><th>Score</th><th>Date</th><th></th></tr></thead>
           <tbody id="recent-scans-tbody">
@@ -271,14 +277,14 @@ a{text-decoration:none;color:inherit;}
       <!-- RISKY FILES + RECENT ISSUES -->
       <div class="grid2b">
         <div class="panel">
-          <div class="panel-hdr"><span class="panel-t">Top Risky Files</span><span class="panel-link">Sorted by severity</span></div>
+          <div class="panel-hdr"><span class="panel-t">Top Risky Files</span><span class="panel-link" onclick="window.location.href='/issues/'">View issues →</span></div>
           <div id="risky-files-container">
             <div style="text-align:center;padding:20px;color:var(--dt3);">Loading risky files...</div>
           </div>
         </div>
 
         <div class="panel">
-          <div class="panel-hdr"><span class="panel-t">Recent Issues</span><span class="panel-link">View all</span></div>
+          <div class="panel-hdr"><span class="panel-t">Recent Issues</span><span class="panel-link" onclick="window.location.href='/issues/'">View all →</span></div>
           <table class="tbl">
             <thead><tr><th>Sev</th><th>Location</th><th>Issue</th></tr></thead>
             <tbody id="recent-issues-tbody">
@@ -293,21 +299,13 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <script>
-// Sidebar navigation active state
-document.querySelectorAll('.side-item').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('on'));
-    el.classList.add('on');
-  });
-});
-
-// Logout Button Logic
+// Logout Button
 document.getElementById("logout-btn").addEventListener("click", () => {
   localStorage.clear();
   window.location.href = "/login/";
 });
 
-// Helper for JWT authenticated API requests
+// Authenticated fetch with automatic token refresh
 async function fetchWithAuth(url, options = {}) {
   let token = localStorage.getItem("access");
   if (!token) {
@@ -355,7 +353,7 @@ async function fetchWithAuth(url, options = {}) {
   return response;
 }
 
-// Function to calculate SVG stroke offset based on score
+// Update SVG ring offset
 function setRingScore(circleId, valId, score) {
   const circle = document.getElementById(circleId);
   const valEl = document.getElementById(valId);
@@ -373,23 +371,20 @@ function setRingScore(circleId, valId, score) {
   }
 }
 
-// Load and populate stats
+// Load stats
 async function loadStats(projectId = "") {
   try {
-    // 1. Fetch User Profile
+    // 1. User profile
     const meResponse = await fetchWithAuth("/api/auth/me/");
     if (meResponse && meResponse.ok) {
       const user = await meResponse.json();
       const name = user.username || user.email || "Developer";
       document.getElementById("user-uname").innerText = name;
       document.getElementById("user-role").innerText = user.role === "admin" ? "Admin" : "Developer";
-      
-      // Avatar Initials
-      const initials = name.slice(0, 2).toUpperCase();
-      document.getElementById("user-av").innerText = initials;
+      document.getElementById("user-av").innerText = name.slice(0, 2).toUpperCase();
     }
 
-    // 2. Fetch Projects to populate select dropdown
+    // 2. Populate projects dropdown
     const projectSelect = document.getElementById("projectSelect");
     if (projectSelect && projectSelect.options.length <= 1) {
       const projResponse = await fetchWithAuth("/api/projects/");
@@ -413,19 +408,16 @@ async function loadStats(projectId = "") {
     if (statsResponse && statsResponse.ok) {
       const data = await statsResponse.json();
       
-      // Update metric cards
       document.getElementById("stat-total-projects").innerText = data.total_projects;
       document.getElementById("stat-total-scans").innerText = data.total_scans;
       document.getElementById("stat-total-issues").innerText = data.total_issues;
       document.getElementById("stat-health-score").innerHTML = `${Math.round(data.scores.overall)}<span style="font-size:15px;color:var(--dt3)">/100</span>`;
       
-      // Update circular score rings
       setRingScore("ring-overall-circle", "ring-overall-val", data.scores.overall);
       setRingScore("ring-security-circle", "ring-security-val", data.scores.security);
       setRingScore("ring-quality-circle", "ring-quality-val", data.scores.code_quality);
       setRingScore("ring-maintain-circle", "ring-maintain-val", data.scores.maintainability);
       
-      // Update severity breakdown
       const totalIssues = data.total_issues || 1;
       document.getElementById("sev-total-lbl").innerText = `${data.total_issues} total`;
       
@@ -445,7 +437,7 @@ async function loadStats(projectId = "") {
       document.getElementById("sev-medium-fill").style.width = `${Math.max(0, Math.min(100, (medium / totalIssues) * 100))}%`;
       document.getElementById("sev-low-fill").style.width = `${Math.max(0, Math.min(100, (low / totalIssues) * 100))}%`;
       
-      // Update recent scans table
+      // Recent Scans Table
       const scansTbody = document.getElementById("recent-scans-tbody");
       if (data.recent_scans && data.recent_scans.length > 0) {
         scansTbody.innerHTML = "";
@@ -454,8 +446,8 @@ async function loadStats(projectId = "") {
           const statusClass = scan.status.toLowerCase();
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${scan.project_name}</td>
-            <td class="cref">${scan.scan_name}</td>
+            <td><b>${escapeHtml(scan.project_name)}</b></td>
+            <td class="cref">${escapeHtml(scan.scan_name)}</td>
             <td><span class="stbadge ${statusClass}">${scan.status.charAt(0).toUpperCase() + scan.status.slice(1)}</span></td>
             <td>${scan.total_issues || 0}</td>
             <td>${scan.score !== null ? Math.round(scan.score) : "—"}</td>
@@ -468,7 +460,7 @@ async function loadStats(projectId = "") {
         scansTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dt3);">No scans recorded yet.</td></tr>`;
       }
       
-      // Update risky files
+      // Risky Files
       const riskyContainer = document.getElementById("risky-files-container");
       if (data.risky_files && data.risky_files.length > 0) {
         riskyContainer.innerHTML = "";
@@ -477,8 +469,8 @@ async function loadStats(projectId = "") {
           div.className = "rf-row";
           div.innerHTML = `
             <div>
-              <div class="rf-path">${file.file_path}</div>
-              <div class="rf-proj">${file.project_name}</div>
+              <div class="rf-path">${escapeHtml(file.file_path)}</div>
+              <div class="rf-proj">${escapeHtml(file.project_name)}</div>
             </div>
             <span class="rf-badge">${file.issue_count} issue${file.issue_count !== 1 ? 's' : ''}</span>
           `;
@@ -489,7 +481,7 @@ async function loadStats(projectId = "") {
       }
     }
     
-    // 4. Fetch Recent Issues
+    // 4. Recent Issues
     const issuesUrl = projectId ? `/api/issues/?project_id=${projectId}` : "/api/issues/";
     const issuesResponse = await fetchWithAuth(issuesUrl);
     if (issuesResponse && issuesResponse.ok) {
@@ -506,8 +498,8 @@ async function loadStats(projectId = "") {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><span class="isev" style="background:var(--${issue.severity === 'critical' ? 'scb' : issue.severity === 'high' ? 'shb' : issue.severity === 'medium' ? 'smb' : 'slb'});color:var(--${issue.severity === 'critical' ? 'sc' : issue.severity === 'high' ? 'sh' : issue.severity === 'medium' ? 'sm' : 'sl'})">${sevMap[issue.severity.toLowerCase()] || 'INFO'}</span></td>
-            <td class="cref">${issue.file_path}:${issue.line_number}</td>
-            <td>${issue.title}</td>
+            <td class="cref">${escapeHtml(issue.file_path)}:${issue.line_number}</td>
+            <td><a href="/issues/?scan_id=${issue.scan || ''}" style="color:var(--dt1);font-weight:500;">${escapeHtml(issue.title)}</a></td>
           `;
           issuesTbody.appendChild(tr);
         });
@@ -521,7 +513,11 @@ async function loadStats(projectId = "") {
   }
 }
 
-// Wire change event to project select filter
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 document.getElementById("projectSelect").addEventListener("change", (e) => {
   loadStats(e.target.value);
 });
@@ -530,3 +526,5 @@ window.addEventListener("DOMContentLoaded", () => {
   loadStats();
 });
 </script>
+</body>
+</html>
