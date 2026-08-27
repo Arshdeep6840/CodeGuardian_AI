@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/scans/<int:id>/status/", views.ScanStatusView.as_view(), name="scan-status"),
     path("api/scans/<int:scan_id>/results/", views.ScanResultsView.as_view(), name="scan-results"),
     path("scan/upload/", views.upload_page, name="scan-upload-page"),
+    path("projects/", views.projects_page, name="projects-page"),
 ]

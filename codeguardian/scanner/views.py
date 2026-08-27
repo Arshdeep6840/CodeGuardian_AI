@@ -218,3 +218,6 @@ class ProjectListView(generics.ListAPIView):
     def get_queryset(self):
         return Project.objects.filter(user=self.request.user).order_by("-created_at")
 
+def projects_page(request):
+    """View to serve the static projects page HTML template."""
+    return render(request, "projects.html")
