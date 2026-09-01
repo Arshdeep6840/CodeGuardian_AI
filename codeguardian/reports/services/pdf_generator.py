@@ -123,13 +123,13 @@ def generate_pdf_report(scan):
         for issue in issues[:50]:
             sev_text = issue.severity.upper()
             if issue.severity == "critical":
-                sev_p = Paragraph(f"<font color='{critical_color.hexval()}'><b>{sev_text}</b></font>", body_style)
+                sev_p = Paragraph(f"<font color='#FF3B5C'><b>{sev_text}</b></font>", body_style)
             elif issue.severity == "high":
-                sev_p = Paragraph(f"<font color='{high_color.hexval()}'><b>{sev_text}</b></font>", body_style)
+                sev_p = Paragraph(f"<font color='#FF8A3E'><b>{sev_text}</b></font>", body_style)
             elif issue.severity == "medium":
-                sev_p = Paragraph(f"<font color='{medium_color.hexval()}'><b>{sev_text}</b></font>", body_style)
+                sev_p = Paragraph(f"<font color='#FFC53D'><b>{sev_text}</b></font>", body_style)
             else:
-                sev_p = Paragraph(f"<font color='{low_color.hexval()}'><b>{sev_text}</b></font>", body_style)
+                sev_p = Paragraph(f"<font color='#23D18B'><b>{sev_text}</b></font>", body_style)
                 
             loc_text = f"{issue.file_path}:{issue.line_number or 1}"
             desc_text = issue.title
