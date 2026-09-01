@@ -1,97 +1,191 @@
 # CodeGuardian AI - Progress & Work Log
 
-This document serves as a tracking README to log completed milestones, system architecture details, API endpoints, recent changes, and proposed next tasks. Use this file to pick up development exactly where we left off.
+This document serves as the central progress log and architectural reference for **CodeGuardian AI**. It details completed milestones, system architecture, API endpoints, user interface routes, static analysis engines, AI integrations, recent fixes, and the upcoming product backlog.
 
 ---
 
-## 🚀 Completed Work & Features
+## 📌 Project Overview & Tech Stack
+
+**CodeGuardian AI** is an intelligent, multi-engine Python code review and automated remediation platform. It combines static AST analysis, security scanning (Bandit), linting (Ruff), regex-based secret detection, and LLM-powered reasoning (Google Gemini) to detect vulnerabilities, explain bugs, generate Git-compatible diff patches, create Pytest test suites, and produce downloadable PDF audit reports.
+
+* **Backend Framework**: Django 5.2, Django REST Framework (DRF), SimpleJWT
+* **Static Analysis & Security**: Python AST, Bandit, Ruff, Custom Regex Secret Detectors
+* **AI & Remediation**: Google Gemini (`gemini-1.5-flash`), `difflib` unified diff engine
+* **Reporting & Exports**: ReportLab PDF Generator
+* **Frontend / UI**: Django Templates, Vanilla CSS Design System, Responsive Glassmorphism UI, Vanilla JavaScript AJAX / Fetch API
+* **Database & Auth**: SQLite (Dev) / PostgreSQL (Prod), Custom User Model with Role-Based Access Control (`user`, `admin`)
+* **DevOps & CI/CD**: Docker, Docker Compose, GitHub Actions CI workflows
+
+---
+
+## 🚀 Completed Modules & System Features
 
 ### 1. Database & Authentication Module (`accounts` app)
-* **Custom User Model (`CustomUser`)**: Extends Django's `AbstractUser` to support user roles (`user`, `admin`).
-* **JWT Authentication**: Implemented via Django REST Framework (DRF) and `rest_framework_simplejwt`.
-* **Endpoints**:
-  * `POST /api/auth/register/` - Registers a user and returns JWT access/refresh tokens.
-  * `POST /api/auth/login/` - Standard JWT token generation (DRF SimpleJWT).
-  * `POST /api/auth/token/refresh/` - Refreshes expired access tokens.
-  * `GET /api/auth/me/` - Retrieves current authenticated user profile.
+* **Custom User Model (`CustomUser`)**: Extends Django's `AbstractUser` with custom role fields (`user`, `admin`).
+* **JWT Authentication**: Configured via `djangorestframework-simplejwt` for secure stateless REST API communication.
+* **Session & Token Management**: Supports simultaneous browser session authentication and localStorage JWT token persistence.
+* **Authentication UI Templates**:
+  * `accounts/templates/login.html` - Modern login interface with client-side credential validation, animated loader, and automatic dashboard redirect.
+  * `accounts/templates/register.html` - Interactive registration interface with live password strength calculation, match verification, and role handling.
+  * `static/js/login.js` & `static/js/register.js` - Client-side AJAX submission and token lifecycle managers.
 
-### 2. Project Ingestion & Extraction Module (`scanner` app)
-* **Ingestion Types**: Supports ZIP upload, single `.py` file upload, or importing via a public GitHub repository URL.
-* **Extraction Security**: Implements path traversal checks during extraction to prevent *Zip Slip* vulnerabilities.
-* **Framework Auto-Detection**: Scans directory structures and imports to classify projects as **Django**, **Flask**, **FastAPI**, or generic **Python**.
-* **Ignored Paths**: Automatically ignores system/dependency directories like `.git`, `venv`, `node_modules`, `migrations`, and `__pycache__` to keep results clean.
-* **Endpoints**:
-  * `POST /api/projects/upload/` - Uploads a ZIP or `.py` file, extracts and indexes code files.
-  * `POST /api/projects/github/` - Pulls a public GitHub repository, extracts and indexes it.
+### 2. Project Ingestion & Extraction Engine (`scanner` app)
+* **Multi-Modal Project Ingestion**:
+  * **ZIP Archive Upload**: Direct extraction and recursive directory mapping.
+  * **Single File Upload**: Instant single `.py` script scanning and evaluation.
+  * **GitHub Repository Import**: Automated download and extraction of public GitHub repository archives via `github_downloader.py`.
+* **Path Traversal & Security Sanitization**: Implements rigorous path traversal checks to neutralize *Zip Slip* vulnerabilities during extraction.
+* **Framework Auto-Detection**: Heuristically detects and classifies projects as **Django**, **Flask**, **FastAPI**, or standard **Python** scripts by inspecting project structure and imports.
+* **Code File Indexing**: Recursively traverses extracted directories (ignoring `.git`, `node_modules`, `venv`, `migrations`, `__pycache__`) and persists indexed source files into the `CodeFile` model.
+* **Project Management UI**:
+  * `scanner/templates/upload.html` - Interactive drag-and-drop file upload and GitHub repository URL import form with progress indicator.
+  * `scanner/templates/projects.html` - Project card view listing all uploaded projects, framework badges, status indicators, scan triggers, and direct navigation to issues.
 
-### 3. Static Code Analysis & Scoring Engine (`scanner` app)
-* **Security Scanner (Bandit)**: Invokes Bandit security scanner programmatically on the extracted workspace directory.
-* **Custom AST Parser**: Parses Python files to AST representation to find quality/reliability issues:
-  * `AST001`: Bare `except:` clauses.
-  * `AST002`: Use of dangerous functions like `eval()` and `exec()`.
-  * `AST003`: Functions exceeding 50 lines (encourages modularity).
-  * `AST004`: Functions with more than 6 arguments.
-* **Regex Secret Detector**: Identifies potential credentials matching patterns for AWS Access Keys, Slack Tokens, Google API Keys, and generic secret assignments, ignoring placeholder values like `your_api_key`.
-* **Scoring Metrics**: Computes score deductions from a base of 100 based on issue severity:
-  * **Critical** (-15 pts) | **High** (-10 pts) | **Medium** (-5 pts) | **Low** (-2 pts).
-  * Outputs individual scores for **Security**, **Code Quality**, **Maintainability**, and an overall **Health Score**.
-* **Endpoints**:
-  * `POST /api/scans/start/` - Starts analysis on an indexed project.
-  * `GET /api/scans/<int:id>/status/` - Returns the current run state (`pending`, `running`, `completed`, `failed`).
-  * `GET /api/scans/<int:scan_id>/results/` - Returns issues found, optionally filtered by severity.
+### 3. Multi-Engine Static Code Analysis & Scoring Pipeline (`scanner` app)
+* **Custom AST Quality Analyzer (`ast_parser.py`)**:
+  * `AST001`: Bare `except:` clauses that silence exceptions.
+  * `AST002`: Use of dangerous dynamic evaluation functions (`eval()`, `exec()`).
+  * `AST003`: Functions exceeding 50 lines (modularity and complexity warning).
+  * `AST004`: Functions with more than 6 parameters (design smell warning).
+* **Bandit Security Scanner (`bandit_runner.py`)**:
+  * Programmatically invokes Bandit via subprocess with JSON AST reporting.
+  * Captures security issues (SQL injection, weak cryptography, insecure temporary files, shell execution) and maps them to `HIGH` and `CRITICAL` severity levels.
+* **Ruff Fast Linter Integration (`ruff_runner.py`)**:
+  * Runs Ruff against target project workspaces to catch code quality, syntax, and style anti-patterns.
+  * Normalizes and maps Ruff rule codes directly into CodeGuardian issue categories and severity tiers.
+* **Regex Secret Detector (`secret_detector.py`)**:
+  * Scans codebases for hardcoded credentials (AWS Access Keys, Slack API Tokens, Google API Keys, and generic secret tokens).
+  * Intelligently filters out placeholder strings (e.g., `your_api_key`, `dummy_secret`).
+* **Issue Aggregator & Weighted Health Scoring (`issue_aggregator.py`)**:
+  * Deduplicates findings across AST, Bandit, Ruff, and Secret detectors.
+  * Computes severity-weighted deductions from a baseline score of 100:
+    * **Critical**: -15 pts | **High**: -10 pts | **Medium**: -5 pts | **Low**: -2 pts.
+  * Generates independent metric scores for **Security**, **Code Quality**, **Maintainability**, and an aggregated **Overall Health Score**.
 
-### 4. AI Explanation & Auto-Fix Engine (`fixes` & `issues` apps)
-* **AI Explanations**: Uses Gemini (`gemini-1.5-flash`) to generate detailed explanations structured into: **Explain the Bug**, **Risks**, and **Remediation**.
-* **Auto-Fix Code & Diff**: Generates fixed code blocks via Gemini and produces Git-style unified diff patches using `difflib`.
-* **Interactive Fix States**: Users can change fix status to `accepted`, `rejected`, or `applied` (which marks the parent issue as fixed in the DB).
-* **Test Case Generator**: Generates `pytest` test suites for specific `CodeFile` resources.
-* **Endpoints**:
-  * `GET /api/issues/<int:id>/` - Returns detailed issue metadata and generates AI explanations on-demand.
-  * `PATCH /api/issues/<int:id>/` - Marks issues as resolved or false positives.
-  * `GET /api/fixes/issue/<int:issue_id>/` - Generates/retrieves an AI-powered code fix and unified diff.
-  * `PATCH /api/fixes/<int:id>/status/` - Promotes fix status (marks parent issue resolved if status is `applied`).
-  * `GET /api/codefiles/<int:code_file_id>/tests/` - Generates a unit test suite.
+### 4. AI Explanation, Auto-Fix & Test Suite Generation (`fixes` & `issues` apps)
+* **On-Demand AI Explanation Engine (`llm_agent.py`)**:
+  * Powered by Google Gemini (`gemini-1.5-flash`).
+  * Provides structured 3-part breakdowns for any discovered issue:
+    1. **Explain the Bug**: Root cause analysis.
+    2. **Risks**: Security, performance, or stability implications.
+    3. **Remediation**: Actionable guidance for fixing the defect.
+* **AI Auto-Fix & Diff Engine (`fix_generator.py`)**:
+  * Generates corrected code snippets via Gemini LLM.
+  * Produces standard Git-compatible unified diff patches using Python's `difflib`.
+* **Fix Lifecycle & Issue Resolution Synchronization**:
+  * Supports fix workflow states: `suggested` ➔ `accepted` / `rejected` ➔ `applied`.
+  * Marking a fix as `applied` automatically marks the parent `Issue` as resolved (`is_fixed = True`).
+* **Automated Pytest Test Suite Generator (`test_generator.py`)**:
+  * Generates unit test suites for any indexed `CodeFile` using Gemini.
+* **Issue Management & Remediation UI (`issues/templates/issue_list.html`)**:
+  * Interactive filtering by severity (Critical, High, Medium, Low), issue type, and search keyword.
+  * Built-in modals:
+    * **AI Explanation Modal**: Displays real-time generated analysis.
+    * **AI Auto-Fix Modal**: Side-by-side original vs. fixed code view with diff patch preview and "Apply Fix" action.
+    * **Test Suite Modal**: View and copy generated Pytest test cases.
+    * **Status Toggles**: Instantly mark issues as resolved or false positives.
 
 ### 5. Reporting & Analytics (`reports` & `dashboard` apps)
-* **Dashboard Aggregations**: Calculates global stats (total projects, total scans, average health scores, severity counts, recent scans list, and top 5 most risky files).
-* **PDF Report Generation**: Creates downloadable PDF reports with a premium look (using `ReportLab`) showing metric scores and detailed issue listings.
-* **Dashboard Page Template**: Designed a modern responsive HTML dashboard (`dashboard.html`) under `dashboard/templates` with cards for metrics, SVG health score circular progress rings, issue severity breakdown bars, and tables/lists for recent scans and top risky files.
-* **Endpoints**:
-  * `GET /api/dashboard/stats/` - Fetches global project and scan metrics.
-  * `GET /api/reports/scan/<int:scan_id>/` - Retrieves or creates report metadata.
-  * `GET /api/reports/<int:id>/download/` - Dynamic PDF download with automatic regeneration on disk if missing.
+* **Dashboard Aggregations (`dashboard/views.py`)**:
+  * User-scoped statistics: Total Projects, Total Scans, Total Issues, Severity Distribution, and Issue Type Breakdown.
+  * Real-time average scores (Overall, Security, Quality, Maintainability).
+  * Recent scan history and Top 5 Most Risky Files ranking.
+* **Interactive Dashboard UI (`dashboard/templates/dashboard.html`)**:
+  * Responsive analytics page with SVG circular health score gauges, severity breakdown progress bars, project filter dropdown, recent scan logs, and quick PDF export triggers.
+* **PDF Audit Report Generator (`reports/services/pdf_generator.py`)**:
+  * Generates branded PDF reports via `ReportLab`.
+  * Includes executive summary, metric health score cards, scan metadata, severity distribution charts, and detailed issue breakdowns.
+  * Serves direct downloads with automatic on-demand generation and disk caching.
 
-### 6. Templates & Frontend Assets
-* **Landing Page**: Implemented a responsive, modern HTML landing page (`index.html`) under `home/templates` using vanilla CSS, modern typography, grid layouts, scroll animations, dynamic counter animations, and an interactive typing command-line terminal simulation.
-* **Authentication Pages**: Built responsive and elegant templates for registration (`register.html`) and login (`login.html`) under `accounts/templates` using custom stylesheets, password strength calculations, eye toggle visibility icons, and error handling elements.
-* **Static Assets**: Created custom `style.css` and helper script files `login.js` and `register.js` to manage CSRF tokens, client-side validation, loader states, and AJAX submission.
+### 6. Frontend UI & Design System
+* **Shared App Shell (`templates/base.html`)**:
+  * Unified dark glassmorphism navbar and sidebar layout with active route detection, user role badges, and mobile-responsive drawer.
+* **Landing Page (`home/templates/index.html`)**:
+  * Hero banner with interactive typing terminal simulation showcasing CLI scanning.
+  * Animated feature cards, dynamic counters, and scan workflow roadmap.
+* **Design Tokens & Stylesheets**:
+  * `static/css/main.css` & `home/static/css/index.css`: Curated HSL color palette, dark mode gradients, clean typography, badge utilities, and animated cards.
 
-### 7. Third-Party Linting Integration
-* **Ruff Static Code Analyzer**: Integrated Ruff programmatically in `ruff_runner.py` inside the scan pipeline. Maps Ruff rule codes to CodeGuardian severity levels (`critical`, `high`, `medium`, `low`) and reports issues back to the scanner.
+### 7. DevOps, CI/CD & Containerization
+* **GitHub Actions Workflows (`.github/workflows/`)**:
+  * `summary.yml`: Automated issue summarization workflow.
+  * CI pipeline configuring automated linting and unit test execution on pull requests.
+* **Containerization**:
+  * `Dockerfile`: Multi-stage Python 3.11 build for the Django web service.
+  * `docker-compose.yml`: Multi-container composition (Django web application + database service).
+  * `.dockerignore` and `.gitignore`: Configured to exclude virtual environments, SQLite databases, and transient media.
 
 ---
 
-## 🛠️ Recent Fixes & Housekeeping
-* **Fixed `codeguardian/settings.py`**: Cleaned up syntax errors at the bottom of the file caused by a duplicate unclosed `TEMPLATES` block and misplaced Git diff conflict hunks.
-* **Proper Static Configuration**: Formatted `STATICFILES_DIRS = [BASE_DIR / "static"]` cleanly to support custom frontend styling files. Created placeholder static directory to eliminate Django static files warning.
-* **User Authentication Model**: Configured `AUTH_USER_MODEL = "accounts.CustomUser"` inside `settings.py` to enable the custom user role system.
-* **Cleaned up View Imports**: Removed unused `aiohttp` import from `accounts/views.py` which was causing a `ModuleNotFoundError` on server startup.
-* **Ingestion and Extraction Fix for GitHub Repo**: Updated `extract_and_map_project` to correctly handle `github` upload types, extracting downloaded repository ZIP files (which were previously skipped).
-* **Test Isolation and Directory Cleanliness**: Cleared target extraction directory before extraction/copy in `extract_and_map_project` to avoid files persisting across test runs in media folders.
-* **Unit Test Repairs**: Fixed and validated all 5 unit tests in `scanner/tests.py` (which were failing due to directory pollution and missing mock structures). All tests now pass successfully.
-* **Superuser Account Created**: Programmatically created an admin superuser with credentials: `admin` / `adminpassword` to simplify manual browser login checks.
+## 📡 API & Web Route Directory
+
+### REST API Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register/` | Register new user and issue JWT tokens | No |
+| `POST` | `/api/auth/login/` | Obtain JWT access/refresh token pair | No |
+| `POST` | `/api/auth/token/refresh/` | Refresh expired JWT access token | No |
+| `GET` | `/api/auth/me/` | Retrieve authenticated user profile | Yes |
+| `GET` | `/api/projects/` | List all projects belonging to user | Yes |
+| `POST` | `/api/projects/upload/` | Upload ZIP or `.py` file for extraction | Optional/Fallback |
+| `POST` | `/api/projects/github/` | Import public GitHub repository by URL | Optional/Fallback |
+| `POST` | `/api/scans/start/` | Trigger static & security scan pipeline | Optional/Fallback |
+| `GET` | `/api/scans/<id>/status/` | Check scan run status & scores | No |
+| `GET` | `/api/scans/<scan_id>/results/`| Fetch issues found in scan with severity filter | No |
+| `GET` | `/api/issues/` | List issues with project/scan/severity filters | Yes |
+| `GET` | `/api/issues/<id>/` | Fetch issue details + on-demand Gemini AI explanation | Yes |
+| `PATCH` | `/api/issues/<id>/` | Mark issue as resolved or false positive | Yes |
+| `GET` | `/api/fixes/issue/<issue_id>/` | Fetch or generate AI code fix and diff patch | Yes |
+| `PATCH` | `/api/fixes/<id>/status/` | Update fix status (`applied` resolves issue) | Yes |
+| `GET` | `/api/codefiles/<id>/tests/` | Generate Pytest test suite for code file | Yes |
+| `GET` | `/api/dashboard/stats/` | Fetch aggregated security & quality metrics | Yes |
+| `GET` | `/api/reports/scan/<scan_id>/` | Fetch or create report metadata | No |
+| `GET` | `/api/reports/<id>/download/` | Download generated ReportLab PDF audit report | No |
+
+### Web UI Pages (HTML Views)
+
+| Method | Route | Template | Purpose |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/` | `home/templates/index.html` | Public landing page with live terminal demo & features |
+| `GET` | `/login/` | `accounts/templates/login.html` | User login page |
+| `GET` | `/register/` | `accounts/templates/register.html` | User registration page |
+| `GET` | `/dashboard/` | `dashboard/templates/dashboard.html` | Analytics dashboard with score gauges & risky files |
+| `GET` | `/projects/` | `scanner/templates/projects.html` | Project portfolio & scan triggering interface |
+| `GET` | `/scan/upload/` | `scanner/templates/upload.html` | Project ZIP / `.py` upload & GitHub import page |
+| `GET` | `/issues/` | `issues/templates/issue_list.html` | Issue inspection, AI fix & test generation UI |
 
 ---
 
-## 🔮 Next Tasks & Backlog
+## 🛠️ Recent Fixes, Improvements & Housekeeping
 
-1. **Manual Web Verification & Running Server**:
-   * Run `python manage.py runserver` locally.
-   * Access the login page (`/login/`), sign in using the `admin` / `adminpassword` credentials, and confirm you are successfully redirected to `/dashboard/`.
-   * Verify that the dashboard dashboard renders and fetches stats via API calls correctly.
-2. **Scan Workflow Testing**:
-   * Upload a sample project zip file and verify that the Bandit and Ruff scan execution works on the server.
-   * Verify that scanning records are created in the database and display on the dashboard page.
-3. **AI explanations configuration**:
-   * Configure `GEMINI_API_KEY` in the local `.env` file to verify on-demand AI explanations function correctly.
+* **Cleaned `codeguardian/settings.py`**:
+  * Resolved unclosed `TEMPLATES` block syntax errors and removed misplaced Git diff conflict hunks.
+  * Formatted `STATICFILES_DIRS = [BASE_DIR / "static"]` cleanly and established default static directories.
+  * Properly bound custom user model: `AUTH_USER_MODEL = "accounts.CustomUser"`.
+* **Cleaned View Imports**:
+  * Removed deprecated/unused `aiohttp` import in `accounts/views.py` that was triggering startup errors.
+* **GitHub Ingestion & Extraction Fix**:
+  * Updated `extract_and_map_project` in `file_extractor.py` to support `github` upload types, extracting downloaded repository archives that were previously bypassed.
+* **Test Isolation & Media Cleanliness**:
+  * Added directory pre-cleaning in `file_extractor.py` before extracting into target project directories, preventing artifact bleeding across test executions.
+* **Unit Test Suite Validation**:
+  * Verified all 5 unit tests in `scanner/tests.py` passing cleanly (`Ran 5 tests in 15.980s, OK`).
+* **Superuser Account Configured**:
+  * Admin superuser available for administrative and local evaluation: `admin` / `adminpassword`.
 
+---
+
+## 🔮 Next Tasks & Product Roadmap
+
+1. **Live Browser End-to-End Verification**:
+   * Run local Django dev server: `python codeguardian/manage.py runserver`.
+   * Test user sign-in (`/login/`) and verify redirect to `/dashboard/`.
+   * Test uploading a sample project archive via `/scan/upload/` and monitoring scan progress.
+   * Verify generated findings appear on `/issues/` with functional AI Explanation and Auto-Fix modals.
+2. **Gemini API Key Configuration**:
+   * Populate `GEMINI_API_KEY` in `codeguardian/.env` to enable live LLM explanation and test suite generation in development.
+3. **Background Job Queue (Celery + Redis)**:
+   * Offload heavy multi-file repository scanning, Bandit analysis, and PDF compilation into asynchronous Celery background tasks for enterprise scalability.
+4. **Repository-Wide RAG Context**:
+   * Implement vector embeddings (FAISS / ChromaDB) across extracted multi-file codebases to give Gemini cross-file contextual awareness during code remediation.
