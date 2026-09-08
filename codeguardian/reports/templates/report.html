@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Report — CodeGuardian AI</title>
+<meta name="description" content="AI-generated code health report: security score, issue breakdown, and recommendations for a completed scan.">
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* ── APP SHELL (shared with dashboard/issues/upload) ── */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-left{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dt3);}
+.tb-left a{color:var(--dt3);font-weight:500;}
+.tb-left a:hover{color:var(--p);}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.btn-newscan{background:var(--p);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-newscan:hover{background:var(--pd);}
+.tb-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding-left:12px;border-left:1px solid var(--bl);}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+.tb-urole{font-size:11px;color:var(--dt3);}
+
+.content{padding:28px 30px 60px;max-width:1200px;}
+
+/* Page header */
+.pg-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+.pg-eyebrow{font-size:11.5px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+.pg-actions{display:flex;gap:10px;}
+.btn-outline{background:var(--lw);border:1px solid var(--bl);color:var(--dt2);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-outline:hover{border-color:var(--p);color:var(--p);}
+
+/* Status badge */
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+.status-pill.completed{background:var(--slb);color:var(--sl);}
+.status-pill.running{background:var(--smb);color:var(--sm);}
+.status-pill.failed{background:var(--scb);color:var(--sc);}
+.status-pill.pending{background:var(--pp);color:var(--pd);}
+
+/* Loading / error */
+.state-box{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:60px 20px;text-align:center;color:var(--dt3);}
+.state-ico{font-size:34px;margin-bottom:12px;}
+
+/* Score hero */
+.score-hero{background:linear-gradient(135deg,#171B30 0%,#0B1222 100%);border-radius:var(--rl);padding:32px;display:flex;align-items:center;gap:36px;margin-bottom:20px;flex-wrap:wrap;}
+.score-big{text-align:center;flex-shrink:0;}
+.score-ring{width:132px;height:132px;position:relative;margin:0 auto 8px;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-ring-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff;}
+.score-ring-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;}
+.score-hero-title{color:var(--t2);font-size:13px;font-weight:600;}
+.score-sub-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;min-width:280px;}
+.score-sub{text-align:left;}
+.score-sub-ring{width:56px;height:56px;position:relative;margin-bottom:8px;}
+.score-sub-ring svg{transform:rotate(-90deg);}
+.score-sub-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;}
+.score-sub-lbl{font-size:12px;color:var(--t3);font-weight:500;}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.mc{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px 20px;}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.mv{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);}
+.ml{font-size:12.5px;color:var(--dt3);margin-top:2px;}
+
+/* Panels */
+.panel{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:22px;margin-bottom:16px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.panel-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dt1);}
+.panel-link{font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;}
+.panel-body-text{font-size:13.5px;color:var(--dt2);line-height:1.75;}
+
+/* Severity bars */
+.sev-r{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
+.sev-lbl{font-size:11px;font-weight:700;width:64px;letter-spacing:.03em;}
+.sev-track{flex:1;height:8px;background:#EEEEF5;border-radius:4px;overflow:hidden;}
+.sev-fill{height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(0.4, 0, 0.2, 1);}
+.sev-cnt{font-size:12.5px;font-weight:700;color:var(--dt2);min-width:22px;text-align:right;}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:10.5px;font-weight:700;color:var(--dt3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--bl);text-transform:uppercase;letter-spacing:.06em;background:var(--l2);}
+.tbl th:first-child{border-radius:8px 0 0 0;}
+.tbl th:last-child{border-radius:0 8px 0 0;}
+.tbl td{font-size:13px;color:var(--dt2);padding:11px 10px;border-bottom:1px solid var(--bl);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--l2);}
+.isev{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.04em;display:inline-block;}
+.cref{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dt3);}
+.rowbtn{font-size:12px;font-weight:600;color:var(--p);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .metrics{grid-template-columns:1fr 1fr;}
+  .score-hero{flex-direction:column;align-items:stretch;}
+  .score-sub-grid{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+  .side{display:none;}
+  .metrics{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
+      <div class="side-item on"><span class="side-ico">📄</span>Report</div>
+    </nav>
+    <div class="side-foot">
+      <div class="side-item" onclick="window.location.href='/profile/'"><span class="side-ico">👤</span>Profile</div>
+      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <a href="/dashboard/">Dashboard</a>&nbsp;/&nbsp;<span id="tb-crumb">Report</span>
+      </div>
+      <div class="tb-right">
+        <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">⚡ New Scan</button>
+        <div class="tb-user" onclick="window.location.href='/profile/'">
+          <div class="tb-av" id="user-av">AS</div>
+          <div><div class="tb-uname" id="user-uname">Developer</div><div class="tb-urole" id="user-role">Developer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div id="loadingState" class="state-box">
+        <div class="state-ico">📄</div>
+        Generating your report…
+      </div>
+
+      <div id="errorState" class="state-box" style="display:none;">
+        <div class="state-ico">⚠️</div>
+        <div id="errorMsg">Could not load this report.</div>
+        <div style="margin-top:16px;"><button class="btn-outline" onclick="window.location.href='/dashboard/'">← Back to Dashboard</button></div>
+      </div>
+
+      <div id="reportBody" style="display:none;">
+
+        <div class="pg-hdr">
+          <div>
+            <div class="pg-eyebrow">Scan Report</div>
+            <div class="pg-h1" id="reportTitle">—</div>
+            <div class="pg-sub" id="reportSub">—</div>
+          </div>
+          <div class="pg-actions">
+            <button class="btn-outline" id="backBtn">← Back to Issues</button>
+            <button class="btn-newscan" id="downloadBtn">⬇ Download PDF</button>
+          </div>
+        </div>
+
+        <!-- SCORE HERO -->
+        <div class="score-hero">
+          <div class="score-big">
+            <div class="score-hero-title">Overall Health Score</div>
+            <div class="score-ring">
+              <svg width="132" height="132">
+                <circle cx="66" cy="66" r="58" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+                <circle id="ring-overall" cx="66" cy="66" r="58" fill="none" stroke="#9B91F7" stroke-width="10" stroke-linecap="round" stroke-dasharray="364" stroke-dashoffset="364"/>
+              </svg>
+              <div class="score-ring-val">
+                <div class="score-ring-num" id="ring-overall-val">-</div>
+                <div class="score-ring-lbl">/ 100</div>
+              </div>
+            </div>
+          </div>
+          <div class="score-sub-grid">
+            <div class="score-sub">
+              <div class="score-sub-ring">
+                <svg width="56" height="56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle id="ring-security" cx="28" cy="28" r="24" fill="none" stroke="#FF7B7B" stroke-width="6" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="151"/></svg>
+                <div class="score-sub-val" id="ring-security-val">-</div>
+              </div>
+              <div class="score-sub-lbl">Security</div>
+            </div>
+            <div class="score-sub">
+              <div class="score-sub-ring">
+                <svg width="56" height="56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle id="ring-quality" cx="28" cy="28" r="24" fill="none" stroke="#7EE8A2" stroke-width="6" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="151"/></svg>
+                <div class="score-sub-val" id="ring-quality-val">-</div>
+              </div>
+              <div class="score-sub-lbl">Code Quality</div>
+            </div>
+            <div class="score-sub">
+              <div class="score-sub-ring">
+                <svg width="56" height="56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle id="ring-maintain" cx="28" cy="28" r="24" fill="none" stroke="#FFC53D" stroke-width="6" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="151"/></svg>
+                <div class="score-sub-val" id="ring-maintain-val">-</div>
+              </div>
+              <div class="score-sub-lbl">Maintainability</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics">
+          <div class="mc">
+            <div class="mc-top"><div class="mc-ico" style="background:var(--scb)">⚠️</div></div>
+            <div class="mv" id="stat-total">-</div><div class="ml">Total Issues Found</div>
+          </div>
+          <div class="mc">
+            <div class="mc-top"><div class="mc-ico" style="background:var(--slb)">✓</div></div>
+            <div class="mv" id="stat-fixed">-</div><div class="ml">Fixed</div>
+          </div>
+          <div class="mc">
+            <div class="mc-top"><div class="mc-ico" style="background:var(--smb)">⏳</div></div>
+            <div class="mv" id="stat-pending">-</div><div class="ml">Pending</div>
+          </div>
+          <div class="mc">
+            <div class="mc-top"><div class="mc-ico" style="background:var(--pp)">📁</div></div>
+            <div class="mv" id="stat-files">-</div><div class="ml">Files Scanned</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:16px;">
+          <!-- SUMMARY + RECOMMENDATIONS -->
+          <div>
+            <div class="panel">
+              <div class="panel-hdr"><span class="panel-t">Summary</span><span class="status-pill" id="statusPill">—</span></div>
+              <p class="panel-body-text" id="reportSummary">—</p>
+            </div>
+            <div class="panel">
+              <div class="panel-hdr"><span class="panel-t">🤖 AI Recommendations</span></div>
+              <p class="panel-body-text" id="reportRecs">—</p>
+            </div>
+          </div>
+
+          <!-- SEVERITY BREAKDOWN -->
+          <div class="panel">
+            <div class="panel-hdr"><span class="panel-t">Issue Severity Breakdown</span><span class="panel-link" id="sev-total-lbl">- total</span></div>
+            <div class="sev-r"><span class="sev-lbl" style="color:var(--sc)">CRITICAL</span><div class="sev-track"><div class="sev-fill" id="sev-critical-fill" style="background:var(--sc);width:0%"></div></div><span class="sev-cnt" id="sev-critical-cnt">0</span></div>
+            <div class="sev-r"><span class="sev-lbl" style="color:var(--sh)">HIGH</span><div class="sev-track"><div class="sev-fill" id="sev-high-fill" style="background:var(--sh);width:0%"></div></div><span class="sev-cnt" id="sev-high-cnt">0</span></div>
+            <div class="sev-r"><span class="sev-lbl" style="color:var(--sm)">MEDIUM</span><div class="sev-track"><div class="sev-fill" id="sev-medium-fill" style="background:var(--sm);width:0%"></div></div><span class="sev-cnt" id="sev-medium-cnt">0</span></div>
+            <div class="sev-r"><span class="sev-lbl" style="color:var(--sl)">LOW</span><div class="sev-track"><div class="sev-fill" id="sev-low-fill" style="background:var(--sl);width:0%"></div></div><span class="sev-cnt" id="sev-low-cnt">0</span></div>
+          </div>
+        </div>
+
+        <!-- ISSUES TABLE -->
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-t">All Detected Issues</span><span class="panel-link" id="viewInIssuesLink">Open in Issues & Fixes →</span></div>
+          <table class="tbl">
+            <thead><tr><th>Sev</th><th>Issue</th><th>File</th><th>Tool</th><th>Status</th></tr></thead>
+            <tbody id="issuesTbody">
+              <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--dt3);">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="text-align:center;color:var(--dt3);font-size:12px;margin-top:10px;" id="generatedAt"></div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function getScanId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const qId = urlParams.get("scan_id") || urlParams.get("id");
+  if (qId && !isNaN(qId)) return qId;
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    if (!isNaN(parts[i]) && parts[i].trim() !== '') {
+      return parts[i];
+    }
+  }
+  return null;
+}
+const scanId = getScanId();
+
+async function fetchWithAuth(url, options = {}) {
+  let token = localStorage.getItem("access");
+  if (!token) { window.location.href = "/login/"; return null; }
+  if (!options.headers) options.headers = {};
+  options.headers["Authorization"] = "Bearer " + token;
+  let response = await fetch(url, options);
+  if (response.status === 401) {
+    const refresh = localStorage.getItem("refresh");
+    if (refresh) {
+      try {
+        const rr = await fetch("/api/auth/token/refresh/", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh })
+        });
+        if (rr.ok) {
+          const rd = await rr.json();
+          localStorage.setItem("access", rd.access);
+          options.headers["Authorization"] = "Bearer " + rd.access;
+          response = await fetch(url, options);
+        } else { localStorage.clear(); window.location.href = "/login/"; return null; }
+      } catch (e) { localStorage.clear(); window.location.href = "/login/"; return null; }
+    } else { localStorage.clear(); window.location.href = "/login/"; return null; }
+  }
+  return response;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function setRing(circleId, valId, score, circumference) {
+  const circle = document.getElementById(circleId);
+  const valEl = document.getElementById(valId);
+  if (!circle || !valEl) return;
+  const s = score !== null && score !== undefined ? Math.round(parseFloat(score)) : null;
+  if (s === null) { circle.setAttribute("stroke-dashoffset", circumference); valEl.innerText = "-"; return; }
+  const offset = Math.round(circumference * (1 - s / 100));
+  circle.setAttribute("stroke-dashoffset", offset);
+  valEl.innerText = s;
+}
+
+const sevColors = {
+  critical: ["scb", "sc"], high: ["shb", "sh"], medium: ["smb", "sm"], low: ["slb", "sl"]
+};
+
+async function loadReport() {
+  if (!scanId || isNaN(scanId)) {
+    document.getElementById("loadingState").style.display = "none";
+    document.getElementById("errorMsg").textContent = "No scan specified.";
+    document.getElementById("errorState").style.display = "block";
+    return;
+  }
+
+  // user
+  const meRes = await fetchWithAuth("/api/auth/me/");
+  if (meRes && meRes.ok) {
+    const u = await meRes.json();
+    const name = u.username || u.email || "Developer";
+    document.getElementById("user-uname").innerText = name;
+    document.getElementById("user-av").innerText = name.slice(0, 2).toUpperCase();
+    document.getElementById("user-role").innerText = u.role === "admin" ? "Admin" : "Developer";
+  }
+
+  try {
+    const res = await fetchWithAuth(`/api/reports/scan/${scanId}/`);
+    if (!res || !res.ok) {
+      const d = res ? await res.json().catch(() => ({})) : {};
+      throw new Error(d.error || "Report could not be generated for this scan.");
+    }
+    const report = await res.json();
+    const scan = report.scan;
+
+    document.getElementById("loadingState").style.display = "none";
+    document.getElementById("reportBody").style.display = "block";
+
+    document.getElementById("reportTitle").textContent = report.title || `Report — ${scan.scan_name || ''}`;
+    document.getElementById("reportSub").textContent =
+      `Project scan · ${scan.total_files_scanned || 0} files scanned`;
+    document.getElementById("backBtn").onclick = () => window.location.href = `/issues/?scan_id=${scanId}`;
+    document.getElementById("viewInIssuesLink").onclick = () => window.location.href = `/issues/?scan_id=${scanId}`;
+    document.getElementById("downloadBtn").onclick = () => downloadPdf(report.id);
+
+    const pill = document.getElementById("statusPill");
+    pill.textContent = scan.status ? scan.status.charAt(0).toUpperCase() + scan.status.slice(1) : "Unknown";
+    pill.className = "status-pill " + (scan.status || "");
+
+    document.getElementById("reportSummary").textContent = report.summary || "No summary available.";
+    document.getElementById("reportRecs").textContent = report.recommendations || "No recommendations generated.";
+
+    setRing("ring-overall", "ring-overall-val", report.final_score ?? scan.overall_score, 364);
+    setRing("ring-security", "ring-security-val", scan.security_score, 151);
+    setRing("ring-quality", "ring-quality-val", scan.code_quality_score, 151);
+    setRing("ring-maintain", "ring-maintain-val", scan.maintainability_score, 151);
+
+    document.getElementById("stat-total").textContent = report.total_issues ?? 0;
+    document.getElementById("stat-fixed").textContent = report.total_fixed ?? 0;
+    document.getElementById("stat-pending").textContent = report.total_pending ?? 0;
+    document.getElementById("stat-files").textContent = scan.total_files_scanned ?? 0;
+
+    const crit = scan.critical_issues || 0, high = scan.high_issues || 0, med = scan.medium_issues || 0, low = scan.low_issues || 0;
+    const total = Math.max(1, crit + high + med + low);
+    document.getElementById("sev-total-lbl").textContent = `${crit + high + med + low} total`;
+    document.getElementById("sev-critical-cnt").textContent = crit;
+    document.getElementById("sev-high-cnt").textContent = high;
+    document.getElementById("sev-medium-cnt").textContent = med;
+    document.getElementById("sev-low-cnt").textContent = low;
+    document.getElementById("sev-critical-fill").style.width = (crit / total * 100) + "%";
+    document.getElementById("sev-high-fill").style.width = (high / total * 100) + "%";
+    document.getElementById("sev-medium-fill").style.width = (med / total * 100) + "%";
+    document.getElementById("sev-low-fill").style.width = (low / total * 100) + "%";
+
+    const tbody = document.getElementById("issuesTbody");
+    const issues = scan.issues || [];
+    if (issues.length > 0) {
+      tbody.innerHTML = "";
+      issues.forEach(issue => {
+        const [bg, fg] = sevColors[issue.severity] || ["pp", "pd"];
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="isev" style="background:var(--${bg});color:var(--${fg})">${(issue.severity || '').toUpperCase()}</span></td>
+          <td><a href="/issues/?scan_id=${scanId}" style="color:var(--dt1);font-weight:500;">${escapeHtml(issue.title)}</a></td>
+          <td class="cref">${escapeHtml(issue.file_path)}${issue.line_number ? ':' + issue.line_number : ''}</td>
+          <td class="cref">${escapeHtml(issue.tool_name || '—')}</td>
+          <td>${issue.is_fixed ? '<span class="isev" style="background:var(--slb);color:var(--sl)">FIXED</span>' : '<span class="isev" style="background:var(--l2);color:var(--dt3)">OPEN</span>'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--dt3);">No issues found for this scan — clean code! 🎉</td></tr>`;
+    }
+
+    if (report.generated_at) {
+      const d = new Date(report.generated_at);
+      document.getElementById("generatedAt").textContent = `Report generated ${d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} at ${d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
+    }
+
+  } catch (err) {
+    document.getElementById("loadingState").style.display = "none";
+    document.getElementById("errorMsg").textContent = err.message || "Could not load this report.";
+    document.getElementById("errorState").style.display = "block";
+  }
+}
+
+async function downloadPdf(reportId) {
+  const btn = document.getElementById("downloadBtn");
+  const original = btn.textContent;
+  btn.textContent = "⬇ Preparing…";
+  btn.disabled = true;
+  try {
+    const res = await fetchWithAuth(`/api/reports/${reportId}/download/`);
+    if (!res || !res.ok) throw new Error("Download failed");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `codeguardian_report_${scanId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    alert("Could not download the PDF report.");
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+}
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "/login/";
+});
+
+loadReport();
+</script>
+</body>
+</html>

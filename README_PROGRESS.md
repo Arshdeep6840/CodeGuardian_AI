@@ -27,6 +27,7 @@ This document serves as the central progress log and architectural reference for
 * **Authentication UI Templates**:
   * `accounts/templates/login.html` - Modern login interface with client-side credential validation, animated loader, and automatic dashboard redirect.
   * `accounts/templates/register.html` - Interactive registration interface with live password strength calculation, match verification, and role handling.
+  * `accounts/templates/profile.html` - Comprehensive user profile and developer workspace overview, displaying user info, role badges, scan statistics, and active projects.
   * `static/js/login.js` & `static/js/register.js` - Client-side AJAX submission and token lifecycle managers.
 
 ### 2. Project Ingestion & Extraction Engine (`scanner` app)
@@ -91,7 +92,10 @@ This document serves as the central progress log and architectural reference for
   * Real-time average scores (Overall, Security, Quality, Maintainability).
   * Recent scan history and Top 5 Most Risky Files ranking.
 * **Interactive Dashboard UI (`dashboard/templates/dashboard.html`)**:
-  * Responsive analytics page with SVG circular health score gauges, severity breakdown progress bars, project filter dropdown, recent scan logs, and quick PDF export triggers.
+  * Responsive analytics page with SVG circular health score gauges, severity breakdown progress bars, project filter dropdown, recent scan logs, direct report navigation, and quick PDF export triggers.
+* **Interactive Scan Report Page (`reports/templates/report.html`)**:
+  * Dedicated scan audit report view accessible via `/reports/<scan_id>/` and `/reports/` query parameters.
+  * Displays radial health dials (Overall, Security, Quality, Maintainability), scan metadata, AI recommendations banner, and searchable detected issues table with fixed/pending badges.
 * **PDF Audit Report Generator (`reports/services/pdf_generator.py`)**:
   * Generates branded PDF reports via `ReportLab`.
   * Includes executive summary, metric health score cards, scan metadata, severity distribution charts, and detailed issue breakdowns.
@@ -154,6 +158,8 @@ This document serves as the central progress log and architectural reference for
 | `GET` | `/projects/` | `scanner/templates/projects.html` | Project portfolio & scan triggering interface |
 | `GET` | `/scan/upload/` | `scanner/templates/upload.html` | Project ZIP / `.py` upload & GitHub import page |
 | `GET` | `/issues/` | `issues/templates/issue_list.html` | Issue inspection, AI fix & test generation UI |
+| `GET` | `/reports/<scan_id>/` | `reports/templates/report.html` | Interactive scan report breakdown, score gauges & PDF export |
+| `GET` | `/profile/` | `accounts/templates/profile.html` | User account information, role details & security metrics |
 
 ---
 
@@ -173,19 +179,31 @@ This document serves as the central progress log and architectural reference for
   * Verified all 5 unit tests in `scanner/tests.py` passing cleanly (`Ran 5 tests in 15.980s, OK`).
 * **Superuser Account Configured**:
   * Admin superuser available for administrative and local evaluation: `admin` / `adminpassword`.
+* **Profile & Scan Report Views**:
+  * Added dedicated `profile` view (`/profile/`) in `accounts/views.py` and template `accounts/templates/profile.html`.
+  * Added interactive `report_page` view (`/reports/<scan_id>/`, `/reports/`) in `reports/views.py` and template `reports/templates/report.html`.
+  * Unified navbar and sidebar foot links across `base.html`, `dashboard.html`, `issue_list.html`, `projects.html`, and `upload.html` to point to `/profile/` and report views.
+* **Automated End-to-End API Pipeline Verification**:
+  * Verified complete 15-step pipeline via automated script (`test_e2e.py`): JWT auth, user profile fetch, dashboard metrics, ZIP project ingestion, scan trigger & status polling, AST/Bandit/Ruff issue extraction, on-demand AI bug explanation, AI auto-fix unified diff generation, fix application & issue resolution synchronization, Pytest test generation, PDF report compilation & download, and web UI template routing. 15/15 tests passed with 0 errors.
+* **Automated Visual Browser Flow Verification**:
+  * Autonomous visual browser agent validated the live user flow on `http://127.0.0.1:8000/`:
+    * Public landing page hero and navbar (`/`)
+    * Admin login authentication and session redirect (`/login/`)
+    * Analytics dashboard with interactive score dials, severity bars, and recent scan logs (`/dashboard/`)
+    * Project portfolio grid and actions (`/projects/`)
+    * Interactive issues browser with severity filter pills and on-demand AI explanation modal (`/issues/`)
+    * Interactive scan audit report page (`/reports/22/`)
+    * User profile and developer workspace card (`/profile/`)
 
 ---
 
 ## 🔮 Next Tasks & Product Roadmap
 
-1. **Live Browser End-to-End Verification**:
-   * Run local Django dev server: `python codeguardian/manage.py runserver`.
-   * Test user sign-in (`/login/`) and verify redirect to `/dashboard/`.
-   * Test uploading a sample project archive via `/scan/upload/` and monitoring scan progress.
-   * Verify generated findings appear on `/issues/` with functional AI Explanation and Auto-Fix modals.
-2. **Gemini API Key Configuration**:
-   * Populate `GEMINI_API_KEY` in `codeguardian/.env` to enable live LLM explanation and test suite generation in development.
-3. **Background Job Queue (Celery + Redis)**:
-   * Offload heavy multi-file repository scanning, Bandit analysis, and PDF compilation into asynchronous Celery background tasks for enterprise scalability.
-4. **Repository-Wide RAG Context**:
+1. **Gemini Live Production API Key Provisioning**:
+   * Populate production `GEMINI_API_KEY` in `codeguardian/.env` or secrets manager for cloud deployment.
+2. **Background Job Queue (Celery + Redis)**:
+   * Offload heavy multi-file repository scanning, Bandit analysis, and PDF compilation into asynchronous Celery background tasks for high-throughput enterprise scalability.
+3. **Repository-Wide RAG Context**:
    * Implement vector embeddings (FAISS / ChromaDB) across extracted multi-file codebases to give Gemini cross-file contextual awareness during code remediation.
+4. **Git Webhook Integrations (GitHub & GitLab CI)**:
+   * Build automated PR review bot integration that posts diff patches and review comments directly to GitHub Pull Requests via Webhooks.

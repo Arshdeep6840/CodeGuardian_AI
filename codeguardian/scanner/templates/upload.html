@@ -180,7 +180,7 @@ a{text-decoration:none;color:inherit;}
       <div class="side-item" onclick="go('/issues/')"><span class="side-ico">📄</span>Reports</div>
     </nav>
     <div class="side-foot">
-      <div class="side-item"><span class="side-ico">⚙️</span>Settings</div>
+      <div class="side-item" onclick="go('/profile/')"><span class="side-ico">👤</span>Profile</div>
       <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
     </div>
   </aside>
@@ -191,7 +191,7 @@ a{text-decoration:none;color:inherit;}
       <div class="tb-search">🔍 <input type="text" placeholder="Search projects, files, issues..."></div>
       <div class="tb-right">
         <div class="tb-bell">🔔</div>
-        <div class="tb-user">
+        <div class="tb-user" onclick="go('/profile/')" style="cursor:pointer;">
           <div class="tb-av" id="topbar-avatar">U</div>
           <div><div class="tb-uname" id="topbar-username">Loading...</div><div class="tb-urole" id="topbar-role">Developer</div></div>
         </div>

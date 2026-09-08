@@ -180,8 +180,8 @@ a{text-decoration:none;color:inherit;}
         <div class="tb-user">
           <div class="tb-av" id="user-av">AS</div>
           <div>
-            <div class="tb-uname" id="user-uname">Developer</div>
-            <div class="tb-urole" id="user-role">Developer</div>
+            <div onclick="window.location.href='/profile/'" class="tb-uname" id="user-uname">Developer</div>
+            <div onclick="window.location.href='/profile/'" class="tb-urole" id="user-role">Developer</div>
           </div>
         </div>
       </div>
@@ -452,7 +452,12 @@ async function loadStats(projectId = "") {
             <td>${scan.total_issues || 0}</td>
             <td>${scan.score !== null ? Math.round(scan.score) : "—"}</td>
             <td>${date}</td>
-            <td><button class="rowbtn" onclick="window.location.href='/issues/?scan_id=${scan.scan_id}'">View →</button></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="rowbtn" onclick="window.location.href='/issues/?scan_id=${scan.scan_id}'">Issues →</button>
+                <button class="rowbtn" onclick="window.location.href='/reports/${scan.scan_id}/'" style="background:var(--pp);color:var(--pd);" title="View Scan Report">Report 📄</button>
+              </div>
+            </td>
           `;
           scansTbody.appendChild(tr);
         });

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — CodeGuardian AI</title>
+<meta name="description" content="Your CodeGuardian AI account, activity, and code health stats.">
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --p:#7365F0;--pm:#9B91F7;--pp:#EAE8FD;--pd:#4A41C4;
+  --d9:#070C18;--d8:#0B1222;--d7:#111B30;--d6:#172038;--d5:#1E2C47;
+  --l1:#F4F3FF;--l2:#FAFBFF;--lw:#FFFFFF;
+  --t1:#EEF2FF;--t2:#B4C0D6;--t3:#7A8FAF;--t4:#4A5A78;
+  --dt1:#1A1F36;--dt2:#3A4266;--dt3:#5E6B8A;
+  --bd:rgba(255,255,255,0.06);--bdm:rgba(255,255,255,0.10);--bl:rgba(26,31,54,0.08);
+  --sc:#FF3B5C;--scb:rgba(255,59,92,.12);--scbd:rgba(255,59,92,.28);
+  --sh:#FF8A3E;--shb:rgba(255,138,62,.12);--shbd:rgba(255,138,62,.28);
+  --sm:#FFC53D;--smb:rgba(255,197,61,.10);--smbd:rgba(255,197,61,.28);
+  --sl:#23D18B;--slb:rgba(35,209,139,.12);--slbd:rgba(35,209,139,.28);
+  --r:14px;--rl:20px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* ── APP SHELL (shared with dashboard/issues/upload) ── */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-right{display:flex;align-items:center;gap:14px;margin-left:auto;}
+.btn-newscan{background:var(--p);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-newscan:hover{background:var(--pd);}
+.tb-user{display:flex;align-items:center;gap:9px;padding-left:12px;}
+.tb-av{width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.tb-uname{font-size:13px;font-weight:600;color:var(--dt1);}
+.tb-urole{font-size:11px;color:var(--dt3);}
+
+.content{padding:28px 30px 60px;max-width:1180px;}
+
+.pg-hdr{margin-bottom:26px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+
+/* Profile hero */
+.profile-hero{background:linear-gradient(135deg,#171B30 0%,#0B1222 100%);border-radius:var(--rl);padding:32px;display:flex;align-items:center;gap:22px;margin-bottom:20px;flex-wrap:wrap;}
+.profile-avatar{width:76px;height:76px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:26px;font-weight:800;flex-shrink:0;}
+.profile-info{flex:1;min-width:180px;}
+.profile-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;}
+.profile-email{font-size:13px;color:var(--t3);margin-top:3px;}
+.profile-meta{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.profile-tag{font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.08);color:var(--t2);}
+.profile-tag.role{background:rgba(115,101,240,.22);color:var(--pm);}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.mc{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:18px 20px;}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.mv{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);}
+.ml{font-size:12.5px;color:var(--dt3);margin-top:2px;}
+
+/* Panels */
+.panel{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:22px;margin-bottom:16px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.panel-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dt1);}
+.panel-link{font-size:12.5px;font-weight:600;color:var(--p);cursor:pointer;}
+
+/* Score rings (reuse dashboard pattern) */
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.ring-box{text-align:center;}
+.ring{width:84px;height:84px;margin:0 auto 10px;position:relative;}
+.ring svg{transform:rotate(-90deg);}
+.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--dt1);}
+.ring-lbl{font-size:11.5px;color:var(--dt3);font-weight:500;}
+
+/* Project list */
+.proj-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--bl);}
+.proj-row:last-child{border-bottom:none;}
+.proj-name{font-size:13.5px;font-weight:600;color:var(--dt1);}
+.proj-meta{font-size:11.5px;color:var(--dt3);margin-top:2px;}
+.tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;text-transform:capitalize;}
+.tag.ready{background:var(--slb);color:var(--sl);}
+.tag.processing{background:var(--smb);color:var(--sm);}
+.tag.failed{background:var(--scb);color:var(--sc);}
+.tag.zip, .tag.single_file, .tag.github{background:var(--pp);color:var(--pd);margin-left:6px;}
+
+.state-box{text-align:center;color:var(--dt3);padding:30px;font-size:13px;}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .metrics{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:760px){
+  .side{display:none;}
+  .metrics{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <span class="side-logo-text">Code<em>Guardian</em> AI</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Workspace</div>
+      <div class="side-item" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
+      <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
+      <div class="side-item" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
+      <div class="side-grp-t">Analysis</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
+    </nav>
+    <div class="side-foot">
+      <div class="side-item on"><span class="side-ico">👤</span>Profile</div>
+      <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-right">
+        <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">⚡ New Scan</button>
+        <div class="tb-user">
+          <div class="tb-av" id="user-av">AS</div>
+          <div><div class="tb-uname" id="user-uname">Developer</div><div class="tb-urole" id="user-role">Developer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div class="pg-h1">Profile</div>
+        <div class="pg-sub">Your account details and code health activity across CodeGuardian AI.</div>
+      </div>
+
+      <!-- PROFILE HERO -->
+      <div class="profile-hero">
+        <div class="profile-avatar" id="hero-avatar">–</div>
+        <div class="profile-info">
+          <div class="profile-name" id="hero-name">Loading…</div>
+          <div class="profile-email" id="hero-email">—</div>
+          <div class="profile-meta">
+            <span class="profile-tag role" id="hero-role">—</span>
+            <span class="profile-tag" id="hero-joined">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics">
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--pp)">📁</div></div>
+          <div class="mv" id="stat-projects">-</div><div class="ml">Total Projects</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:#EAF5FF">🔍</div></div>
+          <div class="mv" id="stat-scans">-</div><div class="ml">Total Scans</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--scb)">⚠️</div></div>
+          <div class="mv" id="stat-issues">-</div><div class="ml">Issues Found</div>
+        </div>
+        <div class="mc">
+          <div class="mc-top"><div class="mc-ico" style="background:var(--slb)">💚</div></div>
+          <div class="mv" id="stat-score">-<span style="font-size:15px;color:var(--dt3)">/100</span></div><div class="ml">Avg. Health Score</div>
+        </div>
+      </div>
+
+      <!-- SCORE RINGS -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-t">Average Code Health</span><span class="panel-link" onclick="window.location.href='/dashboard/'">View dashboard →</span></div>
+        <div class="rings">
+          <div class="ring-box">
+            <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-overall-circle" cx="42" cy="42" r="36" fill="none" stroke="#7365F0" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="ring-val" id="ring-overall-val">-</div></div>
+            <div class="ring-lbl">Overall</div>
+          </div>
+          <div class="ring-box">
+            <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-security-circle" cx="42" cy="42" r="36" fill="none" stroke="#FF3B5C" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="ring-val" id="ring-security-val">-</div></div>
+            <div class="ring-lbl">Security</div>
+          </div>
+          <div class="ring-box">
+            <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-quality-circle" cx="42" cy="42" r="36" fill="none" stroke="#23D18B" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="ring-val" id="ring-quality-val">-</div></div>
+            <div class="ring-lbl">Code Quality</div>
+          </div>
+          <div class="ring-box">
+            <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="#EEEEF5" stroke-width="8"/><circle id="ring-maintain-circle" cx="42" cy="42" r="36" fill="none" stroke="#FFC53D" stroke-width="8" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="ring-val" id="ring-maintain-val">-</div></div>
+            <div class="ring-lbl">Maintain.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY PROJECTS -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-t">My Projects</span><span class="panel-link" onclick="window.location.href='/projects/'">Manage all →</span></div>
+        <div id="projectsList"><div class="state-box">Loading projects…</div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+async function fetchWithAuth(url, options = {}) {
+  let token = localStorage.getItem("access");
+  if (!token) { window.location.href = "/login/"; return null; }
+  if (!options.headers) options.headers = {};
+  options.headers["Authorization"] = "Bearer " + token;
+  let response = await fetch(url, options);
+  if (response.status === 401) {
+    const refresh = localStorage.getItem("refresh");
+    if (refresh) {
+      try {
+        const rr = await fetch("/api/auth/token/refresh/", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh })
+        });
+        if (rr.ok) {
+          const rd = await rr.json();
+          localStorage.setItem("access", rd.access);
+          options.headers["Authorization"] = "Bearer " + rd.access;
+          response = await fetch(url, options);
+        } else { localStorage.clear(); window.location.href = "/login/"; return null; }
+      } catch (e) { localStorage.clear(); window.location.href = "/login/"; return null; }
+    } else { localStorage.clear(); window.location.href = "/login/"; return null; }
+  }
+  return response;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function setRingScore(circleId, valId, score) {
+  const circle = document.getElementById(circleId);
+  const valEl = document.getElementById(valId);
+  if (!circle || !valEl) return;
+  const s = score !== null && score !== undefined ? Math.round(parseFloat(score)) : null;
+  if (s === null) { circle.setAttribute("stroke-dashoffset", 226); valEl.innerText = "-"; return; }
+  const offset = Math.round(226 * (1 - s / 100));
+  circle.setAttribute("stroke-dashoffset", offset);
+  valEl.innerText = s;
+}
+
+async function loadProfile() {
+  try {
+    // User info
+    const meRes = await fetchWithAuth("/api/auth/me/");
+    if (meRes && meRes.ok) {
+      const u = await meRes.json();
+      const name = u.username || u.email || "Developer";
+      const initials = name.slice(0, 2).toUpperCase();
+
+      document.getElementById("user-uname").innerText = name;
+      document.getElementById("user-av").innerText = initials;
+      document.getElementById("user-role").innerText = u.role === "admin" ? "Admin" : "Developer";
+
+      document.getElementById("hero-avatar").innerText = initials;
+      document.getElementById("hero-name").innerText = name;
+      document.getElementById("hero-email").innerText = u.email || "—";
+      document.getElementById("hero-role").innerText = u.role === "admin" ? "🛡 Admin" : "👤 Developer";
+      if (u.created_at) {
+        const joined = new Date(u.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+        document.getElementById("hero-joined").innerText = "Joined " + joined;
+      } else {
+        document.getElementById("hero-joined").innerText = "";
+      }
+    }
+
+    // Aggregate stats
+    const statsRes = await fetchWithAuth("/api/dashboard/stats/");
+    if (statsRes && statsRes.ok) {
+      const data = await statsRes.json();
+      document.getElementById("stat-projects").innerText = data.total_projects;
+      document.getElementById("stat-scans").innerText = data.total_scans;
+      document.getElementById("stat-issues").innerText = data.total_issues;
+      document.getElementById("stat-score").innerHTML = `${Math.round(data.scores.overall)}<span style="font-size:15px;color:var(--dt3)">/100</span>`;
+
+      setRingScore("ring-overall-circle", "ring-overall-val", data.scores.overall);
+      setRingScore("ring-security-circle", "ring-security-val", data.scores.security);
+      setRingScore("ring-quality-circle", "ring-quality-val", data.scores.code_quality);
+      setRingScore("ring-maintain-circle", "ring-maintain-val", data.scores.maintainability);
+    }
+
+    // Projects list
+    const projRes = await fetchWithAuth("/api/projects/");
+    const listEl = document.getElementById("projectsList");
+    if (projRes && projRes.ok) {
+      const projects = await projRes.json();
+      if (projects.length > 0) {
+        listEl.innerHTML = "";
+        projects.slice(0, 8).forEach(p => {
+          const row = document.createElement("div");
+          row.className = "proj-row";
+          row.innerHTML = `
+            <div>
+              <div class="proj-name">${escapeHtml(p.name)}</div>
+              <div class="proj-meta">${p.total_python_files || 0} Python files <span class="tag ${p.upload_type}">${p.upload_type === 'github' ? 'GitHub' : p.upload_type === 'single_file' ? 'PY File' : 'ZIP'}</span></div>
+            </div>
+            <span class="tag ${p.status}">${p.status.charAt(0).toUpperCase() + p.status.slice(1)}</span>
+          `;
+          listEl.appendChild(row);
+        });
+      } else {
+        listEl.innerHTML = `<div class="state-box">No projects yet. <a href="/scan/upload/" style="color:var(--p);font-weight:600;">Upload your first project →</a></div>`;
+      }
+    } else {
+      listEl.innerHTML = `<div class="state-box">Could not load projects.</div>`;
+    }
+  } catch (e) {
+    console.error("Error loading profile:", e);
+  }
+}
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "/login/";
+});
+
+loadProfile();
+</script>
+</body>
+</html>

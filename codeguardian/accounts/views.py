@@ -42,3 +42,6 @@ def register(request):
 def login(request):
     return render(request, 'login.html')
 
+
+def profile(request):
+    return render(request, "profile.html")

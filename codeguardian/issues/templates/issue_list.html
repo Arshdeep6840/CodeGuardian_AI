@@ -731,8 +731,9 @@
         <div class="tb-search">🔍 <input type="text" id="searchInput" placeholder="Filter issues by title or file...">
         </div>
         <div class="tb-right">
+          <button id="btn-view-report" class="btn-newscan" style="display:none;background:var(--d7);border:1px solid var(--bl);color:var(--t1);" onclick="if(scanId) window.location.href='/reports/' + scanId + '/';">📄 View Report</button>
           <button class="btn-newscan" onclick="window.location.href='/scan/upload/'">⚡ New Scan</button>
-          <div class="tb-user">
+          <div class="tb-user" style="cursor:pointer;" onclick="window.location.href='/profile/'">
             <div class="tb-av" id="user-av">AS</div>
             <div class="tb-uname" id="user-uname">Developer</div>
           </div>
@@ -780,6 +781,10 @@
     function getToken() { return localStorage.getItem('access'); }
 
     async function fetchIssues() {
+      if (scanId) {
+        const rBtn = document.getElementById('btn-view-report');
+        if (rBtn) rBtn.style.display = 'inline-flex';
+      }
       const token = getToken();
       let url = '/api/issues/?';
       if (scanId) url += `scan_id=${scanId}&`;

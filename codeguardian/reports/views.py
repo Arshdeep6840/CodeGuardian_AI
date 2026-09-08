@@ -1,5 +1,5 @@
 import os
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.core.files.base import ContentFile
 from rest_framework import status
@@ -84,3 +84,8 @@ class ReportDownloadView(APIView):
 def os_file_exists(path):
     import os
     return os.path.exists(path)
+
+
+def report_page(request, scan_id=None):
+    """Render the HTML Scan Report view."""
+    return render(request, "report.html", {"scan_id": scan_id})
