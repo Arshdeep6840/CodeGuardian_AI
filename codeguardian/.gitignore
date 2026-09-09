@@ -97,3 +97,8 @@ Thumbs.db
 *.bak
 *.tmp
 *.orig
+
+# Virtual environment
+env/
+venv/
+.venv/

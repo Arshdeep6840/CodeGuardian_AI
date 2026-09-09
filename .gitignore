@@ -1,1 +1,132 @@
 codeguardian/db.sqlite3
+# =============================================================
+# Python
+# =============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyo
+
+# =============================================================
+# Virtual Environments
+# =============================================================
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# =============================================================
+# Django
+# =============================================================
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static_root/
+
+# =============================================================
+# Environment Variables / Secrets
+# =============================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# =============================================================
+# Distribution / Packaging
+# =============================================================
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
+
+# =============================================================
+# Testing & Coverage
+# =============================================================
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+.pytest_cache/
+.cache/
+nosetests.xml
+
+# =============================================================
+# IDEs & Editors
+# =============================================================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# =============================================================
+# Docker
+# =============================================================
+.dockerignore
+
+# =============================================================
+# Jupyter Notebooks
+# =============================================================
+.ipynb_checkpoints
+*.ipynb
+
+# =============================================================
+# Misc
+# =============================================================
+*.bak
+*.tmp
+*.orig
+# Virtual environment
+env/
+venv/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution
+dist/
+build/
+.eggs/
+*.egg-info/
+
+# Virtual environment
+env/
+venv/
+.venv/
