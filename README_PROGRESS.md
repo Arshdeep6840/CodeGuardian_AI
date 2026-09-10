@@ -195,6 +195,30 @@ This document serves as the central progress log and architectural reference for
     * Interactive scan audit report page (`/reports/22/`)
     * User profile and developer workspace card (`/profile/`)
 
+* **Auto-Fix & Patch Center (`fixes` app)**:
+  * Implemented `fix_list_page` (`/fixes/`) and interactive template `fixes/templates/fix_list.html` with status filters and diff preview.
+  * Added `ScanPatchExportView` (`GET /api/scans/<id>/patch/`) to export unified Git `.patch` files.
+  * Added `ScanFixedArchiveView` (`GET /api/scans/<id>/download-fixed/`) to download the complete codebase with all applied fixes injected as a `.zip` archive.
+  * Added `FixListAPIView` (`GET /api/fixes/`) with scan, project, and status query parameters.
+* **AI Test Suite Generator & Bundle Center (`fixes` app)**:
+  * Implemented `test_suite_page` (`/tests/`, `/tests/<scan_id>/`) and template `fixes/templates/test_suite.html` for interactive Pytest test generation.
+  * Added `ScanTestSuiteDownloadView` (`GET /api/scans/<id>/tests/download/`) bundling test cases for all Python files into `tests.zip` with `conftest.py`.
+  * Added `CodeFileTestDownloadView` (`GET /api/codefiles/<id>/tests/download/`) for downloading individual `test_<file>.py` files.
+* **Machine Learning Severity Predictor & Classifier (`issues` app)**:
+  * Built `issues/services/severity_predictor.py` featuring multi-class Bayesian & heuristic defect classification across `critical`, `high`, `medium`, and `low` tiers with deterministic safety guardrails.
+  * Added `SeverityPredictAPIView` (`POST /api/issues/predict-severity/`) for on-demand defect severity estimation.
+* **Code Complexity & Maintainability Analyzer (`scanner` app)**:
+  * Built `scanner/services/complexity_analyzer.py` computing McCabe Cyclomatic Complexity (`COMP001`, `COMP002`, `COMP003`) and Maintainability Index (MI: 0–100).
+  * Integrated complexity metrics directly into `scanner/services/issue_aggregator.py` to drive scientific `maintainability_score` calculations.
+* **Live Scan Status Progress Page (`scanner` app)**:
+  * Added `scan_status_page` (`/scans/<scan_id>/status-page/`) and template `scanner/templates/scan_status.html` with real-time stage progress and auto-redirection upon completion.
+* **Chart.js Visual Analytics Dashboard (`dashboard` app)**:
+  * Integrated Chart.js into `dashboard/templates/dashboard.html` with an animated Severity Distribution doughnut chart and an Issues by Category bar chart.
+* **Django Admin Extensions (`accounts` app)**:
+  * Added CSV export actions (`export_scans_csv`, `export_issues_csv`) and bulk resolution actions (`mark_selected_fixed`, `mark_selected_false_positive`) to `accounts/admin.py`.
+* **Global Navigation Consistency**:
+  * Unified sidebars and navigation links across all pages (`base.html`, `dashboard.html`, `projects.html`, `upload.html`, `issue_list.html`, `report.html`, `profile.html`) to expose Dashboard, Projects, New Scan, Issues, Auto-Fixes, Test Suites, Reports, and Profile.
+
 ---
 
 ## 🔮 Next Tasks & Product Roadmap
