@@ -24,7 +24,8 @@ class FixRetrieveOrGenerateView(APIView):
                 issue.title,
                 issue.description,
                 issue.code_snippet or "",
-                issue.file_path
+                issue.file_path,
+                issue.scan.project_id if issue.scan else None
             )
             
             fix = Fix.objects.create(

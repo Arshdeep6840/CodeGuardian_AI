@@ -68,7 +68,7 @@ def generate_heuristic_fix(issue_title, issue_desc, original_code, file_path="")
         "diff_patch": diff_patch
     }
 
-def generate_fix(issue_title, issue_desc, original_code, file_path=""):
+def generate_fix(issue_title, issue_desc, original_code, file_path="", project_id=None):
     """
     Generate corrected code and unified diff patch for an issue using the Gemini API.
     Falls back to intelligent heuristic fixes if API key is not configured or fails.
@@ -86,7 +86,16 @@ def generate_fix(issue_title, issue_desc, original_code, file_path=""):
 
     try:
         import google.generativeai as genai
+        from issues.services.rag_context import retrieve_relevant_context
         genai.configure(api_key=api_key)
+        
+        rag_context = ""
+        if project_id:
+            context_files = retrieve_relevant_context(project_id, issue_title + " " + issue_desc)
+            if context_files:
+                rag_context = "\n--- RELEVANT REPOSITORY CONTEXT ---\n"
+                for cf in context_files:
+                    rag_context += f"File: {cf['file_path']}\n{cf['content'][:2000]}\n"
         
         for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
             try:
@@ -98,6 +107,7 @@ Fix the code bug or security issue described below.
 File: {file_path or 'code_file.py'}
 Issue Title: {issue_title}
 Issue Description: {issue_desc}
+{rag_context}
 
 Original Code Block:
 ```python

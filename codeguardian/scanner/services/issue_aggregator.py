@@ -1,10 +1,12 @@
 import os
 from django.utils import timezone
 from django.conf import settings
+from celery import shared_task
 from accounts.models import Scan, CodeFile, Issue
 from scanner.services import ast_parser, bandit_runner, secret_detector, ruff_runner, complexity_analyzer
 from issues.services.severity_predictor import predict_severity
 
+@shared_task
 def run_project_scan(scan_id):
     """
     Run AST parser, Bandit, Ruff, Secret Detector, and Complexity Analyzer on all files.

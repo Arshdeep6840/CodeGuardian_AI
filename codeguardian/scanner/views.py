@@ -166,20 +166,15 @@ class StartScanView(APIView):
         scan = Scan.objects.create(
             project=project,
             scan_name=scan_name,
-            status="running",
+            status="pending",
             started_at=timezone.now()
         )
 
-        # Trigger actual scan pipeline
-        success, message = run_project_scan(scan.id)
-        if not success:
-            return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Refresh scan from database to load updated scores and details
-        scan.refresh_from_db()
+        # Trigger actual scan pipeline asynchronously via Celery
+        run_project_scan.delay(scan.id)
 
         serializer = ScanSerializer(scan)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
 class ScanStatusView(generics.RetrieveAPIView):
