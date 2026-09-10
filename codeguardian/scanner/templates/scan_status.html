@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Progress — CodeGuardian AI</title>
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --p: #7365F0; --pm: #9B91F7; --pp: #EAE8FD; --pd: #4A41C4;
+  --d9: #070C18; --d8: #0B1222; --d7: #111B30; --d6: #172038;
+  --l1: #F4F3FF; --lw: #FFFFFF;
+  --dt1: #1A1F36; --dt2: #3A4266; --dt3: #5E6B8A;
+  --bl: rgba(26,31,54,0.08);
+  --sl: #23D18B; --slb: rgba(35,209,139,.12);
+  --sc: #FF3B5C; --scb: rgba(255,59,92,.12);
+  --r: 14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+.container{max-width:880px;margin:50px auto;padding:0 20px;}
+
+.status-box{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:36px 40px;box-shadow:0 12px 36px rgba(115,101,240,.08);text-align:center;}
+
+.radar{width:72px;height:72px;border-radius:50%;background:rgba(115,101,240,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative;}
+.radar::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--pm);opacity:.6;animation:pulse 1.8s ease-out infinite;}
+@keyframes pulse{0%{transform:scale(0.8);opacity:1;}100%{transform:scale(1.5);opacity:0;}}
+.radar-ico{font-size:32px;}
+
+.title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--dt1);margin-bottom:6px;}
+.sub{font-size:14px;color:var(--dt3);margin-bottom:28px;}
+
+/* Progress Bar */
+.pbar-wrap{background:#EEEEF5;height:10px;border-radius:6px;overflow:hidden;margin-bottom:30px;position:relative;}
+.pbar{height:100%;background:linear-gradient(90deg, var(--p), var(--pm), var(--sl));width:35%;border-radius:6px;transition:width 0.5s ease;}
+
+/* Stage Steps */
+.pipeline{display:grid;grid-template-columns:1fr;gap:12px;text-align:left;margin-bottom:32px;}
+.stage{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--l1);border:1px solid var(--bl);border-radius:10px;transition:all .2s;}
+.stage.active{border-color:var(--p);background:var(--pp);}
+.stage.done{border-color:var(--sl);background:var(--slb);}
+.stage-name{font-size:13.5px;font-weight:600;color:var(--dt1);display:flex;align-items:center;gap:10px;}
+.stage-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;text-transform:uppercase;}
+.badge-wait{background:#E2E4EB;color:var(--dt3);}
+.badge-run{background:var(--p);color:#fff;animation:blink 1.2s infinite;}
+.badge-done{background:var(--sl);color:#032A1F;}
+@keyframes blink{50%{opacity:.5;}}
+
+/* Completion Card */
+.done-card{display:none;background:#F6FBF8;border:1px solid rgba(35,209,139,.3);border-radius:12px;padding:24px;margin-bottom:24px;}
+.done-card.show{display:block;}
+.score-row{display:flex;justify-content:space-around;margin:18px 0;}
+.sc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--sl);}
+.sc-lbl{font-size:12px;color:var(--dt3);font-weight:600;}
+
+.btn-group{display:flex;gap:12px;justify-content:center;margin-top:20px;}
+.btn-primary{background:var(--p);color:#fff;border:none;padding:12px 24px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-primary:hover{background:var(--pd);}
+.btn-outline{background:transparent;color:var(--p);border:1px solid var(--p);padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-outline:hover{background:var(--pp);}
+
+.err-alert{display:none;background:var(--scb);border:1px solid rgba(255,59,92,.3);border-radius:10px;padding:16px;color:var(--sc);font-size:13.5px;font-weight:600;margin-bottom:20px;}
+.err-alert.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="status-box">
+    <div class="radar">
+      <div class="radar-ico">🛡️</div>
+    </div>
+
+    <h1 class="title" id="scanTitle">Multi-Engine Security Scan in Progress</h1>
+    <p class="sub" id="scanSub">Scanning codebase using AST, Bandit, Ruff, Complexity Analyzer, and ML Severity Classifier...</p>
+
+    <div class="err-alert" id="errAlert"></div>
+
+    <div class="pbar-wrap">
+      <div class="pbar" id="pbar"></div>
+    </div>
+
+    <!-- Pipeline Stages -->
+    <div class="pipeline">
+      <div class="stage done" id="stage-1">
+        <div class="stage-name"><span>📦</span> Project Extraction & Directory Indexing</div>
+        <span class="stage-badge badge-done">Completed</span>
+      </div>
+      <div class="stage active" id="stage-2">
+        <div class="stage-name"><span>🛡️</span> Bandit Security Scanner (SQL, Crypto, Injection)</div>
+        <span class="stage-badge badge-run" id="badge-2">Running</span>
+      </div>
+      <div class="stage" id="stage-3">
+        <div class="stage-name"><span>🧹</span> Ruff Fast Linter & Quality Rules</div>
+        <span class="stage-badge badge-wait" id="badge-3">Pending</span>
+      </div>
+      <div class="stage" id="stage-4">
+        <div class="stage-name"><span>📐</span> McCabe Cyclomatic Complexity & Maintainability</div>
+        <span class="stage-badge badge-wait" id="badge-4">Pending</span>
+      </div>
+      <div class="stage" id="stage-5">
+        <div class="stage-name"><span>🤖</span> ML Bug Severity Classification & Aggregation</div>
+        <span class="stage-badge badge-wait" id="badge-5">Pending</span>
+      </div>
+    </div>
+
+    <!-- Completion Panel -->
+    <div class="done-card" id="doneCard">
+      <div style="font-size:24px;margin-bottom:6px;">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--dt1);">Scan Complete!</div>
+      <p style="font-size:13px;color:var(--dt3);">Code health assessment and remediation recommendations ready.</p>
+
+      <div class="score-row">
+        <div>
+          <div class="sc-val" id="resOverall">--</div>
+          <div class="sc-lbl">Overall Health</div>
+        </div>
+        <div>
+          <div class="sc-val" id="resSecurity" style="color:var(--p)">--</div>
+          <div class="sc-lbl">Security Score</div>
+        </div>
+        <div>
+          <div class="sc-val" id="resQuality" style="color:#0C447C">--</div>
+          <div class="sc-lbl">Code Quality</div>
+        </div>
+        <div>
+          <div class="sc-val" id="resIssues" style="color:var(--dt1)">--</div>
+          <div class="sc-lbl">Issues Found</div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <a id="linkReport" href="#" class="btn-primary">View Full Audit Report →</a>
+        <a id="linkIssues" href="#" class="btn-outline">Inspect Issues</a>
+        <a id="linkFixes" href="#" class="btn-outline">Review Auto-Fixes</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const scanId = "{{ scan_id }}" || window.location.pathname.split('/').filter(Boolean)[1];
+let pollInterval = null;
+let progressPct = 30;
+
+function advanceStage(stageNum) {
+  for (let i = 2; i <= 5; i++) {
+    const el = document.getElementById(`stage-${i}`);
+    const bd = document.getElementById(`badge-${i}`);
+    if (!el || !bd) continue;
+    if (i < stageNum) {
+      el.className = "stage done";
+      bd.className = "stage-badge badge-done";
+      bd.innerText = "Completed";
+    } else if (i === stageNum) {
+      el.className = "stage active";
+      bd.className = "stage-badge badge-run";
+      bd.innerText = "Running";
+    } else {
+      el.className = "stage";
+      bd.className = "stage-badge badge-wait";
+      bd.innerText = "Pending";
+    }
+  }
+}
+
+async function checkStatus() {
+  if (!scanId || scanId === 'scan_id') return;
+  try {
+    const res = await fetch(`/api/scans/${scanId}/status/`);
+    if (!res.ok) return;
+    const data = await res.json();
+
+    if (data.status === "running") {
+      progressPct = Math.min(progressPct + 15, 85);
+      document.getElementById('pbar').style.width = progressPct + '%';
+      if (progressPct > 45 && progressPct < 65) advanceStage(3);
+      else if (progressPct >= 65 && progressPct < 80) advanceStage(4);
+      else if (progressPct >= 80) advanceStage(5);
+    } else if (data.status === "completed") {
+      clearInterval(pollInterval);
+      document.getElementById('pbar').style.width = '100%';
+      advanceStage(6); // marks all done
+
+      document.getElementById('scanTitle').innerText = "Analysis Finished";
+      document.getElementById('scanSub').innerText = "All security, complexity, and code quality audits are complete.";
+
+      // Populate scores
+      document.getElementById('resOverall').innerText = Math.round(data.overall_score || 100);
+      document.getElementById('resSecurity').innerText = Math.round(data.security_score || 100);
+      document.getElementById('resQuality').innerText = Math.round(data.code_quality_score || 100);
+      document.getElementById('resIssues').innerText = data.total_issues_found || 0;
+
+      // Link CTAs
+      document.getElementById('linkReport').href = `/reports/${scanId}/`;
+      document.getElementById('linkIssues').href = `/issues/?scan_id=${scanId}`;
+      document.getElementById('linkFixes').href = `/fixes/?scan_id=${scanId}`;
+
+      document.getElementById('doneCard').classList.add('show');
+    } else if (data.status === "failed") {
+      clearInterval(pollInterval);
+      document.getElementById('pbar').style.background = 'var(--sc)';
+      document.getElementById('errAlert').innerText = "Scan failed: " + (data.error_message || "Unknown error encountered during execution.");
+      document.getElementById('errAlert').classList.add('show');
+    }
+  } catch (err) {
+    console.error("Polling error:", err);
+  }
+}
+
+pollInterval = setInterval(checkStatus, 2000);
+checkStatus();
+</script>
+
+</body>
+</html>

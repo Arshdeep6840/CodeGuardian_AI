@@ -221,3 +221,8 @@ class ProjectListView(generics.ListAPIView):
 def projects_page(request):
     """View to serve the static projects page HTML template."""
     return render(request, "projects.html")
+
+
+def scan_status_page(request, scan_id):
+    """View to serve the live scan status progress page."""
+    return render(request, "scan_status.html", {"scan_id": scan_id})

@@ -10,4 +10,6 @@ urlpatterns = [
     path("api/scans/<int:scan_id>/results/", views.ScanResultsView.as_view(), name="scan-results"),
     path("scan/upload/", views.upload_page, name="scan-upload-page"),
     path("projects/", views.projects_page, name="projects-page"),
+    path("scans/<int:scan_id>/status-page/", views.scan_status_page, name="scan-status-page"),
+    path("scan/<int:scan_id>/status/", views.scan_status_page, name="scan-status-page-short"),
 ]

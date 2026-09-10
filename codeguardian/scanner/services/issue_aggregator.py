@@ -2,12 +2,13 @@ import os
 from django.utils import timezone
 from django.conf import settings
 from accounts.models import Scan, CodeFile, Issue
-from scanner.services import ast_parser, bandit_runner, secret_detector, ruff_runner
+from scanner.services import ast_parser, bandit_runner, secret_detector, ruff_runner, complexity_analyzer
+from issues.services.severity_predictor import predict_severity
 
 def run_project_scan(scan_id):
     """
-    Run AST parser, Bandit, and Secret Detector on all files associated with a scan.
-    Aggregates findings, calculates metrics and scores, and updates the scan status.
+    Run AST parser, Bandit, Ruff, Secret Detector, and Complexity Analyzer on all files.
+    Aggregates findings, applies ML severity refinement, calculates scores, and updates the scan status.
     """
     try:
         scan = Scan.objects.get(id=scan_id)
@@ -38,16 +39,24 @@ def run_project_scan(scan_id):
     # Run Ruff (Code Quality scanner on project folder)
     ruff_issues = ruff_runner.run_ruff(extracted_path)
     
-    # 2. Run AST and Secret Scanners file-by-file
+    # 2. Run AST, Complexity Analyzer, and Secret Scanners file-by-file
     file_specific_issues = []
+    file_maintainability_indices = []
     
     for code_file in code_files:
         absolute_file_path = os.path.join(extracted_path, code_file.file_path)
         
-        # Only run AST parser on Python files
+        # Only run AST & Complexity on Python files
         if code_file.extension == ".py":
             ast_issues = ast_parser.analyze_file(absolute_file_path)
             for issue in ast_issues:
+                issue["code_file"] = code_file
+                file_specific_issues.append(issue)
+
+            comp_issues, comp_metrics = complexity_analyzer.analyze_file_complexity(absolute_file_path)
+            if "maintainability_index" in comp_metrics:
+                file_maintainability_indices.append(comp_metrics["maintainability_index"])
+            for issue in comp_issues:
                 issue["code_file"] = code_file
                 file_specific_issues.append(issue)
 
@@ -105,16 +114,29 @@ def run_project_scan(scan_id):
         )
         db_issues.append(issue_obj)
 
-    # Create file-specific issues (AST + Secrets)
+    # Create file-specific issues (AST + Secrets + Complexity)
     for raw in file_specific_issues:
         code_file = raw.get("code_file")
-        tool_name = "ai" if raw.get("rule_id", "").startswith("AI") else "custom_rule"
+        rule_id = raw.get("rule_id", "")
+        tool_name = "complexity" if rule_id.startswith("COMP") else ("ai" if rule_id.startswith("AI") else "custom_rule")
         
+        # Apply ML severity prediction refinement
+        assigned_sev = raw.get("severity")
+        if not assigned_sev or assigned_sev.lower() in ["low", "unspecified"]:
+            ml_pred = predict_severity(
+                title=raw.get("title", ""),
+                description=raw.get("description", ""),
+                tool_name=tool_name,
+                rule_id=rule_id,
+                code_snippet=raw.get("code_snippet", "")
+            )
+            assigned_sev = ml_pred.get("predicted_severity", "low")
+
         issue_obj = Issue(
             scan=scan,
             code_file=code_file,
             issue_type=raw.get("issue_type", "code_quality"),
-            severity=raw.get("severity", "low"),
+            severity=assigned_sev,
             title=raw.get("title", "Code Issue"),
             description=raw.get("description", ""),
             file_path=code_file.file_path,
@@ -122,7 +144,7 @@ def run_project_scan(scan_id):
             column_number=raw.get("column_number", 0),
             code_snippet=raw.get("code_snippet"),
             tool_name=tool_name,
-            rule_id=raw.get("rule_id")
+            rule_id=rule_id
         )
         db_issues.append(issue_obj)
 
@@ -162,14 +184,20 @@ def run_project_scan(scan_id):
         elif issue.issue_type in ["code_quality", "style", "bug"]:
             quality_deductions += deduction
         
-        # AST rule or Ruff complexity check for maintainability (complexity, too long, too many arguments)
-        if issue.rule_id in ["AST003", "AST004"] or (issue.rule_id and (issue.rule_id.startswith("C9") or issue.rule_id.startswith("PLR09"))):
+        # AST rule, complexity check, or Ruff complexity check for maintainability
+        if issue.rule_id in ["AST003", "AST004", "COMP001", "COMP002", "COMP003"] or (issue.rule_id and (issue.rule_id.startswith("C9") or issue.rule_id.startswith("PLR09"))):
             maintainability_deductions += deduction
 
     # Deduct from base of 100
     security_score = max(0.0, 100.0 - security_deductions)
     code_quality_score = max(0.0, 100.0 - quality_deductions)
-    maintainability_score = max(0.0, 100.0 - maintainability_deductions)
+    
+    # Maintainability blends AST/complexity deductions and file Maintainability Indices
+    if file_maintainability_indices:
+        avg_mi = sum(file_maintainability_indices) / len(file_maintainability_indices)
+        maintainability_score = round(max(0.0, min(100.0, (avg_mi * 0.5) + (max(0.0, 100.0 - maintainability_deductions) * 0.5))), 1)
+    else:
+        maintainability_score = max(0.0, 100.0 - maintainability_deductions)
     
     # Overall score is a weighted average of individual scores
     overall_score = max(0.0, 100.0 - (15 * critical_cnt + 10 * high_cnt + 5 * medium_cnt + 2 * low_cnt))

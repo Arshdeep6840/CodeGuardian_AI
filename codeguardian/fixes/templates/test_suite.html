@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Test Suites — CodeGuardian AI</title>
+<meta name="description" content="Generate, view, and download comprehensive Pytest unit test suites for Python files using Google Gemini.">
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --p: #7365F0; --pm: #9B91F7; --pp: #EAE8FD; --pd: #4A41C4;
+  --d9: #070C18; --d8: #0B1222; --d7: #111B30; --d6: #172038; --d5: #1E2C47;
+  --l1: #F4F3FF; --l2: #FAFBFF; --lw: #FFFFFF;
+  --t1: #EEF2FF; --t2: #B4C0D6; --t3: #7A8FAF; --t4: #4A5A78;
+  --dt1: #1A1F36; --dt2: #3A4266; --dt3: #5E6B8A;
+  --bd: rgba(255,255,255,0.06); --bl: rgba(26,31,54,0.08);
+  --sl: #23D18B; --slb: rgba(35,209,139,.12);
+  --r: 14px; --rl: 20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* Shell */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+/* Main */
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.btn-primary{background:var(--p);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s;}
+.btn-primary:hover{background:var(--pd);}
+.btn-outline{background:transparent;color:var(--p);border:1px solid var(--p);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-outline:hover{background:var(--pp);}
+
+.content{padding:28px 30px 60px;max-width:1360px;}
+
+/* Header */
+.pg-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+
+/* Two Column Layout */
+.grid-tests{display:grid;grid-template-columns:320px 1fr;gap:20px;}
+.panel{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:20px;}
+.panel-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dt1);margin-bottom:14px;}
+
+.select-box{width:100%;padding:10px 12px;border:1px solid var(--bl);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dt1);background:var(--l1);margin-bottom:14px;}
+
+.file-list{max-height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.file-item{padding:9px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dt2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s;}
+.file-item:hover{background:var(--l1);color:var(--p);}
+.file-item.active{background:var(--pp);color:var(--p);font-weight:600;}
+
+/* Code Viewer */
+.code-panel{background:#0D1117;border-radius:var(--r);padding:20px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;min-height:520px;}
+.cp-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:14px;}
+.cp-fname{font-family:'JetBrains Mono',monospace;font-size:13px;color:#79C0FF;font-weight:600;}
+.cp-actions{display:flex;gap:8px;}
+.btn-code{background:rgba(255,255,255,0.08);color:#C9D1D9;border:1px solid rgba(255,255,255,0.12);padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-code:hover{background:rgba(255,255,255,0.15);color:#fff;}
+
+.code-view{flex:1;overflow:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:#E6EDF3;white-space:pre;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:960px){
+  .grid-tests{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <div class="side-logo-text">Code<em>Guardian</em> AI</div>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Platform</div>
+      <a href="/dashboard/" class="side-item"><span class="side-ico">📊</span>Dashboard</a>
+      <a href="/projects/" class="side-item"><span class="side-ico">📁</span>Projects</a>
+      <a href="/issues/" class="side-item"><span class="side-ico">⚠️</span>Issues</a>
+      <a href="/fixes/" class="side-item"><span class="side-ico">⚡</span>Auto-Fixes</a>
+      <a href="/tests/" class="side-item on"><span class="side-ico">🧪</span>Test Suites</a>
+      <a href="/scan/upload/" class="side-item"><span class="side-ico">🚀</span>New Scan</a>
+      <a href="/reports/" class="side-item"><span class="side-ico">📄</span>Reports</a>
+      <div class="side-grp-t">Account</div>
+      <a href="/profile/" class="side-item"><span class="side-ico">👤</span>Profile</a>
+    </nav>
+    <div class="side-foot">
+      <button onclick="logout()" class="side-item" style="width:100%;border:none;background:none;text-align:left;"><span class="side-ico">🚪</span>Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div class="tb-title">AI Test Suite Generator</div>
+      <div class="tb-right" id="topActions">
+        <!-- Injected dynamically -->
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div>
+          <h1 class="pg-h1">Automated Pytest Test Suites</h1>
+          <p class="pg-sub">Generate robust unit tests, edge-case assertions, and mocks for any Python function using Gemini AI.</p>
+        </div>
+        <div id="batchDownloadDiv"></div>
+      </div>
+
+      <div class="grid-tests">
+        <!-- Sidebar Selector -->
+        <div class="panel">
+          <div class="panel-t">Select Source File</div>
+          
+          <label style="font-size:12px;font-weight:600;color:var(--dt3);display:block;margin-bottom:6px;">Project</label>
+          <select id="projectSelect" class="select-box" onchange="onProjectChange()">
+            <option value="">Loading projects...</option>
+          </select>
+
+          <label style="font-size:12px;font-weight:600;color:var(--dt3);display:block;margin-bottom:6px;">Files (.py)</label>
+          <div class="file-list" id="fileList">
+            <div style="font-size:12px;color:var(--dt3);padding:10px;">Select a project to view files.</div>
+          </div>
+        </div>
+
+        <!-- Code Viewer Panel -->
+        <div class="code-panel">
+          <div class="cp-hdr">
+            <div class="cp-fname" id="activeFileName">No file selected</div>
+            <div class="cp-actions">
+              <button class="btn-code" onclick="copyCode()">📋 Copy</button>
+              <button class="btn-code" id="btnDownloadSingle" onclick="downloadSingleTest()" style="display:none;">📥 Download .py</button>
+            </div>
+          </div>
+          <div class="code-view" id="codeView">
+# Select a Python file from the left sidebar to generate or view its Pytest test suite.
+# Tests are generated using Google Gemini with high coverage targeting:
+# - Normal inputs & expected return types
+# - Edge cases & error handling (pytest.raises)
+# - Fixtures and mock setups
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+let projects = [];
+let currentCodeFiles = [];
+let selectedFileId = null;
+let currentTestCode = "";
+
+async function init() {
+  try {
+    const res = await fetch('/api/projects/', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+    });
+    if (!res.ok) throw new Error("Failed to fetch projects");
+    projects = await res.json();
+
+    const select = document.getElementById('projectSelect');
+    if (!projects.length) {
+      select.innerHTML = '<option value="">No projects found</option>';
+      return;
+    }
+
+    select.innerHTML = projects.map(p => `<option value="${p.id}">${escapeHtml(p.name)} (${p.language})</option>`).join('');
+    onProjectChange();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function onProjectChange() {
+  const projId = document.getElementById('projectSelect').value;
+  if (!projId) return;
+
+  const proj = projects.find(p => p.id == projId);
+  currentCodeFiles = (proj && proj.code_files) ? proj.code_files : [];
+
+  // Update Batch Download button
+  const batchDiv = document.getElementById('batchDownloadDiv');
+  if (proj && proj.scans && proj.scans.length) {
+    const latestScan = proj.scans[0];
+    batchDiv.innerHTML = `
+      <a href="/api/scans/${latestScan.id}/tests/download/" class="btn-primary">
+        <span>📦</span> Download All Tests (.zip)
+      </a>
+    `;
+  } else {
+    batchDiv.innerHTML = '';
+  }
+
+  const fileListEl = document.getElementById('fileList');
+  if (!currentCodeFiles.length) {
+    fileListEl.innerHTML = '<div style="font-size:12px;color:var(--dt3);padding:10px;">No Python files indexed in this project.</div>';
+    return;
+  }
+
+  fileListEl.innerHTML = currentCodeFiles.map(cf => `
+    <div class="file-item ${cf.id === selectedFileId ? 'active' : ''}" onclick="selectFile(${cf.id})">
+      <span>📄 ${escapeHtml(cf.file_name)}</span>
+      <span style="font-size:10.5px;color:var(--dt3);">${cf.lines_of_code || 0} loc</span>
+    </div>
+  `).join('');
+
+  // Auto select first file
+  if (currentCodeFiles.length > 0) {
+    selectFile(currentCodeFiles[0].id);
+  }
+}
+
+async function selectFile(codeFileId) {
+  selectedFileId = codeFileId;
+  document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+
+  const cf = currentCodeFiles.find(f => f.id === codeFileId);
+  if (!cf) return;
+
+  document.getElementById('activeFileName').innerText = `test_${cf.file_name}`;
+  document.getElementById('codeView').innerHTML = '<div style="display:flex;align-items:center;gap:10px;color:#79C0FF;"><div class="spinner"></div> Generating AI Pytest Test Suite with Gemini...</div>';
+  document.getElementById('btnDownloadSingle').style.display = 'none';
+
+  try {
+    const res = await fetch(`/api/codefiles/${codeFileId}/tests/`, {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+    });
+    const data = await res.json();
+    if (res.ok && data.test_code) {
+      currentTestCode = data.test_code;
+      document.getElementById('codeView').innerText = data.test_code;
+      document.getElementById('btnDownloadSingle').style.display = 'inline-block';
+    } else {
+      document.getElementById('codeView').innerText = `# Failed to generate test suite: ${data.error || 'Unknown error'}`;
+    }
+  } catch (err) {
+    document.getElementById('codeView').innerText = `# Network error: ${err.message}`;
+  }
+}
+
+function copyCode() {
+  if (!currentTestCode) return;
+  navigator.clipboard.writeText(currentTestCode);
+  alert("Test suite code copied to clipboard!");
+}
+
+function downloadSingleTest() {
+  if (!selectedFileId) return;
+  window.location.href = `/api/codefiles/${selectedFileId}/tests/download/`;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function logout() {
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+  window.location.href = "/login/";
+}
+
+init();
+</script>
+
+</body>
+</html>

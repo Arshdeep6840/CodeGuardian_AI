@@ -65,6 +65,31 @@ class IssueDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+from issues.services.severity_predictor import predict_severity
+
+
+class SeverityPredictAPIView(APIView):
+    """API view to predict bug severity using the ML Severity Predictor model."""
+    permission_classes = ()
+
+    def post(self, request, *args, **kwargs):
+        title = request.data.get("title", "")
+        description = request.data.get("description", "")
+        tool_name = request.data.get("tool_name", "")
+        rule_id = request.data.get("rule_id", "")
+        code_snippet = request.data.get("code_snippet", "")
+
+        prediction = predict_severity(
+            title=title,
+            description=description,
+            tool_name=tool_name,
+            rule_id=rule_id,
+            code_snippet=code_snippet
+        )
+
+        return Response(prediction, status=status.HTTP_200_OK)
+
+
 def issue_list_page(request):
     """View to serve the static issue list page HTML template."""
     return render(request, "issue_list.html")

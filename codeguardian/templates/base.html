@@ -32,13 +32,28 @@
           </a>
         </li>
         <li>
+          <a href="{% url 'projects-page' %}" class="{% block nav_projects_active %}{% endblock %}">
+            <span class="nav-dot"></span>Projects
+          </a>
+        </li>
+        <li>
           <a href="{% url 'scan-upload-page' %}" class="{% block nav_scan_active %}{% endblock %}">
             <span class="nav-dot"></span>New Scan
           </a>
         </li>
         <li>
           <a href="{% url 'issue-list-page' %}" class="{% block nav_history_active %}{% endblock %}">
-            <span class="nav-dot"></span>History
+            <span class="nav-dot"></span>Issues
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'fix-list-page' %}" class="{% block nav_fixes_active %}{% endblock %}">
+            <span class="nav-dot"></span>Auto-Fixes
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'test-suite-page' %}" class="{% block nav_tests_active %}{% endblock %}">
+            <span class="nav-dot"></span>Test Suites
           </a>
         </li>
         <li>
@@ -75,8 +90,11 @@
           <div class="ft-col-t">Product</div>
           <ul class="ft-links">
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'projects-page' %}">Projects</a></li>
             <li><a href="{% url 'scan-upload-page' %}">New Scan</a></li>
             <li><a href="{% url 'issue-list-page' %}">Issues</a></li>
+            <li><a href="{% url 'fix-list-page' %}">Auto-Fixes</a></li>
+            <li><a href="{% url 'test-suite-page' %}">Test Suites</a></li>
           </ul>
         </div>
         <div>

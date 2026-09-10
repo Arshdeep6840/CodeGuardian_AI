@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto-Fixes — CodeGuardian AI</title>
+<meta name="description" content="Review, apply, and export AI-generated fixes and unified diff patches for detected code vulnerabilities.">
+
+<script>
+  if (!localStorage.getItem("access")) {
+    window.location.href = "/login/";
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --p: #7365F0; --pm: #9B91F7; --pp: #EAE8FD; --pd: #4A41C4;
+  --d9: #070C18; --d8: #0B1222; --d7: #111B30; --d6: #172038; --d5: #1E2C47;
+  --l1: #F4F3FF; --l2: #FAFBFF; --lw: #FFFFFF;
+  --t1: #EEF2FF; --t2: #B4C0D6; --t3: #7A8FAF; --t4: #4A5A78;
+  --dt1: #1A1F36; --dt2: #3A4266; --dt3: #5E6B8A;
+  --bd: rgba(255,255,255,0.06); --bl: rgba(26,31,54,0.08);
+  --sc: #FF3B5C; --scb: rgba(255,59,92,.12);
+  --sh: #FF8A3E; --shb: rgba(255,138,62,.12);
+  --sm: #FFC53D; --smb: rgba(255,197,61,.10);
+  --sl: #23D18B; --slb: rgba(35,209,139,.12);
+  --r: 14px; --rl: 20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--l1);color:var(--dt1);line-height:1.6;}
+.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{text-decoration:none;color:inherit;}
+
+/* Shell */
+.app{display:flex;min-height:100vh;}
+.side{width:224px;flex-shrink:0;background:var(--d9);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.side-logo{display:flex;align-items:center;gap:9px;padding:20px 20px 18px;}
+.side-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.side-logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);}
+.side-logo-text em{color:var(--pm);font-style:normal;}
+.side-nav{flex:1;padding:10px 12px;}
+.side-grp-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);padding:14px 10px 8px;}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--t3);cursor:pointer;margin-bottom:2px;transition:all .15s;}
+.side-item:hover{background:var(--d7);color:var(--t1);}
+.side-item.on{background:rgba(115,101,240,.16);color:var(--pm);}
+.side-ico{font-size:15px;width:18px;text-align:center;}
+.side-foot{padding:14px 12px 18px;border-top:1px solid var(--bd);}
+
+/* Main */
+.main{flex:1;min-width:0;}
+.topbar{height:60px;background:var(--lw);border-bottom:1px solid var(--bl);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;}
+.tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.btn-primary{background:var(--p);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s;}
+.btn-primary:hover{background:var(--pd);}
+.btn-outline{background:transparent;color:var(--p);border:1px solid var(--p);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-outline:hover{background:var(--pp);}
+
+.content{padding:28px 30px 60px;max-width:1360px;}
+
+/* Header */
+.pg-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+.pg-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--dt1);letter-spacing:-.5px;}
+.pg-sub{font-size:13.5px;color:var(--dt3);margin-top:4px;}
+
+/* Filter pills */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.fpill{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--bl);background:var(--lw);color:var(--dt3);cursor:pointer;transition:all .15s;}
+.fpill.active,.fpill:hover{background:var(--p);color:#fff;border-color:var(--p);}
+
+/* Fix Cards */
+.fix-card{background:var(--lw);border:1px solid var(--bl);border-radius:var(--r);padding:20px;margin-bottom:18px;transition:box-shadow .2s;}
+.fix-card:hover{box-shadow:0 4px 20px rgba(115,101,240,.08);}
+.fc-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.fc-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--dt1);}
+.fc-file{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dt3);margin-top:3px;}
+.fc-badges{display:flex;align-items:center;gap:8px;}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.03em;text-transform:uppercase;}
+.badge-suggested{background:var(--smb);color:#996B00;}
+.badge-applied{background:var(--slb);color:var(--sl);}
+.badge-rejected{background:var(--scb);color:var(--sc);}
+.badge-accepted{background:var(--pp);color:var(--p);}
+
+.fc-exp{font-size:13.5px;color:var(--dt2);margin-bottom:14px;line-height:1.6;}
+
+/* Diff Viewer */
+.diff-box{background:#0D1117;border-radius:10px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:#C9D1D9;overflow-x:auto;max-height:280px;}
+.diff-add{color:#7EE787;background:rgba(46,160,67,0.15);display:block;padding:1px 6px;border-radius:3px;}
+.diff-del{color:#FFA198;background:rgba(248,81,73,0.15);display:block;padding:1px 6px;border-radius:3px;}
+.diff-hdr{color:#79C0FF;display:block;margin-bottom:4px;}
+
+/* Actions */
+.fc-actions{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--bl);}
+.fc-btns{display:flex;gap:8px;}
+.btn-sm{padding:6px 12px;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;border:none;transition:all .15s;}
+.btn-apply{background:var(--sl);color:#05291E;}
+.btn-apply:hover{background:#1EB879;}
+.btn-reject{background:var(--scb);color:var(--sc);border:1px solid rgba(255,59,92,.2);}
+.btn-reject:hover{background:var(--sc);color:#fff;}
+.btn-copy{background:var(--l1);color:var(--dt2);border:1px solid var(--bl);}
+.btn-copy:hover{background:#E6E4FD;color:var(--p);}
+
+.empty-state{text-align:center;padding:60px 20px;background:var(--lw);border:1px dashed var(--bl);border-radius:var(--r);}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:6px;color:var(--dt1);}
+.empty-state p{font-size:13.5px;color:var(--dt3);margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-logo">
+      <div class="side-logo-icon">CG</div>
+      <div class="side-logo-text">Code<em>Guardian</em> AI</div>
+    </div>
+    <nav class="side-nav">
+      <div class="side-grp-t">Platform</div>
+      <a href="/dashboard/" class="side-item"><span class="side-ico">📊</span>Dashboard</a>
+      <a href="/projects/" class="side-item"><span class="side-ico">📁</span>Projects</a>
+      <a href="/issues/" class="side-item"><span class="side-ico">⚠️</span>Issues</a>
+      <a href="/fixes/" class="side-item on"><span class="side-ico">⚡</span>Auto-Fixes</a>
+      <a href="/tests/" class="side-item"><span class="side-ico">🧪</span>Test Suites</a>
+      <a href="/scan/upload/" class="side-item"><span class="side-ico">🚀</span>New Scan</a>
+      <a href="/reports/" class="side-item"><span class="side-ico">📄</span>Reports</a>
+      <div class="side-grp-t">Account</div>
+      <a href="/profile/" class="side-item"><span class="side-ico">👤</span>Profile</a>
+    </nav>
+    <div class="side-foot">
+      <button onclick="logout()" class="side-item" style="width:100%;border:none;background:none;text-align:left;"><span class="side-ico">🚪</span>Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div class="tb-title">Auto-Fix & Patch Center</div>
+      <div class="tb-right" id="scanActions">
+        <!-- Injected dynamically if scan_id present -->
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="pg-hdr">
+        <div>
+          <h1 class="pg-h1">AI Remediation & Patch Management</h1>
+          <p class="pg-sub">Review AI-generated bug fixes, inspect unified diffs, and export Git-compatible patches.</p>
+        </div>
+        <div id="exportBtns" style="display:flex;gap:10px;">
+          <!-- Export patch / download buttons -->
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <button class="fpill active" onclick="filterFixes('all')">All Fixes</button>
+        <button class="fpill" onclick="filterFixes('suggested')">Suggested</button>
+        <button class="fpill" onclick="filterFixes('applied')">Applied</button>
+        <button class="fpill" onclick="filterFixes('rejected')">Rejected</button>
+      </div>
+
+      <!-- Fix Cards Container -->
+      <div id="fixesContainer">
+        <div class="empty-state">
+          <h3>Loading Auto-Fix Suggestions...</h3>
+          <p>Connecting to CodeGuardian intelligence engine.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+let allFixes = [];
+let currentFilter = 'all';
+const urlParams = new URLSearchParams(window.location.search);
+const scanIdParam = urlParams.get('scan_id');
+
+async function loadFixes() {
+  try {
+    let url = '/api/fixes/';
+    if (scanIdParam) {
+      url += `?scan_id=${scanIdParam}`;
+      setupScanActions(scanIdParam);
+    }
+
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+    });
+
+    if (!res.ok) {
+      document.getElementById('fixesContainer').innerHTML = `
+        <div class="empty-state">
+          <h3>No Fixes Available</h3>
+          <p>Upload a project and run a scan to generate AI automated code fixes.</p>
+          <a href="/scan/upload/" class="btn-primary">Start New Scan →</a>
+        </div>
+      `;
+      return;
+    }
+
+    allFixes = await res.json();
+    renderFixes();
+  } catch (err) {
+    document.getElementById('fixesContainer').innerHTML = `
+      <div class="empty-state">
+        <h3>Failed to load fixes</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  }
+}
+
+function setupScanActions(scanId) {
+  const exportDiv = document.getElementById('exportBtns');
+  exportDiv.innerHTML = `
+    <a href="/api/scans/${scanId}/patch/" class="btn-outline">
+      <span>📥</span> Download .patch
+    </a>
+    <a href="/api/scans/${scanId}/download-fixed/" class="btn-primary">
+      <span>📦</span> Download Fixed Project (.zip)
+    </a>
+  `;
+}
+
+function filterFixes(status) {
+  currentFilter = status;
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  renderFixes();
+}
+
+function renderFixes() {
+  const container = document.getElementById('fixesContainer');
+  let list = allFixes;
+
+  if (currentFilter !== 'all') {
+    list = list.filter(f => f.status.toLowerCase() === currentFilter);
+  }
+
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>No ${currentFilter === 'all' ? '' : currentFilter} fixes found</h3>
+        <p>There are no automated fixes matching this filter criteria.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(fix => {
+    const diffHtml = formatDiff(fix.patch_diff || '');
+    return `
+      <div class="fix-card" id="fix-card-${fix.id}">
+        <div class="fc-hd">
+          <div>
+            <div class="fc-title">${escapeHtml(fix.fix_title || 'AI Auto-Fix')}</div>
+            <div class="fc-file">📄 ${escapeHtml(fix.issue ? fix.issue.file_path : 'Source Code')}</div>
+          </div>
+          <div class="fc-badges">
+            <span class="badge badge-${fix.status.toLowerCase()}">${fix.status}</span>
+          </div>
+        </div>
+
+        <div class="fc-exp">${escapeHtml(fix.explanation || 'Automated code repair generated by Google Gemini.')}</div>
+
+        <div class="diff-box">
+          <span class="diff-hdr"># Unified Git Diff Preview</span>
+          ${diffHtml || '<div style="color:#8B949E">Unified diff not available.</div>'}
+        </div>
+
+        <div class="fc-actions">
+          <div style="font-size:12px;color:var(--dt3)">
+            Model: <strong>${escapeHtml(fix.ai_model_used || 'gemini-1.5-flash')}</strong> | Confidence: <strong>${Math.round((fix.confidence_score || 0.9) * 100)}%</strong>
+          </div>
+          <div class="fc-btns">
+            ${fix.status !== 'applied' ? `
+              <button class="btn-sm btn-apply" onclick="updateFixStatus(${fix.id}, 'applied')">✓ Apply Fix</button>
+            ` : `<span style="font-size:12px;color:var(--sl);font-weight:700">✓ Fix Applied</span>`}
+            
+            ${fix.status !== 'rejected' && fix.status !== 'applied' ? `
+              <button class="btn-sm btn-reject" onclick="updateFixStatus(${fix.id}, 'rejected')">✕ Dismiss</button>
+            ` : ''}
+
+            <button class="btn-sm btn-copy" onclick="copyPatchText(${fix.id})">📋 Copy Patch</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatDiff(patchText) {
+  if (!patchText) return '';
+  return patchText.split('\n').map(line => {
+    if (line.startsWith('+') && !line.startsWith('+++')) {
+      return `<span class="diff-add">${escapeHtml(line)}</span>`;
+    } else if (line.startsWith('-') && !line.startsWith('---')) {
+      return `<span class="diff-del">${escapeHtml(line)}</span>`;
+    } else if (line.startsWith('@@')) {
+      return `<span class="diff-hdr">${escapeHtml(line)}</span>`;
+    }
+    return `<span>${escapeHtml(line)}</span>`;
+  }).join('');
+}
+
+async function updateFixStatus(fixId, newStatus) {
+  try {
+    const res = await fetch(`/api/fixes/${fixId}/status/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('access')
+      },
+      body: JSON.stringify({ status: newStatus })
+    });
+
+    if (res.ok) {
+      const updated = await res.json();
+      const idx = allFixes.findIndex(f => f.id === fixId);
+      if (idx !== -1) {
+        allFixes[idx].status = newStatus;
+      }
+      renderFixes();
+    } else {
+      alert("Failed to update fix status.");
+    }
+  } catch (err) {
+    alert("Error updating status: " + err.message);
+  }
+}
+
+function copyPatchText(fixId) {
+  const fix = allFixes.find(f => f.id === fixId);
+  if (!fix) return;
+  navigator.clipboard.writeText(fix.patch_diff || fix.fixed_code || '');
+  alert("Unified diff patch copied to clipboard!");
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function logout() {
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+  window.location.href = "/login/";
+}
+
+loadFixes();
+</script>
+
+</body>
+</html>

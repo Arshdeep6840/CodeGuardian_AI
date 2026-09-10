@@ -44,6 +44,10 @@ class CodeFileAdmin(admin.ModelAdmin):
     search_fields = ("file_name", "file_path", "project__name")
 
 
+import csv
+from django.http import HttpResponse
+
+
 @admin.register(Scan)
 class ScanAdmin(admin.ModelAdmin):
     list_display = (
@@ -60,6 +64,17 @@ class ScanAdmin(admin.ModelAdmin):
     list_filter = ("status", "project")
     search_fields = ("scan_name", "project__name")
     ordering = ("-created_at",)
+    actions = ["export_scans_csv"]
+
+    @admin.action(description="Export selected scans to CSV")
+    def export_scans_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="scans_export.csv"'
+        writer = csv.writer(response)
+        writer.writerow(["ID", "Project", "Scan Name", "Status", "Files Scanned", "Issues Found", "Score", "Created At"])
+        for s in queryset:
+            writer.writerow([s.id, s.project.name, s.scan_name, s.status, s.total_files_scanned, s.total_issues_found, s.overall_score, s.created_at])
+        return response
 
 
 @admin.register(Issue)
@@ -79,6 +94,28 @@ class IssueAdmin(admin.ModelAdmin):
     list_filter = ("issue_type", "severity", "tool_name", "is_fixed", "is_false_positive")
     search_fields = ("title", "description", "file_path", "scan__project__name")
     ordering = ("-created_at",)
+    actions = ["mark_selected_fixed", "mark_selected_false_positive", "export_issues_csv"]
+
+    @admin.action(description="Mark selected issues as Fixed")
+    def mark_selected_fixed(self, request, queryset):
+        count = queryset.update(is_fixed=True)
+        self.message_user(request, f"{count} issue(s) successfully marked as Fixed.")
+
+    @admin.action(description="Mark selected issues as False Positive")
+    def mark_selected_false_positive(self, request, queryset):
+        count = queryset.update(is_false_positive=True)
+        self.message_user(request, f"{count} issue(s) marked as False Positive.")
+
+    @admin.action(description="Export selected issues to CSV")
+    def export_issues_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="issues_export.csv"'
+        writer = csv.writer(response)
+        writer.writerow(["ID", "Project", "File", "Line", "Severity", "Type", "Tool", "Title", "Fixed", "False Positive"])
+        for i in queryset:
+            proj_name = i.scan.project.name if i.scan and i.scan.project else ""
+            writer.writerow([i.id, proj_name, i.file_path, i.line_number, i.severity, i.issue_type, i.tool_name, i.title, i.is_fixed, i.is_false_positive])
+        return response
 
 
 @admin.register(Fix)

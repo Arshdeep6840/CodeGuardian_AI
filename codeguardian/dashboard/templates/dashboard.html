@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
 :root{
@@ -162,8 +163,13 @@ a{text-decoration:none;color:inherit;}
       <div class="side-item on" onclick="window.location.href='/dashboard/'"><span class="side-ico">📊</span>Dashboard</div>
       <div class="side-item" onclick="window.location.href='/scan/upload/'"><span class="side-ico">🔍</span>New Scan</div>
       <div class="side-item" onclick="window.location.href='/projects/'"><span class="side-ico">📁</span>My Projects</div>
-      <div class="side-grp-t">Analysis</div>
-      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues & Fixes</div>
+      <div class="side-grp-t">Analysis & Remediation</div>
+      <div class="side-item" onclick="window.location.href='/issues/'"><span class="side-ico">⚠️</span>Issues</div>
+      <div class="side-item" onclick="window.location.href='/fixes/'"><span class="side-ico">⚡</span>Auto-Fixes</div>
+      <div class="side-item" onclick="window.location.href='/tests/'"><span class="side-ico">🧪</span>Test Suites</div>
+      <div class="side-item" onclick="window.location.href='/reports/'"><span class="side-ico">📄</span>Reports</div>
+      <div class="side-grp-t">Account</div>
+      <div class="side-item" onclick="window.location.href='/profile/'"><span class="side-ico">👤</span>Profile</div>
     </nav>
     <div class="side-foot">
       <div class="side-item" id="logout-btn"><span class="side-ico">↪</span>Log out</div>
@@ -260,6 +266,29 @@ a{text-decoration:none;color:inherit;}
           <div class="sev-r"><span class="sev-lbl" style="color:var(--sh)">HIGH</span><div class="sev-track"><div class="sev-fill" id="sev-high-fill" style="background:var(--sh);width:0%"></div></div><span class="sev-cnt" id="sev-high-cnt">0</span></div>
           <div class="sev-r"><span class="sev-lbl" style="color:var(--sm)">MEDIUM</span><div class="sev-track"><div class="sev-fill" id="sev-medium-fill" style="background:var(--sm);width:0%"></div></div><span class="sev-cnt" id="sev-medium-cnt">0</span></div>
           <div class="sev-r"><span class="sev-lbl" style="color:var(--sl)">LOW</span><div class="sev-track"><div class="sev-fill" id="sev-low-fill" style="background:var(--sl);width:0%"></div></div><span class="sev-cnt" id="sev-low-cnt">0</span></div>
+        </div>
+      </div>
+
+      <!-- VISUAL ANALYTICS CHARTS (CHART.JS) -->
+      <div class="grid2b" style="margin-bottom:16px;">
+        <div class="panel">
+          <div class="panel-hdr">
+            <span class="panel-t">Severity Distribution</span>
+            <span class="panel-link" onclick="window.location.href='/issues/'">View issues →</span>
+          </div>
+          <div style="height:220px;position:relative;display:flex;align-items:center;justify-content:center;">
+            <canvas id="chart-severity-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hdr">
+            <span class="panel-t">Issues by Category</span>
+            <span class="panel-link" onclick="window.location.href='/fixes/'">Auto-Fixes →</span>
+          </div>
+          <div style="height:220px;position:relative;">
+            <canvas id="chart-types-canvas"></canvas>
+          </div>
         </div>
       </div>
 
@@ -437,6 +466,63 @@ async function loadStats(projectId = "") {
       document.getElementById("sev-medium-fill").style.width = `${Math.max(0, Math.min(100, (medium / totalIssues) * 100))}%`;
       document.getElementById("sev-low-fill").style.width = `${Math.max(0, Math.min(100, (low / totalIssues) * 100))}%`;
       
+      // Update Chart.js Severity Doughnut
+      const ctxSev = document.getElementById("chart-severity-canvas");
+      if (ctxSev) {
+        if (window._chartSev) window._chartSev.destroy();
+        window._chartSev = new Chart(ctxSev, {
+          type: "doughnut",
+          data: {
+            labels: ["Critical", "High", "Medium", "Low"],
+            datasets: [{
+              data: [critical, high, medium, low],
+              backgroundColor: ["#FF3B5C", "#FF8A3E", "#FFC53D", "#23D18B"],
+              borderWidth: 0,
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: "right", labels: { font: { family: "DM Sans", size: 12 } } }
+            },
+            cutout: "68%"
+          }
+        });
+      }
+
+      // Update Chart.js Issue Types Bar
+      const ctxTypes = document.getElementById("chart-types-canvas");
+      if (ctxTypes) {
+        const tc = data.issue_type_counts || {};
+        const typeLabels = Object.keys(tc).length ? Object.keys(tc) : ["security", "code_quality", "complexity", "bug"];
+        const typeData = Object.keys(tc).length ? Object.values(tc) : [0, 0, 0, 0];
+        
+        if (window._chartTypes) window._chartTypes.destroy();
+        window._chartTypes = new Chart(ctxTypes, {
+          type: "bar",
+          data: {
+            labels: typeLabels.map(l => l.replace("_", " ").toUpperCase()),
+            datasets: [{
+              label: "Issues",
+              data: typeData,
+              backgroundColor: "#7365F0",
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0, font: { family: "DM Sans" } } },
+              x: { ticks: { font: { family: "DM Sans", size: 11 } } }
+            }
+          }
+        });
+      }
+
       // Recent Scans Table
       const scansTbody = document.getElementById("recent-scans-tbody");
       if (data.recent_scans && data.recent_scans.length > 0) {
