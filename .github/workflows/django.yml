@@ -10,10 +10,29 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: codeguardian
+          POSTGRES_USER: codeguardian
+          POSTGRES_PASSWORD: supersecret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -26,5 +45,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
+      env:
+        DATABASE_URL: postgres://codeguardian:supersecret@localhost:5432/codeguardian
+        CELERY_BROKER_URL: redis://localhost:6379/0
+        CELERY_RESULT_BACKEND: redis://localhost:6379/0
+        SECRET_KEY: testing-secret-key
+        DEBUG: "True"
       run: |
-        python manage.py test
+        cd codeguardian
+        pytest

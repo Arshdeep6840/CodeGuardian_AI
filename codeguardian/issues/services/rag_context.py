@@ -7,11 +7,14 @@ from django.conf import settings
 CHROMA_PERSIST_DIR = os.path.join(settings.BASE_DIR, "chroma_db")
 chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
 
+from celery import shared_task
+
 def get_or_create_collection(project_id):
     """Retrieve or create a ChromaDB collection for a specific project."""
     collection_name = f"project_{project_id}"
     return chroma_client.get_or_create_collection(name=collection_name)
 
+@shared_task
 def index_project_files(project_id, extracted_path):
     """
     Chunks and indexes all Python files in the extracted project path

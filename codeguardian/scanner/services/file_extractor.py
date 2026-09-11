@@ -222,4 +222,11 @@ def extract_and_map_project(project_id):
     project.total_python_files = python_files_count
     project.save()
 
+    # Index files into Vector DB for RAG Context asynchronously
+    try:
+        from issues.services.rag_context import index_project_files
+        index_project_files.delay(project.id, extracted_dir_path)
+    except Exception as e:
+        print(f"Failed to queue indexing for RAG: {e}")
+
     return True, "Project extracted and indexed successfully"
